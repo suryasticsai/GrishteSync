@@ -8,112 +8,111 @@
     * { margin:0; padding:0; box-sizing:border-box; font-family:system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }
     body { background:#f0f2f5; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; min-height:100vh; padding:1rem; }
     .app-container { width:100%; max-width:700px; background:white; border-radius:1.5rem; box-shadow:0 20px 35px rgba(0,0,0,0.1); overflow:hidden; margin-bottom:2rem; }
-    .header { background:linear-gradient(135deg, #0b1c2c, #1a3a4f, #0e2a36); color:white; padding:1.2rem 1.5rem 0.8rem; }
-    .app-title { font-size:2rem; font-weight:700; display:flex; align-items:center; gap:0.5rem; margin-bottom:0.4rem; }
-    .logo { font-size:2.2rem; }
-    .version { font-size:0.8rem; background:rgba(255,255,255,0.2); display:inline-block; padding:0.2rem 0.7rem; border-radius:2rem; }
-    .meta-row { display:flex; flex-wrap:wrap; gap:0.5rem 1rem; font-size:0.75rem; margin:0.6rem 0 0.2rem; opacity:0.9; }
+    .header { background:linear-gradient(135deg, #0b1c2c, #1a3a4f, #0e2a36); color:white; padding:1.2rem 1.5rem 0.8rem; display:flex; flex-direction:column; gap:0.6rem; }
+    .top-row { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; }
+    .app-title { font-size:2rem; font-weight:700; display:flex; align-items:center; gap:0.4rem; }
+    .logo-img { height:2.4rem; width:auto; vertical-align:middle; }
+    .btn-connect-group { display:flex; gap:0.5rem; align-items:center; }
+    .btn-login { background:rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.3); color:white; padding:0.3rem 0.8rem; border-radius:2rem; font-size:0.8rem; cursor:pointer; }
+    .btn-login:hover { background:rgba(255,255,255,0.3); }
+    .version { font-size:0.8rem; background:rgba(255,255,255,0.2); display:inline-block; padding:0.2rem 0.7rem; border-radius:2rem; width:fit-content; }
+    .meta-row { display:flex; flex-wrap:wrap; gap:0.5rem 1rem; font-size:0.75rem; opacity:0.9; }
     .meta-row span { background:rgba(255,255,255,0.1); padding:0.2rem 0.7rem; border-radius:2rem; }
-    .dot { width:8px; height:8px; border-radius:50%; display:inline-block; margin-right:0.3rem; }
-    .green { background:#4caf50; }
     .main { padding:1.5rem; }
     .prompt-label { font-weight:600; margin-bottom:0.5rem; color:#1a3a4f; }
-    textarea { width:100%; height:110px; padding:0.8rem; border:2px solid #e2e8f0; border-radius:1rem; font-size:0.95rem; resize:vertical; outline:none; transition:all 0.2s; }
-    textarea:focus { border-color:#1a3a4f; box-shadow:0 0 0 3px rgba(26,58,79,0.1); }
-    .repo-input { width:100%; padding:0.7rem; border:2px solid #e2e8f0; border-radius:1rem; margin-top:0.8rem; font-size:0.9rem; outline:none; transition:all 0.2s; }
-    .repo-input:focus { border-color:#1a3a4f; }
-    .btn-generate { width:100%; margin-top:1rem; padding:0.9rem; background:#1a3a4f; color:white; border:none; border-radius:3rem; font-size:1rem; font-weight:600; cursor:pointer; transition:all 0.2s; }
+    textarea, input[type=text] { width:100%; padding:0.8rem; border:2px solid #e2e8f0; border-radius:1rem; font-size:0.95rem; outline:none; margin-top:0.8rem; }
+    textarea:focus, input[type=text]:focus { border-color:#1a3a4f; }
+    .btn-generate { width:100%; margin-top:1rem; padding:0.9rem; background:#1a3a4f; color:white; border:none; border-radius:3rem; font-size:1rem; font-weight:600; cursor:pointer; }
     .btn-generate:hover { background:#0e2a36; transform:scale(0.98); }
-    .btn-generate:disabled { background:#9ca3af; cursor:not-allowed; transform:none; }
-    .btn-login { background:rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.3); color:white; padding:0.3rem 0.8rem; border-radius:2rem; font-size:0.8rem; cursor:pointer; margin-left:0.5rem; }
-    .btn-login:hover { background:rgba(255,255,255,0.3); }
+    .btn-generate:disabled { background:#9ca3af; cursor:not-allowed; }
     .status { margin-top:1.2rem; background:#f8fafc; border-radius:1rem; padding:0.8rem; display:none; flex-direction:column; gap:0.6rem; border:1px solid #e2e8f0; }
-    .step-item { display:flex; align-items:center; gap:0.7rem; font-size:0.85rem; color:#334155; opacity:0.6; transition:opacity 0.2s; }
+    .step-item { display:flex; align-items:center; gap:0.7rem; font-size:0.85rem; color:#334155; opacity:0.6; }
     .step-item.active { opacity:1; font-weight:500; color:#1a3a4f; }
     .step-icon { width:20px; text-align:center; }
-    @keyframes spin { to { transform:rotate(360deg); } }
     .result-card { margin-top:1.5rem; border:1px solid #e2e8f0; border-radius:1rem; padding:1rem; display:none; background:#fefce8; }
-    .pr-desc { font-size:0.9rem; background:white; padding:0.8rem; border-radius:0.8rem; margin-bottom:1rem; white-space:pre-wrap; font-family:monospace; }
+    .section-title { font-weight:600; margin:1rem 0 0.4rem; }
     .file-viewer { margin:1rem 0; }
     .file-item { border:1px solid #e2e8f0; border-radius:0.6rem; margin-bottom:0.5rem; overflow:hidden; background:white; }
     .file-header { padding:0.5rem 0.8rem; cursor:pointer; display:flex; justify-content:space-between; align-items:center; background:#f8fafc; font-weight:500; font-size:0.85rem; }
-    .file-header:hover { background:#f1f5f9; }
     .file-content { display:none; background:#1e293b; color:#e2e8f0; font-family:monospace; font-size:0.8rem; padding:0.8rem; white-space:pre-wrap; overflow-x:auto; }
     .file-content.open { display:block; }
-    .followup-section { margin:1rem 0; }
     .followup-buttons { display:flex; flex-wrap:wrap; gap:0.6rem; margin-top:0.5rem; }
-    .btn-follow { background:#e2e8f0; border:none; padding:0.5rem 1rem; border-radius:2rem; font-size:0.8rem; cursor:pointer; transition:background 0.2s; }
+    .btn-follow { background:#e2e8f0; border:none; padding:0.5rem 1rem; border-radius:2rem; font-size:0.8rem; cursor:pointer; }
     .btn-follow:hover { background:#cbd5e1; }
     .action-buttons { display:flex; gap:0.8rem; margin-top:1rem; flex-wrap:wrap; }
-    .btn-approve, .btn-redo, .btn-download { flex:1; padding:0.7rem; border:none; border-radius:2rem; font-weight:600; cursor:pointer; white-space:nowrap; }
+    .btn-approve, .btn-hf, .btn-redo, .btn-download { flex:1; padding:0.7rem; border:none; border-radius:2rem; font-weight:600; cursor:pointer; white-space:nowrap; }
     .btn-approve { background:#10b981; color:white; }
+    .btn-hf { background:#f59e0b; color:white; }
     .btn-redo { background:#6366f1; color:white; }
-    .btn-download { background:#f59e0b; color:white; }
-    .btn-approve:hover { background:#059669; }
-    .btn-redo:hover { background:#4f46e5; }
-    .btn-download:hover { background:#d97706; }
-    .toast { position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:#1f2937; color:white; padding:0.7rem 1.2rem; border-radius:2rem; font-size:0.85rem; z-index:1000; animation:fadeInUp 0.3s ease; box-shadow:0 4px 12px rgba(0,0,0,0.15); }
+    .btn-download { background:#3b82f6; color:white; }
+    .deploy-links { margin-top:0.8rem; padding:0.6rem; background:white; border-radius:0.6rem; border:1px solid #e2e8f0; display:none; }
+    .toast { position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:#1f2937; color:white; padding:0.7rem 1.2rem; border-radius:2rem; font-size:0.85rem; z-index:1000; animation:fadeInUp 0.3s ease; }
     @keyframes fadeInUp { from{opacity:0; transform:translateX(-50%) translateY(20px);} to{opacity:1; transform:translateX(-50%) translateY(0);} }
     .footer { background:#f1f5f9; text-align:center; padding:0.8rem; font-size:0.7rem; color:#475569; }
     .about-author { max-width:700px; background:white; border-radius:1.5rem; padding:1.5rem; box-shadow:0 8px 20px rgba(0,0,0,0.05); }
     .about-author h2 { color:#1a3a4f; margin-bottom:0.5rem; font-size:1.2rem; }
     .about-author a { display:inline-block; margin-right:1rem; color:#1a3a4f; text-decoration:none; font-size:0.85rem; }
-.logo-img {
-  height: 2.4rem;
-  width: auto;
-  vertical-align: middle;
-}
   </style>
 </head>
 <body>
 <div class="app-container">
   <div class="header">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
+    <div class="top-row">
       <div class="app-title">
-  <img src="https://i.ibb.co/pjmCv3Vy/1781038658031.png" alt="GrishteSync Logo" class="logo-img">
-  GrishteSync
-</div>
-      <button class="btn-login" id="loginBtn" style="display:none;">🔗 Connect GitHub</button>
+        <img src="https://i.ibb.co/pjmCv3Vy/1781038658031.png" alt="Logo" class="logo-img">
+        GrishteSync
+      </div>
+      <div class="btn-connect-group">
+        <button class="btn-login" id="loginBtn" style="display:none;">🐙 GitHub</button>
+        <button class="btn-login" id="hfLoginBtn" style="display:none;">🤗 HF</button>
+      </div>
     </div>
     <span class="version" id="versionBadge">v0.0.0</span>
     <div class="meta-row">
       <span>🐙 Git: <span id="gitStatus">not connected</span></span>
-      <span id="repoDisplay">📁 repo: my-ai-app</span>
-      <span id="deployDisplay">☁️ Deploy: not deployed</span>
+      <span>🤗 HF: <span id="hfStatus">not connected</span></span>
+      <span id="repoDisplay">📁 repo: none</span>
+      <span id="deployDisplay">☁️ not deployed</span>
     </div>
   </div>
   <div class="main">
-    <div class="prompt-label">✍️ Describe your app or update (Streamlit/Gradio/Flask)</div>
-    <textarea id="promptInput" placeholder="e.g., Add dark mode toggle and fix API timeout. Or: Build a new Streamlit app that..."></textarea>
-    <input type="text" class="repo-input" id="repoInput" placeholder="Existing repo (user/repo) – leave empty to create new">
-    <button class="btn-generate" id="generateBtn">🚀 Generate / Update App</button>
+    <div class="prompt-label">✍️ App name (for new apps) or existing repo (user/repo)</div>
+    <input type="text" class="repo-input" id="repoInput" placeholder="e.g., dad-joke (will create GrishteSync-dad-joke) or user/existing-repo">
+    <div class="prompt-label" style="margin-top:1rem;">✨ What should the app do?</div>
+    <textarea id="promptInput" placeholder="Describe your app or update..."></textarea>
+    <button class="btn-generate" id="generateBtn">🚀 Generate / Update</button>
 
-    <div class="status" id="statusArea">
-      <div id="stepList"></div>
-    </div>
+    <div class="status" id="statusArea"><div id="stepList"></div></div>
 
     <div class="result-card" id="resultCard">
       <div class="pr-desc" id="prDescription"></div>
       <div class="file-viewer" id="fileViewer"></div>
+
+      <!-- Editable PR description -->
+      <div class="section-title">📝 Pull Request description (editable)</div>
+      <textarea id="prEditTextarea" rows="5" placeholder="Custom PR description..."></textarea>
+
       <div class="followup-section">
-        <strong>✨ Suggested next features:</strong>
+        <strong>✨ Suggested next:</strong>
         <div class="followup-buttons" id="followupButtons"></div>
       </div>
       <div class="action-buttons">
-        <button class="btn-approve" id="approveBtn" style="display:none;">✅ Deploy to GitHub</button>
+        <button class="btn-approve" id="approveBtn" style="display:none;">🐙 Deploy to GitHub</button>
+        <button class="btn-hf" id="hfDeployBtn" style="display:none;">🤗 Deploy to HF</button>
         <button class="btn-redo" id="redoBtn">🔄 Re‑weave</button>
-        <button class="btn-download" id="downloadBtn">📥 Download ZIP</button>
+        <button class="btn-download" id="downloadBtn">📥 Download</button>
       </div>
+      <!-- Live links after deployment -->
+      <div class="deploy-links" id="deployLinks"></div>
     </div>
   </div>
   <div class="footer">
-    GRISHTESYNC — Grishma (Summer) + Sync. One prompt, one downpour, one release.<br>
-    Update existing apps by typing the repo name (user/repo).
+    GRISHTESYNC — Grishma + Sync. One prompt, one downpour, one release.
   </div>
 </div>
 <div class="about-author">
   <h2>👤 About the Author</h2>
-  <p>Crafted by <strong>Suryasticsai</strong> — an AI software developer that builds, versions, and deploys Python AI apps from natural language.</p>
+  <p>Crafted by <strong>Suryasticsai</strong> — AI app builder from natural language.</p>
   <div>
     <a href="https://github.com/suryasticsai" target="_blank">🐙 GitHub</a>
     <a href="https://linkedin.com/in/suryasticsai" target="_blank">💼 LinkedIn</a>
@@ -125,14 +124,18 @@
   const API_BASE = "https://grishtesync-backend.onrender.com";
   const API_GENERATE = `${API_BASE}/api/generate`;
   const API_DEPLOY = `${API_BASE}/api/deploy`;
-  const AUTH_LOGIN = `${API_BASE}/auth/login`;
+  const API_DEPLOY_HF = `${API_BASE}/api/deploy-hf`;
+  const AUTH_GITHUB = `${API_BASE}/auth/login`;
+  const AUTH_HF = `${API_BASE}/hf/login`;
 
   let currentVersion = "0.0.0";
-  let repoName = "";               // will be generated or taken from input
+  let repoName = "";
   let generatedFiles = {};
   let currentPrompt = "";
   let githubToken = localStorage.getItem("github_token") || null;
+  let hfToken = localStorage.getItem("hf_token") || null;
 
+  // DOM refs
   const versionBadge = document.getElementById('versionBadge');
   const repoDisplay = document.getElementById('repoDisplay');
   const deployDisplay = document.getElementById('deployDisplay');
@@ -146,304 +149,258 @@
   const fileViewer = document.getElementById('fileViewer');
   const followupButtons = document.getElementById('followupButtons');
   const approveBtn = document.getElementById('approveBtn');
+  const hfDeployBtn = document.getElementById('hfDeployBtn');
   const redoBtn = document.getElementById('redoBtn');
   const downloadBtn = document.getElementById('downloadBtn');
   const loginBtn = document.getElementById('loginBtn');
+  const hfLoginBtn = document.getElementById('hfLoginBtn');
   const gitStatus = document.getElementById('gitStatus');
+  const hfStatus = document.getElementById('hfStatus');
+  const prEditTextarea = document.getElementById('prEditTextarea');
+  const deployLinks = document.getElementById('deployLinks');
 
   function updateAuthUI() {
     if (githubToken) {
       loginBtn.style.display = 'none';
       gitStatus.innerText = 'connected ✅';
-      gitStatus.style.color = '#4caf50';
       approveBtn.style.display = 'inline-block';
     } else {
       loginBtn.style.display = 'inline-block';
       gitStatus.innerText = 'not connected';
-      gitStatus.style.color = 'inherit';
       approveBtn.style.display = 'none';
+    }
+    if (hfToken) {
+      hfLoginBtn.style.display = 'none';
+      hfStatus.innerText = 'connected ✅';
+      hfDeployBtn.style.display = 'inline-block';
+    } else {
+      hfLoginBtn.style.display = 'inline-block';
+      hfStatus.innerText = 'not connected';
+      hfDeployBtn.style.display = 'none';
     }
   }
 
-  function handleRedirectToken() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const token = urlParams.get('token');
-    if (token) {
-      localStorage.setItem('github_token', token);
-      githubToken = token;
+  function handleRedirectTokens() {
+    const params = new URLSearchParams(window.location.search);
+    let changed = false;
+    if (params.get('token')) {
+      githubToken = params.get('token');
+      localStorage.setItem('github_token', githubToken);
+      changed = true;
+    }
+    if (params.get('hf_token')) {
+      hfToken = params.get('hf_token');
+      localStorage.setItem('hf_token', hfToken);
+      changed = true;
+    }
+    if (changed) {
       window.history.replaceState({}, document.title, window.location.pathname);
-      showToast("🔗 GitHub connected successfully!");
+      showToast("Connected successfully!");
     }
     updateAuthUI();
   }
 
-  loginBtn.addEventListener('click', () => {
-    window.location.href = AUTH_LOGIN;
-  });
+  loginBtn.addEventListener('click', () => { window.location.href = AUTH_GITHUB; });
+  hfLoginBtn.addEventListener('click', () => { window.location.href = AUTH_HF; });
 
   function showToast(msg, duration = 3000) {
-    const t = document.createElement('div');
-    t.className = 'toast';
-    t.innerText = msg;
-    document.body.appendChild(t);
-    setTimeout(() => t.remove(), duration);
+    const t = document.createElement('div'); t.className='toast'; t.innerText=msg;
+    document.body.appendChild(t); setTimeout(()=>t.remove(), duration);
   }
 
-  function showSteps(stepsList) {
+  function showSteps(steps) {
     stepListDiv.innerHTML = '';
-    stepsList.forEach((name, idx) => {
-      const div = document.createElement('div');
-      div.className = 'step-item';
-      div.id = `step-${idx}`;
-      div.innerHTML = `<span class="step-icon">⏳</span><span>${name}</span>`;
-      stepListDiv.appendChild(div);
+    steps.forEach((name, idx) => {
+      const d = document.createElement('div'); d.className='step-item'; d.id=`step-${idx}`;
+      d.innerHTML = `<span class="step-icon">⏳</span><span>${name}</span>`;
+      stepListDiv.appendChild(d);
     });
   }
   function setStepDone(idx) {
     const el = document.getElementById(`step-${idx}`);
-    if (el) { el.querySelector('.step-icon').innerHTML = '✅'; el.classList.remove('active'); }
+    if(el){ el.querySelector('.step-icon').innerHTML='✅'; el.classList.remove('active'); }
   }
-  function setStepActive(idx, icon = '⚙️') {
+  function setStepActive(idx) {
     const el = document.getElementById(`step-${idx}`);
-    if (el) { el.classList.add('active'); el.querySelector('.step-icon').innerHTML = icon; }
-    document.querySelectorAll('.step-item').forEach(e => { if (e.id !== `step-${idx}`) e.classList.remove('active'); });
+    if(el){ el.classList.add('active'); el.querySelector('.step-icon').innerHTML='⚙️'; }
+    document.querySelectorAll('.step-item').forEach(e=>{ if(e.id!==`step-${idx}`) e.classList.remove('active'); });
   }
-  function toggleFile(fileName) {
-    const id = `file-${fileName.replace(/[^a-zA-Z0-9]/g, '_')}`;
-    const el = document.getElementById(id);
-    if (el) el.classList.toggle('open');
+  function toggleFile(fname) {
+    const id = `file-${fname.replace(/[^a-zA-Z0-9]/g, '_')}`;
+    const el = document.getElementById(id); if(el) el.classList.toggle('open');
   }
   function renderFileViewer(files) {
     fileViewer.innerHTML = '';
-    if (!files || !Object.keys(files).length) return;
-    for (const [fname, content] of Object.entries(files)) {
-      const safeId = fname.replace(/[^a-zA-Z0-9]/g, '_');
-      const div = document.createElement('div');
-      div.className = 'file-item';
-      div.innerHTML = `
-        <div class="file-header" onclick="toggleFile('${fname}')">
-          <span>📄 ${fname}</span>
-          <span>▼</span>
-        </div>
-        <div class="file-content" id="file-${safeId}">${content}</div>
-      `;
+    if(!files || !Object.keys(files).length) return;
+    for(const [fname, content] of Object.entries(files)) {
+      const safe = fname.replace(/[^a-zA-Z0-9]/g, '_');
+      const div = document.createElement('div'); div.className='file-item';
+      div.innerHTML = `<div class="file-header" onclick="toggleFile('${fname}')"><span>📄 ${fname}</span><span>▼</span></div>
+        <div class="file-content" id="file-${safe}">${content}</div>`;
       fileViewer.appendChild(div);
     }
   }
 
+  // ---------- Generate ----------
   async function generatePR() {
     const prompt = promptInput.value.trim();
-    if (!prompt) return showToast("⚠️ Please enter a prompt.");
+    if(!prompt) return showToast("⚠️ Enter a prompt.");
     currentPrompt = prompt;
 
-    // Determine repo name
     const existingRepo = repoInput.value.trim();
-    if (existingRepo) {
-      repoName = existingRepo;   // e.g., Varakalasai/ai-app-mq772ch6
+    if (existingRepo && existingRepo.includes('/')) {
+      repoName = existingRepo;   // user/repo format
+    } else if (existingRepo) {
+      // New app with custom name
+      repoName = `GrishteSync-${existingRepo}`;
     } else {
-      repoName = `ai-app-${Date.now().toString(36)}`; // new repo
+      repoName = `GrishteSync-${Date.now().toString(36)}`;
     }
 
     generateBtn.disabled = true;
     resultCard.style.display = 'none';
     statusArea.style.display = 'flex';
+    deployLinks.style.display = 'none';
 
     const steps = [
-      existingRepo ? "🔍 Fetching current code..." : "🔍 Sending prompt to GrishteSync AI...",
-      "🧠 Agentic Kernel generating code...",
-      "📁 Creating project files...",
+      existingRepo ? "🔍 Fetching current code..." : "🔍 Sending prompt to AI...",
+      "🧠 Generating code...",
+      "📁 Creating files...",
       "📝 Preparing result..."
     ];
     showSteps(steps);
-
     let stepIdx = 0;
     const interval = setInterval(() => {
-      if (stepIdx < steps.length) {
-        setStepActive(stepIdx);
-        if (stepIdx > 0) setStepDone(stepIdx - 1);
-        stepIdx++;
-      }
+      if(stepIdx < steps.length){ setStepActive(stepIdx); if(stepIdx>0) setStepDone(stepIdx-1); stepIdx++; }
     }, 1500);
 
-    // Build request body and headers
-    const body = { prompt };
-    if (existingRepo) {
-      body.repo = existingRepo;
-    }
     const headers = { 'Content-Type': 'application/json' };
-    if (existingRepo && githubToken) {
-      headers['Authorization'] = `token ${githubToken}`;
-    }
+    if(existingRepo && githubToken) headers['Authorization'] = `token ${githubToken}`;
+    const body = { prompt }; if(existingRepo) body.repo = existingRepo;
 
     try {
-      const res = await fetch(API_GENERATE, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify(body)
-      });
+      const res = await fetch(API_GENERATE, { method:'POST', headers, body: JSON.stringify(body) });
       const data = await res.json();
-      clearInterval(interval);
-      steps.forEach((_, i) => setStepDone(i));
-
-      if (data.error) {
-        showToast("❌ " + data.error);
-        statusArea.style.display = 'none';
-        generateBtn.disabled = false;
-        return;
-      }
+      clearInterval(interval); steps.forEach((_,i)=>setStepDone(i));
+      if(data.error){ showToast("❌ "+data.error); statusArea.style.display='none'; generateBtn.disabled=false; return; }
       generatedFiles = data.files;
       renderFileViewer(generatedFiles);
       finalizeUI(prompt);
-    } catch (err) {
-      clearInterval(interval);
-      showToast("❌ Network error: " + err.message);
-      statusArea.style.display = 'none';
-      generateBtn.disabled = false;
+    } catch(e) {
+      clearInterval(interval); showToast("❌ Network error: "+e.message); statusArea.style.display='none'; generateBtn.disabled=false;
     }
   }
 
   function finalizeUI(prompt) {
     let ver = currentVersion.split('.').map(Number);
-    if (ver.length !== 3 || ver.some(isNaN)) ver = [0,0,0];
-    ver[2]++;
-    currentVersion = ver.join('.');
+    if(ver.length!==3 || ver.some(isNaN)) ver=[0,0,0];
+    ver[2]++; currentVersion = ver.join('.');
     versionBadge.innerText = `v${currentVersion}`;
-
     repoDisplay.innerText = `📁 repo: ${repoName}`;
-    deployDisplay.innerText = '☁️ Deploy: not deployed';
+    deployDisplay.innerText = '☁️ not deployed';
+    const fileList = Object.keys(generatedFiles).map(f=>`- ${f}`).join('\n') || '(none)';
+    prDescription.innerHTML = `<strong>✨ Generated app</strong><br><em>“${prompt}”</em><br><br><strong>📂 Files:</strong><br>${fileList}<br><strong>📦 Version:</strong> v${currentVersion}`;
 
-    const fileList = Object.keys(generatedFiles).map(f => `- ${f}`).join('\n') || '(none)';
-    prDescription.innerHTML = `
-      <strong>✨ Generated / Updated Python AI App</strong><br>
-      <em>“${prompt}”</em><br><br>
-      <strong>📂 Files:</strong><br>${fileList}<br><br>
-      <strong>📦 Version:</strong> v${currentVersion}<br>
-      <strong>🧠 Model:</strong> Groq (llama-3.3-70b)<br><br>
-      <em>✅ Click file names to view code. Then Deploy to GitHub or Download.</em>
-    `;
+    // Pre-fill editable PR description with default
+    prEditTextarea.value = `GrishteSync update v${currentVersion}\n\nFiles: ${Object.keys(generatedFiles).join(', ')}\n\nAuto-generated PR.`;
 
-    const followups = [
-      "Add dark mode",
-      "Connect a database",
-      "Add error handling",
-      "Improve UI",
-      "Add logging"
-    ];
-    const selected = followups.sort(() => 0.5 - Math.random()).slice(0, 3);
+    const followups = ["Add dark mode","Connect database","Improve UI","Add logging","Add tests"];
+    const sel = followups.sort(()=>0.5-Math.random()).slice(0,3);
     followupButtons.innerHTML = '';
-    selected.forEach(s => {
-      const b = document.createElement('button');
-      b.className = 'btn-follow';
-      b.innerText = s;
-      b.onclick = () => {
-        promptInput.value = s;
-        showToast(`📝 Follow-up: "${s}"`);
-        promptInput.scrollIntoView({ behavior: 'smooth' });
-      };
-      followupButtons.appendChild(b);
-    });
+    sel.forEach(s=>{ const b=document.createElement('button'); b.className='btn-follow'; b.innerText=s; b.onclick=()=>{ promptInput.value=s; promptInput.scrollIntoView({behavior:'smooth'}); }; followupButtons.appendChild(b); });
 
-    resultCard.style.display = 'block';
-    statusArea.style.display = 'none';
-    generateBtn.disabled = false;
-    approveBtn.innerText = '✅ Deploy to GitHub';
-    approveBtn.disabled = false;
-    approveBtn.style.opacity = '1';
+    resultCard.style.display='block';
+    statusArea.style.display='none';
+    generateBtn.disabled=false;
+    approveBtn.innerText='🐙 Deploy to GitHub'; approveBtn.disabled=false;
+    hfDeployBtn.innerText='🤗 Deploy to HF'; hfDeployBtn.disabled=false;
+    deployLinks.innerHTML = ''; deployLinks.style.display = 'none';
   }
 
+  // ---------- Deploy to GitHub (with editable PR) ----------
   async function deployToGitHub() {
-    if (!githubToken) {
-      showToast("⚠️ Please connect your GitHub account first.");
-      return;
-    }
-    if (!generatedFiles || Object.keys(generatedFiles).length === 0) {
-      showToast("⚠️ Nothing to deploy.");
-      return;
-    }
-    approveBtn.disabled = true;
-    approveBtn.innerText = '⏳ Deploying...';
+    if(!githubToken){ showToast("Connect GitHub first."); return; }
+    if(!generatedFiles || Object.keys(generatedFiles).length===0){ showToast("No files."); return; }
+    approveBtn.disabled=true; approveBtn.innerText='⏳ Deploying...';
+    const customPR = prEditTextarea.value.trim() || undefined;
     try {
       const res = await fetch(API_DEPLOY, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `token ${githubToken}`
-        },
+        method:'POST',
+        headers:{ 'Content-Type':'application/json', 'Authorization':`token ${githubToken}` },
         body: JSON.stringify({
           repo_name: repoName,
           files: generatedFiles,
-          version: currentVersion
+          version: currentVersion,
+          pr_description: customPR
         })
       });
       const data = await res.json();
-      if (data.error) {
-        showToast("❌ " + data.error);
-        approveBtn.disabled = false;
-        approveBtn.innerText = '✅ Deploy to GitHub';
-        return;
-      }
-      deployDisplay.innerText = `🐙 GitHub: live (${data.repo_url})`;
-      approveBtn.innerText = '✅ Deployed';
-      approveBtn.disabled = true;
-      approveBtn.style.opacity = '0.7';
-      showToast("✅ Deployed to your GitHub! " + data.repo_url);
-    } catch (err) {
-      showToast("❌ Network error: " + err.message);
-      approveBtn.disabled = false;
-      approveBtn.innerText = '✅ Deploy to GitHub';
-    }
+      if(data.error){ showToast("❌ "+data.error); approveBtn.disabled=false; approveBtn.innerText='🐙 Deploy to GitHub'; return; }
+      let linksHtml = `<strong>🐙 GitHub Repo:</strong> <a href="${data.repo_url}" target="_blank">${data.repo_url}</a>`;
+      if(data.pr_url) linksHtml += `<br><strong>🔀 Pull Request:</strong> <a href="${data.pr_url}" target="_blank">${data.pr_url}</a>`;
+      deployLinks.innerHTML = linksHtml;
+      deployLinks.style.display = 'block';
+      deployDisplay.innerText = `🐙 GitHub: ${data.repo_url}`;
+      approveBtn.innerText='✅ Deployed'; approveBtn.disabled=true;
+      showToast("✅ Deployed to GitHub!");
+    } catch(e){ showToast("❌ "+e.message); approveBtn.disabled=false; approveBtn.innerText='🐙 Deploy to GitHub'; }
   }
 
-  function reweave() {
-    if (currentPrompt) {
-      promptInput.value = currentPrompt;
-      generatePR();
-    } else {
-      showToast("No previous prompt. Type something to weave.");
-    }
+  // ---------- Deploy to HF (unchanged, links shown) ----------
+  async function deployToHF() {
+    if(!githubToken){ showToast("Connect GitHub first."); return; }
+    if(!hfToken){ showToast("Connect Hugging Face first."); return; }
+    if(!repoName){ showToast("No repo defined."); return; }
+    hfDeployBtn.disabled=true; hfDeployBtn.innerText='⏳ Deploying...';
+    try {
+      const res = await fetch(API_DEPLOY_HF, {
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json',
+          'Authorization': `token ${githubToken}`,
+          'HF-Authorization': `Bearer ${hfToken}`
+        },
+        body: JSON.stringify({
+          repo_full_name: repoName,
+          space_name: repoName.split('/')[1] || 'grishte-app',
+          sdk: 'streamlit'
+        })
+      });
+      const data = await res.json();
+      if(data.error){ showToast("❌ "+data.error); hfDeployBtn.disabled=false; hfDeployBtn.innerText='🤗 Deploy to HF'; return; }
+      deployLinks.innerHTML += `<br><strong>🤗 Live App:</strong> <a href="${data.space_url}" target="_blank">${data.space_url}</a>`;
+      deployLinks.style.display = 'block';
+      deployDisplay.innerText = `🤗 Live: ${data.space_url}`;
+      hfDeployBtn.innerText='✅ Live'; hfDeployBtn.disabled=true;
+      showToast("✅ App is live on Hugging Face! "+data.space_url);
+    } catch(e){ showToast("❌ "+e.message); hfDeployBtn.disabled=false; hfDeployBtn.innerText='🤗 Deploy to HF'; }
   }
 
+  function reweave() { if(currentPrompt){ promptInput.value = currentPrompt; generatePR(); } else showToast("No prompt."); }
   function downloadZip() {
-    if (!generatedFiles || Object.keys(generatedFiles).length === 0) {
-      showToast("⚠️ No files to download.");
-      return;
-    }
-    const JSZip = window.JSZip;
-    if (!JSZip) {
-      const script = document.createElement('script');
-      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
-      script.onload = () => downloadZip();
-      document.head.appendChild(script);
-      return;
+    if(!generatedFiles || Object.keys(generatedFiles).length===0) return showToast("No files.");
+    if(!window.JSZip){
+      const s=document.createElement('script'); s.src='https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+      s.onload=()=>downloadZip(); document.head.appendChild(s); return;
     }
     const zip = new JSZip();
-    for (const [fname, content] of Object.entries(generatedFiles)) {
-      zip.file(fname, content);
-    }
-    zip.generateAsync({ type: 'blob' }).then(blob => {
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${repoName.replace('/', '_')}.zip`;
-      a.click();
-      URL.revokeObjectURL(url);
-      showToast("📥 Downloaded!");
-    });
+    for(const [f,c] of Object.entries(generatedFiles)) zip.file(f,c);
+    zip.generateAsync({type:'blob'}).then(b=>{ const url=URL.createObjectURL(b); const a=document.createElement('a'); a.href=url; a.download=`${repoName.replace('/','_')}.zip`; a.click(); URL.revokeObjectURL(url); });
   }
 
   generateBtn.onclick = generatePR;
   approveBtn.onclick = deployToGitHub;
+  hfDeployBtn.onclick = deployToHF;
   redoBtn.onclick = reweave;
   downloadBtn.onclick = downloadZip;
 
   window.onload = () => {
-    handleRedirectToken();
+    handleRedirectTokens();
     versionBadge.innerText = 'v0.0.0';
-    repoDisplay.innerText = '📁 repo: (none)';
-    deployDisplay.innerText = '☁️ Deploy: not deployed';
-    if (!window.JSZip) {
-      const s = document.createElement('script');
-      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+    repoDisplay.innerText = '📁 repo: none';
+    deployDisplay.innerText = '☁️ not deployed';
+    if(!window.JSZip){
+      const s=document.createElement('script'); s.src='https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
       document.head.appendChild(s);
     }
   };
