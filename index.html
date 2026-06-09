@@ -1,10 +1,9 @@
-<!-- GrishteSync version 0.0.1 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-  <title>🌀 GrishteSync — AI Python App Builder · Git · PythonAnywhere</title>
+  <title>🌀 GrishteSync — AI Python App Builder · Git · HuggingFace</title>
   <style>
     * { margin:0; padding:0; box-sizing:border-box; font-family:system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }
     body { background:#f0f2f5; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; min-height:100vh; padding:1rem; }
@@ -21,6 +20,8 @@
     .prompt-label { font-weight:600; margin-bottom:0.5rem; color:#1a3a4f; }
     textarea { width:100%; height:110px; padding:0.8rem; border:2px solid #e2e8f0; border-radius:1rem; font-size:0.95rem; resize:vertical; outline:none; transition:all 0.2s; }
     textarea:focus { border-color:#1a3a4f; box-shadow:0 0 0 3px rgba(26,58,79,0.1); }
+    .repo-input { width:100%; padding:0.7rem; border:2px solid #e2e8f0; border-radius:1rem; margin-top:0.8rem; font-size:0.9rem; outline:none; transition:all 0.2s; }
+    .repo-input:focus { border-color:#1a3a4f; }
     .btn-generate { width:100%; margin-top:1rem; padding:0.9rem; background:#1a3a4f; color:white; border:none; border-radius:3rem; font-size:1rem; font-weight:600; cursor:pointer; transition:all 0.2s; }
     .btn-generate:hover { background:#0e2a36; transform:scale(0.98); }
     .btn-generate:disabled { background:#9ca3af; cursor:not-allowed; transform:none; }
@@ -70,13 +71,14 @@
     <div class="meta-row">
       <span>🐙 Git: <span id="gitStatus">not connected</span></span>
       <span id="repoDisplay">📁 repo: my-ai-app</span>
-      <span id="deployDisplay">☁️ PythonAnywhere: not deployed</span>
+      <span id="deployDisplay">☁️ Deploy: not deployed</span>
     </div>
   </div>
   <div class="main">
-    <div class="prompt-label">✍️ Describe your Python AI app (Streamlit / Gradio / Flask)</div>
-    <textarea id="promptInput" placeholder="e.g., Build a Streamlit app that shows a random joke from an API. Include tests."></textarea>
-    <button class="btn-generate" id="generateBtn">🚀 Generate & Deploy to Staging</button>
+    <div class="prompt-label">✍️ Describe your app or update (Streamlit/Gradio/Flask)</div>
+    <textarea id="promptInput" placeholder="e.g., Add dark mode toggle and fix API timeout. Or: Build a new Streamlit app that..."></textarea>
+    <input type="text" class="repo-input" id="repoInput" placeholder="Existing repo (user/repo) – leave empty to create new">
+    <button class="btn-generate" id="generateBtn">🚀 Generate / Update App</button>
 
     <div class="status" id="statusArea">
       <div id="stepList"></div>
@@ -98,7 +100,7 @@
   </div>
   <div class="footer">
     GRISHTESYNC — Grishma (Summer) + Sync. One prompt, one downpour, one release.<br>
-    Turns prompts into versioned Python AI apps (Streamlit/Gradio/Flask) → Git → PythonAnywhere
+    Update existing apps by typing the repo name (user/repo).
   </div>
 </div>
 <div class="about-author">
@@ -118,7 +120,7 @@
   const AUTH_LOGIN = `${API_BASE}/auth/login`;
 
   let currentVersion = "0.0.0";
-  let repoName = "my-ai-app";
+  let repoName = "";               // will be generated or taken from input
   let generatedFiles = {};
   let currentPrompt = "";
   let githubToken = localStorage.getItem("github_token") || null;
@@ -127,6 +129,7 @@
   const repoDisplay = document.getElementById('repoDisplay');
   const deployDisplay = document.getElementById('deployDisplay');
   const promptInput = document.getElementById('promptInput');
+  const repoInput = document.getElementById('repoInput');
   const generateBtn = document.getElementById('generateBtn');
   const statusArea = document.getElementById('statusArea');
   const stepListDiv = document.getElementById('stepList');
@@ -224,12 +227,21 @@
     const prompt = promptInput.value.trim();
     if (!prompt) return showToast("⚠️ Please enter a prompt.");
     currentPrompt = prompt;
+
+    // Determine repo name
+    const existingRepo = repoInput.value.trim();
+    if (existingRepo) {
+      repoName = existingRepo;   // e.g., Varakalasai/ai-app-mq772ch6
+    } else {
+      repoName = `ai-app-${Date.now().toString(36)}`; // new repo
+    }
+
     generateBtn.disabled = true;
     resultCard.style.display = 'none';
     statusArea.style.display = 'flex';
 
     const steps = [
-      "🔍 Sending prompt to GrishteSync AI...",
+      existingRepo ? "🔍 Fetching current code..." : "🔍 Sending prompt to GrishteSync AI...",
       "🧠 Agentic Kernel generating code...",
       "📁 Creating project files...",
       "📝 Preparing result..."
@@ -245,11 +257,21 @@
       }
     }, 1500);
 
+    // Build request body and headers
+    const body = { prompt };
+    if (existingRepo) {
+      body.repo = existingRepo;
+    }
+    const headers = { 'Content-Type': 'application/json' };
+    if (existingRepo && githubToken) {
+      headers['Authorization'] = `token ${githubToken}`;
+    }
+
     try {
       const res = await fetch(API_GENERATE, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt })
+        headers,
+        body: JSON.stringify(body)
       });
       const data = await res.json();
       clearInterval(interval);
@@ -279,14 +301,12 @@
     currentVersion = ver.join('.');
     versionBadge.innerText = `v${currentVersion}`;
 
-    const newRepo = `ai-app-${Date.now().toString(36)}`;
-    repoName = newRepo;
     repoDisplay.innerText = `📁 repo: ${repoName}`;
-    deployDisplay.innerText = '☁️ PythonAnywhere: not deployed';
+    deployDisplay.innerText = '☁️ Deploy: not deployed';
 
     const fileList = Object.keys(generatedFiles).map(f => `- ${f}`).join('\n') || '(none)';
     prDescription.innerHTML = `
-      <strong>✨ Generated Python AI App</strong><br>
+      <strong>✨ Generated / Updated Python AI App</strong><br>
       <em>“${prompt}”</em><br><br>
       <strong>📂 Files:</strong><br>${fileList}<br><br>
       <strong>📦 Version:</strong> v${currentVersion}<br>
@@ -295,11 +315,11 @@
     `;
 
     const followups = [
-      "Add user authentication",
+      "Add dark mode",
       "Connect a database",
-      "Add a /metrics endpoint",
-      "Improve test coverage",
-      "Add CI/CD pipeline"
+      "Add error handling",
+      "Improve UI",
+      "Add logging"
     ];
     const selected = followups.sort(() => 0.5 - Math.random()).slice(0, 3);
     followupButtons.innerHTML = '';
@@ -396,7 +416,7 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `${repoName}.zip`;
+      a.download = `${repoName.replace('/', '_')}.zip`;
       a.click();
       URL.revokeObjectURL(url);
       showToast("📥 Downloaded!");
@@ -411,8 +431,8 @@
   window.onload = () => {
     handleRedirectToken();
     versionBadge.innerText = 'v0.0.0';
-    repoDisplay.innerText = '📁 repo: my-ai-app';
-    deployDisplay.innerText = '☁️ PythonAnywhere: not deployed';
+    repoDisplay.innerText = '📁 repo: (none)';
+    deployDisplay.innerText = '☁️ Deploy: not deployed';
     if (!window.JSZip) {
       const s = document.createElement('script');
       s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
