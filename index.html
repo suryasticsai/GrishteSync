@@ -173,13 +173,12 @@
     try {
       return JSON.parse(text);
     } catch (e) {
-      // If the response is HTML, show a snippet
       const preview = text.substring(0, 300);
       throw new Error(`Server returned non-JSON response (status ${res.status}): ${preview}`);
     }
   }
 
-  // DOM refs with null safety
+  // DOM refs
   const $ = (id) => document.getElementById(id);
   const versionBadge = $('versionBadge');
   const repoDisplay = $('repoDisplay');
@@ -196,7 +195,6 @@
   const resultCard = $('resultCard');
   const prDescription = $('prDescription');
   const fileViewer = $('fileViewer');
-  const followupButtons = $('followupButtons');
   const approveBtn = $('approveBtn');
   const hfDeployBtn = $('hfDeployBtn');
   const redoBtn = $('redoBtn');
@@ -293,10 +291,11 @@
   if(resetBtn) resetBtn.addEventListener('click', resetAndDiagnose);
   if(loginBtn) loginBtn.addEventListener('click', ()=> window.location.href = AUTH_GITHUB);
 
-  function toggleFile(f) { 
+  window.toggleFile = function(f) { 
     const el = document.getElementById(`file-${f.replace(/[^a-zA-Z0-9]/g,'_')}`); 
     if(el) el.classList.toggle('open'); 
-  }
+  };
+
   function renderFileViewer(files) {
     if(!fileViewer) return;
     fileViewer.innerHTML='';
@@ -305,9 +304,20 @@
       const s=f.replace(/[^a-zA-Z0-9]/g,'_'); 
       const d=document.createElement('div'); 
       d.className='file-item'; 
-      d.innerHTML=`<div class="file-header" onclick="toggleFile('${f}')"><span>📄 ${f}</span><span>▼</span></div><div class="file-content" id="file-${s}">${c}</div>`; 
+      d.innerHTML=`<div class="file-header" onclick="toggleFile('${f}')"><span>📄 ${f}</span><span>▼</span></div><div class="file-content" id="file-${s}">${escapeHtml(c)}</div>`; 
       fileViewer.appendChild(d); 
     }
+  }
+
+  function escapeHtml(str) {
+    return str.replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+      return c;
+    });
   }
 
   function showProgress() {
@@ -392,18 +402,6 @@
         prEditTextarea.value = `GrishteSync update v${currentVersion}\n\nFiles: ${Object.keys(generatedFiles).join(', ')}`;
     }
     
-    if(followupButtons) {
-        const followups = ["Add dark mode","Connect database","Improve UI","Add logging","Add tests"];
-        followupButtons.innerHTML = '';
-        followups.sort(()=>0.5-Math.random()).slice(0,3).forEach(s=>{ 
-            const b=document.createElement('button'); 
-            b.className='btn-follow'; 
-            b.innerText=s; 
-            b.onclick=()=>{ if(promptInput) promptInput.value=s; }; 
-            followupButtons.appendChild(b); 
-        });
-    }
-    
     if(generateBtn) generateBtn.disabled=false;
     if(approveBtn) { approveBtn.innerText='🐙 Deploy to GitHub'; approveBtn.disabled=false; }
     if(hfDeployBtn) { hfDeployBtn.innerText='🤗 Deploy to HF'; hfDeployBtn.disabled=false; }
@@ -428,6 +426,14 @@
       });
       if(data.error){ anim.fail(data.error); showError(data.error); if(approveBtn){ approveBtn.disabled=false; approveBtn.innerText='🐙 Deploy to GitHub'; } return; }
       anim.complete(data.deploy_time || '?');
+      
+      // ✅ FIX: Update repoName to full "username/repo" after successful deploy
+      if (data.username && repoName) {
+        const baseName = repoName.includes('/') ? repoName.split('/').pop() : repoName;
+        repoName = `${data.username}/${baseName}`;
+        if (repoDisplay) repoDisplay.innerText = `📁 repo: ${repoName}`;
+      }
+      
       setTimeout(() => {
         if(statusArea) statusArea.style.display = 'none';
         let html = `<strong>🐙 Repo:</strong> <a href="${data.repo_url}" target="_blank">${data.repo_url}</a>`;
@@ -453,7 +459,7 @@
       const data = await safeFetch(API_DEPLOY_HF, { 
         method:'POST', 
         headers:{ 'Content-Type':'application/json' }, 
-        body: JSON.stringify({ repo_full_name: repoName, space_name: repoName.split('/')[1]||'grishte-app', files: generatedFiles }) 
+        body: JSON.stringify({ repo_full_name: repoName, space_name: repoName.split('/')[1] || 'grishte-app', files: generatedFiles }) 
       });
       if(data.error){ anim.fail(data.error); showError(data.error); if(hfDeployBtn){ hfDeployBtn.disabled=false; hfDeployBtn.innerText='🤗 Deploy to HF'; } return; }
       anim.complete(data.deploy_time || '?');
@@ -518,9 +524,7 @@
     updateAuthUI();
   }
 
-  // Pre-warm the backend (wake Render if sleeping) and handle OAuth redirect
   window.onload = () => {
-    // Wake-up ping
     safeFetch(`${API_BASE}/`).catch(() => {});
     handleRedirectTokens(); 
     updateAuthUI();
