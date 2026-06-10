@@ -34,7 +34,7 @@
     input:checked + .toggle-slider:before { transform:translateX(20px); }
 
     .main { padding:1.5rem; }
-    .section-label { font-weight:600; margin-bottom:0.4rem; color:#1a3a4f; display:flex; align-items:center; gap:0.4rem; }
+    .section-label { font-weight:600; margin-bottom:0.4rem; color:#1a3a4f; }
     textarea, input[type=text], select { width:100%; padding:0.8rem; border:2px solid #e2e8f0; border-radius:1rem; font-size:0.95rem; outline:none; margin-top:0.5rem; background:white; }
     textarea:focus, input:focus, select:focus { border-color:#1a3a4f; }
     .select-row { display:flex; gap:0.5rem; align-items:center; margin-top:0.5rem; }
@@ -45,7 +45,6 @@
     .btn-generate:disabled { background:#9ca3af; cursor:not-allowed; }
     .btn-live { background:#10b981; color:white; padding:0.7rem 1.5rem; border:none; border-radius:2rem; font-weight:600; cursor:pointer; font-size:0.9rem; }
     
-    /* Progress bar */
     .progress-container { width:100%; height:12px; background:#e2e8f0; border-radius:6px; overflow:hidden; }
     .progress-bar { height:100%; background:linear-gradient(90deg, #10b981, #f59e0b); border-radius:6px; width:0%; transition:width 0.3s ease; }
     .progress-text { text-align:center; font-weight:700; font-size:1.2rem; color:#1a3a4f; margin-top:0.4rem; }
@@ -117,7 +116,6 @@
     <button class="btn-generate" id="generateBtn">🚀 Generate / Update</button>
     <div id="errorBox"></div>
     
-    <!-- Progress bar area -->
     <div class="status" id="statusArea">
       <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
       <div class="progress-text" id="progressText">0%</div>
@@ -129,15 +127,8 @@
       <div class="file-viewer" id="fileViewer"></div>
       <div class="section-title">📝 PR Description (editable)</div>
       <textarea id="prEditTextarea" rows="4" placeholder="Custom PR description..."></textarea>
-      
-      <div class="pr-instructions" id="prInstructions">
-        ⚠️ <strong>Action needed:</strong> Open the Pull Request and <strong>merge it to main</strong> to complete the deployment.
-      </div>
-
-      <div class="celebration" id="celebrationBox">
-        🎉 <strong>Congratulations!</strong> You just built an AI-powered app with GrishteSync! 🌀
-      </div>
-
+      <div class="pr-instructions" id="prInstructions">⚠️ <strong>Action needed:</strong> Open the Pull Request and <strong>merge it to main</strong> to complete the deployment.</div>
+      <div class="celebration" id="celebrationBox">🎉 <strong>Congratulations!</strong> You just built an AI-powered app with GrishteSync! 🌀</div>
       <div class="action-buttons">
         <button class="btn-approve" id="approveBtn" style="display:none;">🐙 Deploy to GitHub</button>
         <button class="btn-hf" id="hfDeployBtn">🤗 Deploy to HF</button>
@@ -235,9 +226,7 @@
     if (!githubToken) return;
     try {
       repoSelect.innerHTML = '<option value="">⏳ Loading...</option>';
-      const res = await fetch('https://api.github.com/user/repos?per_page=100&sort=updated', {
-        headers: { Authorization: `token ${githubToken}` }
-      });
+      const res = await fetch('https://api.github.com/user/repos?per_page=100&sort=updated', { headers: { Authorization: `token ${githubToken}` } });
       const repos = await res.json();
       if (!Array.isArray(repos)) { repoSelect.innerHTML = '<option value="">-- Error --</option>'; return; }
       const grishteRepos = repos.filter(r => r.name.toLowerCase().startsWith('grishtesync-'));
@@ -284,7 +273,7 @@
     progressStep.textContent = 'Starting...';
   }
 
-  function animateProgress(stepMessages, onComplete, deployTime) {
+  function animateProgress(stepMessages) {
     let progress = 0;
     let stepIndex = 0;
     const interval = setInterval(() => {
@@ -297,20 +286,9 @@
         stepIndex++;
       }
     }, 300);
-
     return {
-      complete: (time) => {
-        clearInterval(interval);
-        progressBar.style.width = '100%';
-        progressText.textContent = '100%';
-        progressStep.textContent = `✅ Completed in ${time}s`;
-      },
-      fail: (msg) => {
-        clearInterval(interval);
-        progressBar.style.width = '0%';
-        progressText.textContent = 'Failed';
-        progressStep.textContent = msg;
-      }
+      complete: (time) => { clearInterval(interval); progressBar.style.width='100%'; progressText.textContent='100%'; progressStep.textContent=`✅ Completed in ${time}s`; },
+      fail: (msg) => { clearInterval(interval); progressBar.style.width='0%'; progressText.textContent='Failed'; progressStep.textContent=msg; }
     };
   }
 
@@ -365,12 +343,12 @@
       if(data.error){ anim.fail(data.error); showError(data.error); approveBtn.disabled=false; approveBtn.innerText='🐙 Deploy to GitHub'; return; }
       anim.complete(data.deploy_time || '?');
       setTimeout(() => {
-        statusArea.style.display = 'none'; resultCard.style.display = 'block';
+        statusArea.style.display = 'none';
         let html = `<strong>🐙 Repo:</strong> <a href="${data.repo_url}" target="_blank">${data.repo_url}</a>`;
         if(data.pr_url) html += `<br><strong>🔀 PR:</strong> <a href="${data.pr_url}" target="_blank">${data.pr_url}</a>`;
         deployLinks.innerHTML = html; deployLinks.style.display='block'; deployDisplay.innerText = `🐙 GitHub: ${data.repo_url}`;
         prInstructions.style.display = 'block'; approveBtn.innerText='✅ Deployed'; approveBtn.disabled=true;
-        showToast(`✅ Deployed in ${data.deploy_time || '?'}s! Open the PR and merge it.`); hideError();
+        resultCard.style.display = 'block'; showToast(`✅ Deployed in ${data.deploy_time||'?'}s! Merge the PR.`); hideError();
       }, 600);
     } catch(e) { anim.fail(e.message); showError(e.message); approveBtn.disabled=false; approveBtn.innerText='🐙 Deploy to GitHub'; }
   }
@@ -388,12 +366,12 @@
       anim.complete(data.deploy_time || '?');
       liveSpaceUrl = data.space_url;
       setTimeout(() => {
-        statusArea.style.display = 'none'; resultCard.style.display = 'block';
+        statusArea.style.display = 'none';
         deployLinks.innerHTML += `<br><strong>🤗 Live:</strong> <a href="${data.space_url}" target="_blank">${data.space_url}</a>`;
         deployLinks.style.display='block'; deployDisplay.innerText = `🤗 Live: ${data.space_url}`;
         hfDeployBtn.innerText='✅ Live'; hfDeployBtn.disabled=true;
         liveBtn.style.display = 'block'; celebrationBox.style.display = 'block';
-        showToast(`🎉 App is live! Deployed in ${data.deploy_time || '?'}s`); hideError();
+        resultCard.style.display = 'block'; showToast(`🎉 App is live! ${data.deploy_time||'?'}s`); hideError();
       }, 600);
     } catch(e) { anim.fail(e.message); showError(e.message); hfDeployBtn.disabled=false; hfDeployBtn.innerText='🤗 Deploy to HF'; }
   }
