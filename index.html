@@ -1,3 +1,4 @@
+<!-- |  🌀 GrishteSync Version 0.3 | -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,9 +18,7 @@
     .btn-login, .btn-reset { background:rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.3); color:white; padding:0.3rem 0.8rem; border-radius:2rem; font-size:0.8rem; cursor:pointer; }
     .btn-login:hover, .btn-reset:hover { background:rgba(255,255,255,0.3); }
     .btn-reset { background:rgba(255,100,100,0.3); }
-    .btn-reset:hover { background:rgba(255,100,100,0.5); }
     .btn-disconnect { background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.3); color:white; padding:0.3rem 0.8rem; border-radius:2rem; font-size:0.8rem; cursor:pointer; margin-left:0.3rem; }
-    .btn-disconnect:hover { background:rgba(255,100,100,0.4); }
     .version { font-size:0.8rem; background:rgba(255,255,255,0.2); display:inline-block; padding:0.2rem 0.7rem; border-radius:2rem; width:fit-content; }
     .meta-row { display:flex; flex-wrap:wrap; gap:0.5rem 1rem; font-size:0.75rem; opacity:0.9; }
     .meta-row span { background:rgba(255,255,255,0.1); padding:0.2rem 0.7rem; border-radius:2rem; }
@@ -31,7 +30,6 @@
     .select-row { display:flex; gap:0.5rem; align-items:center; margin-top:0.8rem; }
     .select-row select { flex:1; margin-top:0; }
     .btn-refresh-repos { background:#e2e8f0; border:none; padding:0.5rem 0.8rem; border-radius:2rem; font-size:0.8rem; cursor:pointer; white-space:nowrap; }
-    .btn-refresh-repos:hover { background:#cbd5e1; }
     .btn-generate { width:100%; margin-top:1rem; padding:0.9rem; background:#1a3a4f; color:white; border:none; border-radius:3rem; font-size:1rem; font-weight:600; cursor:pointer; }
     .btn-generate:hover { background:#0e2a36; transform:scale(0.98); }
     .btn-generate:disabled { background:#9ca3af; cursor:not-allowed; }
@@ -40,10 +38,7 @@
     .draft-list { margin-top:0.5rem; max-height:150px; overflow-y:auto; }
     .draft-item { display:flex; justify-content:space-between; align-items:center; padding:0.4rem 0; border-bottom:1px solid #e2e8f0; }
     .draft-item button { background:none; border:none; cursor:pointer; }
-    .draft-item .load-draft { color:#1a3a4f; font-weight:500; }
-    .draft-item .delete-draft { color:#ef4444; }
     .save-draft-btn { margin-top:0.8rem; background:#e2e8f0; border:none; padding:0.5rem 1rem; border-radius:2rem; font-size:0.8rem; cursor:pointer; }
-    .save-draft-btn:hover { background:#cbd5e1; }
     #errorBox { display:none; margin-top:0.8rem; padding:0.8rem; background:#fee2e2; color:#b91c1c; border-radius:0.8rem; font-size:0.85rem; white-space:pre-wrap; word-break:break-word; }
     .status { margin-top:1.2rem; background:#f8fafc; border-radius:1rem; padding:0.8rem; display:none; flex-direction:column; gap:0.6rem; border:1px solid #e2e8f0; }
     .step-item { display:flex; align-items:center; gap:0.7rem; font-size:0.85rem; color:#334155; opacity:0.6; }
@@ -58,7 +53,6 @@
     .file-content.open { display:block; }
     .followup-buttons { display:flex; flex-wrap:wrap; gap:0.6rem; margin-top:0.5rem; }
     .btn-follow { background:#e2e8f0; border:none; padding:0.5rem 1rem; border-radius:2rem; font-size:0.8rem; cursor:pointer; }
-    .btn-follow:hover { background:#cbd5e1; }
     .action-buttons { display:flex; gap:0.8rem; margin-top:1rem; flex-wrap:wrap; }
     .btn-approve, .btn-hf, .btn-redo, .btn-download { flex:1; padding:0.7rem; border:none; border-radius:2rem; font-weight:600; cursor:pointer; white-space:nowrap; }
     .btn-approve { background:#10b981; color:white; }
@@ -85,8 +79,6 @@
       <div class="btn-connect-group">
         <button class="btn-login" id="loginBtn" style="display:none;">🐙 GitHub</button>
         <span id="gitStatusWrap" style="display:none;"><span id="gitStatus">connected ✅</span><button class="btn-disconnect" id="disconnectGit">✕</button></span>
-        <button class="btn-login" id="hfLoginBtn" style="display:none;">🤗 HF</button>
-        <span id="hfStatusWrap" style="display:none;"><span id="hfStatus">connected ✅</span><button class="btn-disconnect" id="disconnectHF">✕</button></span>
         <button class="btn-reset" id="resetBtn">🔄 Reset</button>
       </div>
     </div>
@@ -101,15 +93,10 @@
     <input type="text" id="appNameInput" placeholder="e.g., dad-joke">
     <div class="prompt-label" style="margin-top:1rem;">📁 Or update an existing repo</div>
     <div class="select-row">
-      <select id="repoSelect">
-        <option value="">-- Select a repo to update --</option>
-      </select>
+      <select id="repoSelect"><option value="">-- Select a repo to update --</option></select>
       <button class="btn-refresh-repos" id="refreshReposBtn">🔄</button>
     </div>
-    <div class="prompt-label" style="margin-top:1rem;">
-      ✨ What should the app do?
-      <button class="clear-draft-btn" id="clearAutoDraft" title="Clear auto-saved prompt">Clear</button>
-    </div>
+    <div class="prompt-label" style="margin-top:1rem;">✨ What should the app do? <button class="clear-draft-btn" id="clearAutoDraft">Clear</button></div>
     <textarea id="promptInput" placeholder="Describe your app or update..."></textarea>
 
     <div class="draft-section" id="draftPanel">
@@ -122,7 +109,6 @@
     </div>
 
     <button class="btn-generate" id="generateBtn">🚀 Generate / Update</button>
-
     <div id="errorBox"></div>
     <div class="status" id="statusArea"><div id="stepList"></div></div>
 
@@ -131,22 +117,17 @@
       <div class="file-viewer" id="fileViewer"></div>
       <div class="section-title">📝 Pull Request description (editable)</div>
       <textarea id="prEditTextarea" rows="5" placeholder="Custom PR description..."></textarea>
-      <div class="followup-section">
-        <strong>✨ Suggested next:</strong>
-        <div class="followup-buttons" id="followupButtons"></div>
-      </div>
+      <div class="followup-section"><strong>✨ Suggested next:</strong><div class="followup-buttons" id="followupButtons"></div></div>
       <div class="action-buttons">
         <button class="btn-approve" id="approveBtn" style="display:none;">🐙 Deploy to GitHub</button>
-        <button class="btn-hf" id="hfDeployBtn" style="display:none;">🤗 Deploy to HF</button>
+        <button class="btn-hf" id="hfDeployBtn">🤗 Deploy to HF</button>
         <button class="btn-redo" id="redoBtn">🔄 Re‑weave</button>
         <button class="btn-download" id="downloadBtn">📥 Download</button>
       </div>
       <div class="deploy-links" id="deployLinks"></div>
     </div>
   </div>
-  <div class="footer">
-    GRISHTESYNC — Grishma + Sync. One prompt, one downpour, one release.
-  </div>
+  <div class="footer">GRISHTESYNC — Grishma + Sync. One prompt, one downpour, one release.</div>
 </div>
 <div class="about-author">
   <h2>👤 About the Author</h2>
@@ -164,14 +145,12 @@
   const API_DEPLOY = `${API_BASE}/api/deploy`;
   const API_DEPLOY_HF = `${API_BASE}/api/deploy-hf`;
   const AUTH_GITHUB = `${API_BASE}/auth/login`;
-  const AUTH_HF = `${API_BASE}/hf/login`;
 
   let currentVersion = "0.0.0";
   let repoName = "";
   let generatedFiles = {};
   let currentPrompt = "";
   let githubToken = localStorage.getItem("github_token") || null;
-  let hfToken = localStorage.getItem("hf_token") || null;
 
   const versionBadge = document.getElementById('versionBadge');
   const repoDisplay = document.getElementById('repoDisplay');
@@ -192,17 +171,12 @@
   const redoBtn = document.getElementById('redoBtn');
   const downloadBtn = document.getElementById('downloadBtn');
   const loginBtn = document.getElementById('loginBtn');
-  const hfLoginBtn = document.getElementById('hfLoginBtn');
-  const gitStatus = document.getElementById('gitStatus');
-  const hfStatus = document.getElementById('hfStatus');
   const gitStatusWrap = document.getElementById('gitStatusWrap');
-  const hfStatusWrap = document.getElementById('hfStatusWrap');
   const prEditTextarea = document.getElementById('prEditTextarea');
   const deployLinks = document.getElementById('deployLinks');
   const errorBox = document.getElementById('errorBox');
   const resetBtn = document.getElementById('resetBtn');
   const disconnectGitBtn = document.getElementById('disconnectGit');
-  const disconnectHFBtn = document.getElementById('disconnectHF');
   const draftList = document.getElementById('draftList');
   const saveDraftBtn = document.getElementById('saveDraftBtn');
   const clearAllDraftsBtn = document.getElementById('clearAllDraftsBtn');
@@ -210,80 +184,47 @@
   const draftContent = document.getElementById('draftContent');
   const clearAutoDraftBtn = document.getElementById('clearAutoDraft');
 
-  function showToast(msg, d=3000) {
-    const t = document.createElement('div'); t.className='toast'; t.innerText=msg;
-    document.body.appendChild(t); setTimeout(()=>t.remove(), d);
-  }
+  function showToast(msg, d=3000) { const t=document.createElement('div'); t.className='toast'; t.innerText=msg; document.body.appendChild(t); setTimeout(()=>t.remove(), d); }
   function showError(msg) { errorBox.style.display='block'; errorBox.textContent=msg; }
-  function hideError() { errorBox.style.display='none'; errorBox.textContent=''; }
+  function hideError() { errorBox.style.display='none'; }
 
   function updateAuthUI() {
-    if (githubToken) {
-      loginBtn.style.display = 'none';
-      gitStatusWrap.style.display = 'inline';
-      approveBtn.style.display = 'inline-block';
-      fetchUserRepos();
-    } else {
-      loginBtn.style.display = 'inline-block';
-      gitStatusWrap.style.display = 'none';
-      approveBtn.style.display = 'none';
-    }
-    if (hfToken) {
-      hfLoginBtn.style.display = 'none';
-      hfStatusWrap.style.display = 'inline';
-      hfDeployBtn.style.display = 'inline-block';
-    } else {
-      hfLoginBtn.style.display = 'inline-block';
-      hfStatusWrap.style.display = 'none';
-      hfDeployBtn.style.display = 'none';
-    }
+    if (githubToken) { loginBtn.style.display='none'; gitStatusWrap.style.display='inline'; approveBtn.style.display='inline-block'; fetchUserRepos(); }
+    else { loginBtn.style.display='inline-block'; gitStatusWrap.style.display='none'; approveBtn.style.display='none'; }
+    hfDeployBtn.style.display='inline-block'; // Always show HF deploy
   }
 
   async function fetchUserRepos() {
     if (!githubToken) return;
     try {
-      const res = await fetch('https://api.github.com/user/repos?per_page=100&sort=updated', {
-        headers: { Authorization: `token ${githubToken}` }
-      });
+      const res = await fetch('https://api.github.com/user/repos?per_page=100&sort=updated', { headers: { Authorization: `token ${githubToken}` } });
       const repos = await res.json();
       if (!Array.isArray(repos)) return;
       repoSelect.innerHTML = '<option value="">-- Select a repo to update --</option>';
-      repos.forEach(repo => {
-        const opt = document.createElement('option');
-        opt.value = repo.full_name;
-        opt.textContent = repo.full_name;
-        repoSelect.appendChild(opt);
-      });
-    } catch (e) {
-      showToast("⚠️ Could not load repos.");
-    }
+      repos.forEach(repo => { const o=document.createElement('option'); o.value=repo.full_name; o.textContent=repo.full_name; repoSelect.appendChild(o); });
+    } catch(e) {}
   }
   refreshReposBtn.addEventListener('click', fetchUserRepos);
 
-  function disconnectGitHub() { localStorage.removeItem('github_token'); githubToken=null; updateAuthUI(); showToast("🐙 Disconnected."); }
-  function disconnectHF() { localStorage.removeItem('hf_token'); hfToken=null; updateAuthUI(); showToast("🤗 Disconnected."); }
-  disconnectGitBtn.addEventListener('click', disconnectGitHub);
-  disconnectHFBtn.addEventListener('click', disconnectHF);
+  disconnectGitBtn.addEventListener('click', ()=>{ localStorage.removeItem('github_token'); githubToken=null; updateAuthUI(); showToast("🐙 Disconnected."); });
 
   function resetAndDiagnose() {
-    localStorage.clear(); githubToken=null; hfToken=null;
+    localStorage.clear(); githubToken=null;
     updateAuthUI(); appNameInput.value=''; promptInput.value=''; resultCard.style.display='none';
     statusArea.style.display='none'; errorBox.style.display='none'; deployLinks.style.display='none';
     repoDisplay.innerText='📁 repo: none'; deployDisplay.innerText='☁️ not deployed';
-    showToast("🗑️ Tokens cleared. Checking backend...");
-    fetch(`${API_BASE}/`).then(r=>r.text()).then(t=>{ showToast(t.includes("running")?"✅ Backend alive.":"⚠️ Backend issue."); }).catch(()=>showToast("❌ Cannot reach backend."));
-    renderDrafts();
+    showToast("🗑️ Cleared. Checking backend...");
+    fetch(`${API_BASE}/`).then(r=>r.text()).then(t=>{ showToast(t.includes("running")?"✅ Backend alive.":"⚠️ Issue."); }).catch(()=>showToast("❌ Cannot reach backend."));
   }
   resetBtn.addEventListener('click', resetAndDiagnose);
 
   loginBtn.addEventListener('click', ()=> window.location.href = AUTH_GITHUB);
-  hfLoginBtn.addEventListener('click', ()=> window.location.href = AUTH_HF);
 
+  // Drafts
   function getDrafts() { try { return JSON.parse(localStorage.getItem('grishtesync_drafts')||'[]'); } catch { return []; } }
   function saveDrafts(d) { localStorage.setItem('grishtesync_drafts', JSON.stringify(d)); }
   function addDraft(text) { const drafts=getDrafts(); drafts.push({text, time:new Date().toLocaleString()}); saveDrafts(drafts); renderDrafts(); }
   function deleteDraft(i) { const drafts=getDrafts(); drafts.splice(i,1); saveDrafts(drafts); renderDrafts(); }
-  function clearAllDrafts() { saveDrafts([]); renderDrafts(); showToast("🗑️ All drafts cleared."); }
   function loadDraft(i) { const drafts=getDrafts(); if(drafts[i]){ promptInput.value=drafts[i].text; showToast("📝 Draft loaded."); } }
   function renderDrafts() {
     const drafts=getDrafts(); draftList.innerHTML='';
@@ -298,149 +239,101 @@
   }
   function saveCurrentDraft() { localStorage.setItem('grishtesync_current_draft', promptInput.value); }
   function loadCurrentDraft() { const s=localStorage.getItem('grishtesync_current_draft'); if(s) promptInput.value=s; }
-  function clearCurrentDraft() { localStorage.removeItem('grishtesync_current_draft'); promptInput.value=''; showToast("🗑️ Auto‑saved prompt cleared."); }
   promptInput.addEventListener('input', ()=>{ clearTimeout(window.draftSaveTimeout); window.draftSaveTimeout=setTimeout(saveCurrentDraft,500); });
-  clearAutoDraftBtn.addEventListener('click', clearCurrentDraft);
+  clearAutoDraftBtn.addEventListener('click', ()=>{ localStorage.removeItem('grishtesync_current_draft'); promptInput.value=''; showToast("Cleared."); });
   let draftPanelOpen=true;
   draftToggle.addEventListener('click', ()=>{ draftPanelOpen=!draftPanelOpen; draftContent.style.display=draftPanelOpen?'block':'none'; draftToggle.querySelector('span:last-child').innerText=draftPanelOpen?'▼':'▶'; });
-  saveDraftBtn.addEventListener('click', ()=>{ const t=promptInput.value.trim(); if(!t) return showToast("⚠️ Type something."); addDraft(t); showToast("💾 Draft saved."); });
-  clearAllDraftsBtn.addEventListener('click', clearAllDrafts);
+  saveDraftBtn.addEventListener('click', ()=>{ const t=promptInput.value.trim(); if(!t) return showToast("Type something."); addDraft(t); showToast("💾 Saved."); });
+  clearAllDraftsBtn.addEventListener('click', ()=>{ saveDrafts([]); renderDrafts(); showToast("All drafts cleared."); });
 
+  // Status steps
   function showSteps(steps) { stepListDiv.innerHTML=''; steps.forEach((n,i)=>{ const d=document.createElement('div'); d.className='step-item'; d.id=`step-${i}`; d.innerHTML=`<span class="step-icon">⏳</span><span>${n}</span>`; stepListDiv.appendChild(d); }); }
   function setStepDone(i) { const e=document.getElementById(`step-${i}`); if(e){ e.querySelector('.step-icon').innerHTML='✅'; e.classList.remove('active'); } }
-  function setStepActive(i) { const e=document.getElementById(`step-${i}`); if(e){ e.classList.add('active'); e.querySelector('.step-icon').innerHTML='⚙️'; } document.querySelectorAll('.step-item').forEach(x=>{ if(x.id!==`step-${i}`) x.classList.remove('active'); }); }
-  function toggleFile(f) { const id=`file-${f.replace(/[^a-zA-Z0-9]/g,'_')}`; const e=document.getElementById(id); if(e) e.classList.toggle('open'); }
-  function renderFileViewer(files) { fileViewer.innerHTML=''; if(!files||!Object.keys(files).length) return; for(const [f,c] of Object.entries(files)){ const s=f.replace(/[^a-zA-Z0-9]/g,'_'); const d=document.createElement('div'); d.className='file-item'; d.innerHTML=`<div class="file-header" onclick="toggleFile('${f}')"><span>📄 ${f}</span><span>▼</span></div><div class="file-content" id="file-${s}">${c}</div>`; fileViewer.appendChild(d); } }
+  function setStepActive(i) { const e=document.getElementById(`step-${i}`); if(e){ e.classList.add('active'); e.querySelector('.step-icon').innerHTML='⚙️'; } }
 
+  function toggleFile(f) { const el=document.getElementById(`file-${f.replace(/[^a-zA-Z0-9]/g,'_')}`); if(el) el.classList.toggle('open'); }
+  function renderFileViewer(files) {
+    fileViewer.innerHTML='';
+    if(!files||!Object.keys(files).length) return;
+    for(const [f,c] of Object.entries(files)){ const s=f.replace(/[^a-zA-Z0-9]/g,'_'); const d=document.createElement('div'); d.className='file-item'; d.innerHTML=`<div class="file-header" onclick="toggleFile('${f}')"><span>📄 ${f}</span><span>▼</span></div><div class="file-content" id="file-${s}">${c}</div>`; fileViewer.appendChild(d); }
+  }
+
+  // Generate
   async function generatePR() {
     const prompt = promptInput.value.trim();
     if(!prompt) return showToast("⚠️ Enter a prompt.");
-    currentPrompt = prompt;
-    hideError();
-
+    currentPrompt = prompt; hideError();
     const selectedRepo = repoSelect.value;
     const newAppName = appNameInput.value.trim();
-    if (selectedRepo) {
-      repoName = selectedRepo;
-    } else if (newAppName) {
-      repoName = `GrishteSync-${newAppName}`;
-    } else {
-      repoName = `GrishteSync-${Date.now().toString(36)}`;
-    }
-
-    generateBtn.disabled = true;
-    resultCard.style.display = 'none';
-    statusArea.style.display = 'flex';
-    deployLinks.style.display = 'none';
-
-    const steps = [
-      selectedRepo ? "🔍 Fetching current code..." : "🔍 Sending prompt to AI...",
-      "🧠 Generating code...",
-      "📁 Creating files...",
-      "📝 Preparing result..."
-    ];
-    showSteps(steps);
-    let stepIdx = 0;
-    const interval = setInterval(() => {
-      if(stepIdx < steps.length){ setStepActive(stepIdx); if(stepIdx>0) setStepDone(stepIdx-1); stepIdx++; }
-    }, 1500);
-
-    const headers = { 'Content-Type': 'application/json' };
+    repoName = selectedRepo || (newAppName ? `GrishteSync-${newAppName}` : `GrishteSync-${Date.now().toString(36)}`);
+    generateBtn.disabled = true; resultCard.style.display='none'; statusArea.style.display='flex'; deployLinks.style.display='none';
+    const steps = [selectedRepo?"🔍 Fetching current code...":"🔍 Sending prompt...","🧠 Generating...","📁 Creating files...","📝 Preparing result..."];
+    showSteps(steps); let stepIdx=0;
+    const interval = setInterval(()=>{ if(stepIdx<steps.length){ setStepActive(stepIdx); if(stepIdx>0) setStepDone(stepIdx-1); stepIdx++; } }, 1500);
+    const headers = { 'Content-Type':'application/json' };
     if(selectedRepo && githubToken) headers['Authorization'] = `token ${githubToken}`;
-    const body = { prompt };
-    if(selectedRepo) body.repo = selectedRepo;
-
+    const body = { prompt }; if(selectedRepo) body.repo = selectedRepo;
     try {
       const res = await fetch(API_GENERATE, { method:'POST', headers, body: JSON.stringify(body) });
-      const data = await res.json();
-      clearInterval(interval); steps.forEach((_,i)=>setStepDone(i));
-      if(data.error){
-        showToast("❌ "+data.error);
-        showError(data.error);
-        statusArea.style.display='none'; generateBtn.disabled=false;
-        return;
-      }
-      generatedFiles = data.files;
-      renderFileViewer(generatedFiles);
-      finalizeUI(prompt);
-    } catch(e) {
-      clearInterval(interval);
-      showToast("❌ Network error: "+e.message);
-      showError(e.message);
-      statusArea.style.display='none'; generateBtn.disabled=false;
-    }
+      const data = await res.json(); clearInterval(interval); steps.forEach((_,i)=>setStepDone(i));
+      if(data.error){ showToast("❌ "+data.error); showError(data.error); statusArea.style.display='none'; generateBtn.disabled=false; return; }
+      generatedFiles = data.files; renderFileViewer(generatedFiles); finalizeUI(prompt);
+    } catch(e) { clearInterval(interval); showToast("❌ "+e.message); showError(e.message); statusArea.style.display='none'; generateBtn.disabled=false; }
   }
 
   function finalizeUI(prompt) {
     let ver = currentVersion.split('.').map(Number);
-    if(ver.length!==3 || ver.some(isNaN)) ver=[0,0,0];
-    ver[2]++; currentVersion = ver.join('.');
-    versionBadge.innerText = `v${currentVersion}`;
-    repoDisplay.innerText = `📁 repo: ${repoName}`;
-    deployDisplay.innerText = '☁️ not deployed';
-    const fileList = Object.keys(generatedFiles).map(f=>`- ${f}`).join('\n') || '(none)';
-    prDescription.innerHTML = `<strong>✨ Generated app</strong><br><em>“${prompt}”</em><br><br><strong>📂 Files:</strong><br>${fileList}<br><strong>📦 Version:</strong> v${currentVersion}`;
-    prEditTextarea.value = `GrishteSync update v${currentVersion}\n\nFiles: ${Object.keys(generatedFiles).join(', ')}\n\nAuto-generated PR.`;
+    if(ver.length!==3||ver.some(isNaN)) ver=[0,0,0];
+    ver[2]++; currentVersion = ver.join('.'); versionBadge.innerText = `v${currentVersion}`;
+    repoDisplay.innerText = `📁 repo: ${repoName}`; deployDisplay.innerText = '☁️ not deployed';
+    prDescription.innerHTML = `<strong>✨ Generated app</strong><br><em>“${prompt}”</em><br><br><strong>📂 Files:</strong><br>${Object.keys(generatedFiles).map(f=>`- ${f}`).join('\n')||'(none)'}<br><strong>📦 Version:</strong> v${currentVersion}`;
+    prEditTextarea.value = `GrishteSync update v${currentVersion}\n\nFiles: ${Object.keys(generatedFiles).join(', ')}`;
     const followups = ["Add dark mode","Connect database","Improve UI","Add logging","Add tests"];
-    const sel = followups.sort(()=>0.5-Math.random()).slice(0,3);
     followupButtons.innerHTML = '';
-    sel.forEach(s=>{ const b=document.createElement('button'); b.className='btn-follow'; b.innerText=s; b.onclick=()=>{ promptInput.value=s; promptInput.scrollIntoView({behavior:'smooth'}); }; followupButtons.appendChild(b); });
+    followups.sort(()=>0.5-Math.random()).slice(0,3).forEach(s=>{ const b=document.createElement('button'); b.className='btn-follow'; b.innerText=s; b.onclick=()=>{ promptInput.value=s; }; followupButtons.appendChild(b); });
     resultCard.style.display='block'; statusArea.style.display='none'; generateBtn.disabled=false;
     approveBtn.innerText='🐙 Deploy to GitHub'; approveBtn.disabled=false;
     hfDeployBtn.innerText='🤗 Deploy to HF'; hfDeployBtn.disabled=false;
-    deployLinks.innerHTML = ''; deployLinks.style.display = 'none';
-    hideError();
+    deployLinks.innerHTML=''; deployLinks.style.display='none'; hideError();
   }
 
+  // Deploy GitHub
   async function deployToGitHub() {
     if(!githubToken){ showToast("Connect GitHub first."); return; }
-    if(!generatedFiles || Object.keys(generatedFiles).length===0){ showToast("No files."); return; }
+    if(!generatedFiles||!Object.keys(generatedFiles).length){ showToast("No files."); return; }
     approveBtn.disabled=true; approveBtn.innerText='⏳ Deploying...';
-    const customPR = prEditTextarea.value.trim() || undefined;
     try {
-      const res = await fetch(API_DEPLOY, {
-        method:'POST',
-        headers:{ 'Content-Type':'application/json', 'Authorization':`token ${githubToken}` },
-        body: JSON.stringify({ repo_name: repoName, files: generatedFiles, version: currentVersion, pr_description: customPR })
-      });
+      const res = await fetch(API_DEPLOY, { method:'POST', headers:{ 'Content-Type':'application/json','Authorization':`token ${githubToken}` }, body: JSON.stringify({ repo_name: repoName, files: generatedFiles, version: currentVersion, pr_description: prEditTextarea.value.trim()||undefined }) });
       const data = await res.json();
       if(data.error){ showToast("❌ "+data.error); showError(data.error); approveBtn.disabled=false; approveBtn.innerText='🐙 Deploy to GitHub'; return; }
       let html = `<strong>🐙 GitHub Repo:</strong> <a href="${data.repo_url}" target="_blank">${data.repo_url}</a>`;
       if(data.pr_url) html += `<br><strong>🔀 Pull Request:</strong> <a href="${data.pr_url}" target="_blank">${data.pr_url}</a>`;
-      deployLinks.innerHTML = html; deployLinks.style.display = 'block';
-      deployDisplay.innerText = `🐙 GitHub: ${data.repo_url}`;
-      approveBtn.innerText='✅ Deployed'; approveBtn.disabled=true;
-      showToast("✅ Deployed to GitHub!"); hideError();
+      deployLinks.innerHTML = html; deployLinks.style.display='block'; deployDisplay.innerText = `🐙 GitHub: ${data.repo_url}`;
+      approveBtn.innerText='✅ Deployed'; approveBtn.disabled=true; showToast("✅ Deployed to GitHub!"); hideError();
     } catch(e) { showToast("❌ "+e.message); showError(e.message); approveBtn.disabled=false; approveBtn.innerText='🐙 Deploy to GitHub'; }
   }
 
+  // Deploy HF (no token needed — uses backend's personal token)
   async function deployToHF() {
-    if(!githubToken){ showToast("Connect GitHub first."); return; }
-    if(!hfToken){ showToast("Connect Hugging Face first."); return; }
-    if(!repoName){ showToast("No repo defined."); return; }
+    if(!repoName){ showToast("No repo defined. Deploy to GitHub first."); return; }
+    if(!generatedFiles||!Object.keys(generatedFiles).length){ showToast("No files. Generate first."); return; }
     hfDeployBtn.disabled=true; hfDeployBtn.innerText='⏳ Deploying...';
     try {
-      const res = await fetch(API_DEPLOY_HF, {
-        method:'POST',
-        headers:{ 'Content-Type':'application/json', 'Authorization':`token ${githubToken}`, 'HF-Authorization':`Bearer ${hfToken}` },
-        body: JSON.stringify({ repo_full_name: repoName, space_name: repoName.split('/')[1] || 'grishte-app', sdk: 'streamlit' })
-      });
+      const res = await fetch(API_DEPLOY_HF, { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ repo_full_name: repoName, space_name: repoName.split('/')[1]||'grishte-app', files: generatedFiles }) });
       const data = await res.json();
       if(data.error){ showToast("❌ "+data.error); showError(data.error); hfDeployBtn.disabled=false; hfDeployBtn.innerText='🤗 Deploy to HF'; return; }
       deployLinks.innerHTML += `<br><strong>🤗 Live App:</strong> <a href="${data.space_url}" target="_blank">${data.space_url}</a>`;
-      deployLinks.style.display = 'block';
-      deployDisplay.innerText = `🤗 Live: ${data.space_url}`;
-      hfDeployBtn.innerText='✅ Live'; hfDeployBtn.disabled=true;
-      showToast("✅ App is live on Hugging Face! "+data.space_url); hideError();
+      deployLinks.style.display='block'; deployDisplay.innerText = `🤗 Live: ${data.space_url}`;
+      hfDeployBtn.innerText='✅ Live'; hfDeployBtn.disabled=true; showToast("✅ Live on Hugging Face!"); hideError();
     } catch(e) { showToast("❌ "+e.message); showError(e.message); hfDeployBtn.disabled=false; hfDeployBtn.innerText='🤗 Deploy to HF'; }
   }
 
   function reweave() { if(currentPrompt){ promptInput.value=currentPrompt; generatePR(); } else showToast("No prompt."); }
   function downloadZip() {
-    if(!generatedFiles || Object.keys(generatedFiles).length===0) return showToast("No files.");
+    if(!generatedFiles||!Object.keys(generatedFiles).length) return showToast("No files.");
     if(!window.JSZip){ const s=document.createElement('script'); s.src='https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js'; s.onload=()=>downloadZip(); document.head.appendChild(s); return; }
     const zip=new JSZip(); for(const [f,c] of Object.entries(generatedFiles)) zip.file(f,c);
-    zip.generateAsync({type:'blob'}).then(b=>{ const url=URL.createObjectURL(b); const a=document.createElement('a'); a.href=url; a.download=`${repoName.replace('/','_')}.zip`; a.click(); URL.revokeObjectURL(url); });
+    zip.generateAsync({type:'blob'}).then(b=>{ const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=`${repoName.replace('/','_')}.zip`; a.click(); });
   }
 
   generateBtn.onclick = generatePR;
@@ -451,21 +344,13 @@
 
   function handleRedirectTokens() {
     const params = new URLSearchParams(window.location.search);
-    let changed = false;
-    if (params.get('token')) { githubToken=params.get('token'); localStorage.setItem('github_token',githubToken); changed=true; }
-    if (params.get('hf_token')) { hfToken=params.get('hf_token'); localStorage.setItem('hf_token',hfToken); changed=true; }
-    if (changed) { window.history.replaceState({}, document.title, window.location.pathname); showToast("Connected successfully!"); }
+    if(params.get('token')){ githubToken=params.get('token'); localStorage.setItem('github_token',githubToken); window.history.replaceState({},document.title,window.location.pathname); showToast("🐙 GitHub connected!"); }
     updateAuthUI();
   }
 
   window.onload = () => {
-    handleRedirectTokens();
-    updateAuthUI();
-    renderDrafts();
-    loadCurrentDraft();
-    versionBadge.innerText = 'v0.0.0';
-    repoDisplay.innerText = '📁 repo: none';
-    deployDisplay.innerText = '☁️ not deployed';
+    handleRedirectTokens(); updateAuthUI(); renderDrafts(); loadCurrentDraft();
+    versionBadge.innerText='v0.0.0'; repoDisplay.innerText='📁 repo: none'; deployDisplay.innerText='☁️ not deployed';
     if(!window.JSZip){ const s=document.createElement('script'); s.src='https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js'; document.head.appendChild(s); }
   };
 </script>
