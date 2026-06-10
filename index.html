@@ -59,6 +59,7 @@
     .file-header { padding:0.5rem 0.8rem; cursor:pointer; display:flex; justify-content:space-between; align-items:center; background:#f8fafc; font-weight:500; font-size:0.85rem; }
     .file-content { display:none; background:#1e293b; color:#e2e8f0; font-family:monospace; font-size:0.8rem; padding:0.8rem; white-space:pre-wrap; overflow-x:auto; }
     .file-content.open { display:block; }
+    /* FIX 1: followup-buttons was styled but the element was missing from HTML */
     .followup-buttons { display:flex; flex-wrap:wrap; gap:0.6rem; margin-top:0.5rem; }
     .btn-follow { background:#e2e8f0; border:none; padding:0.5rem 1rem; border-radius:2rem; font-size:0.8rem; cursor:pointer; }
     .action-buttons { display:flex; gap:0.8rem; margin-top:1rem; flex-wrap:wrap; }
@@ -127,6 +128,9 @@
       <div class="file-viewer" id="fileViewer"></div>
       <div class="section-title">📝 PR Description (editable)</div>
       <textarea id="prEditTextarea" rows="4" placeholder="Custom PR description..."></textarea>
+      <!-- FIX 1: Added missing followupButtons div — it was referenced in JS but absent from HTML -->
+      <div class="section-title">💡 Suggestions</div>
+      <div class="followup-buttons" id="followupButtons"></div>
       <div class="pr-instructions" id="prInstructions">⚠️ <strong>Action needed:</strong> Open the Pull Request and <strong>merge it to main</strong> to complete the deployment.</div>
       <div class="celebration" id="celebrationBox">🎉 <strong>Congratulations!</strong> You just built an AI-powered app with GrishteSync! 🌀</div>
       <div class="action-buttons">
@@ -201,6 +205,18 @@
   const prInstructions = $('prInstructions');
   const celebrationBox = $('celebrationBox');
   const liveBtn = $('liveBtn');
+
+  // FIX 2: Utility to safely escape HTML — prevents display breakage and XSS
+  // when file content contains <, >, &, ", or ' characters.
+  function escapeHtml(str) {
+    if (typeof str !== 'string') return '';
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
 
   function showToast(msg, d=3000) { 
     const t=document.createElement('div'); t.className='toast'; t.innerText=msg; 
@@ -279,20 +295,36 @@
   if(resetBtn) resetBtn.addEventListener('click', resetAndDiagnose);
   if(loginBtn) loginBtn.addEventListener('click', ()=> window.location.href = AUTH_GITHUB);
 
-  function toggleFile(f) { 
-    const el = document.getElementById(`file-${f.replace(/[^a-zA-Z0-9]/g,'_')}`); 
-    if(el) el.classList.toggle('open'); 
-  }
+  // FIX 3: Replaced inline onclick with addEventListener to avoid breakage
+  // when filenames contain single quotes or other special characters.
   function renderFileViewer(files) {
     if(!fileViewer) return;
-    fileViewer.innerHTML='';
-    if(!files||!Object.keys(files).length) return;
-    for(const [f,c] of Object.entries(files)){ 
-      const s=f.replace(/[^a-zA-Z0-9]/g,'_'); 
-      const d=document.createElement('div'); 
-      d.className='file-item'; 
-      d.innerHTML=`<div class="file-header" onclick="toggleFile('${f}')"><span>📄 ${f}</span><span>▼</span></div><div class="file-content" id="file-${s}">${c}</div>`; 
-      fileViewer.appendChild(d); 
+    fileViewer.innerHTML = '';
+    if(!files || !Object.keys(files).length) return;
+    for (const [f, c] of Object.entries(files)) {
+      const safeId = 'file-' + f.replace(/[^a-zA-Z0-9]/g, '_');
+      const item = document.createElement('div');
+      item.className = 'file-item';
+
+      const header = document.createElement('div');
+      header.className = 'file-header';
+      // FIX 2 (also): Escape the filename in the header display
+      header.innerHTML = `<span>📄 ${escapeHtml(f)}</span><span>▼</span>`;
+      header.addEventListener('click', () => {
+        const content = document.getElementById(safeId);
+        if (content) content.classList.toggle('open');
+      });
+
+      const content = document.createElement('div');
+      content.className = 'file-content';
+      content.id = safeId;
+      // FIX 2: Use textContent instead of innerHTML so code is displayed as-is,
+      // never interpreted as HTML (fixes broken display for any file containing < > & etc.)
+      content.textContent = c;
+
+      item.appendChild(header);
+      item.appendChild(content);
+      fileViewer.appendChild(item);
     }
   }
 
@@ -373,22 +405,26 @@
     if(deployDisplay) deployDisplay.innerText = '☁️ not deployed';
     
     if(prDescription) {
-        prDescription.innerHTML = `<strong>✨ Generated app</strong><br><em>"${prompt}"</em><br><br><strong>📂 Files:</strong><br>${Object.keys(generatedFiles).map(f=>`- ${f}`).join('\n')||'(none)'}<br><strong>📦 Version:</strong> v${currentVersion}`;
+      // FIX 4: Use <br> tags for line breaks inside innerHTML (not \n which renders as a space)
+      // Also escape the prompt to prevent XSS if the user typed HTML-like content
+      const filesHtml = Object.keys(generatedFiles).map(f => `— ${escapeHtml(f)}`).join('<br>') || '(none)';
+      prDescription.innerHTML = `<strong>✨ Generated app</strong><br><em>"${escapeHtml(prompt)}"</em><br><br><strong>📂 Files:</strong><br>${filesHtml}<br><strong>📦 Version:</strong> v${currentVersion}`;
     }
     if(prEditTextarea) {
-        prEditTextarea.value = `GrishteSync update v${currentVersion}\n\nFiles: ${Object.keys(generatedFiles).join(', ')}`;
+      prEditTextarea.value = `GrishteSync update v${currentVersion}\n\nFiles: ${Object.keys(generatedFiles).join(', ')}`;
     }
     
+    // FIX 1: followupButtons now exists in the DOM, so this code will actually run
     if(followupButtons) {
-        const followups = ["Add dark mode","Connect database","Improve UI","Add logging","Add tests"];
-        followupButtons.innerHTML = '';
-        followups.sort(()=>0.5-Math.random()).slice(0,3).forEach(s=>{ 
-            const b=document.createElement('button'); 
-            b.className='btn-follow'; 
-            b.innerText=s; 
-            b.onclick=()=>{ if(promptInput) promptInput.value=s; }; 
-            followupButtons.appendChild(b); 
-        });
+      const followups = ["Add dark mode","Connect database","Improve UI","Add logging","Add tests"];
+      followupButtons.innerHTML = '';
+      followups.sort(()=>0.5-Math.random()).slice(0,3).forEach(s=>{ 
+        const b = document.createElement('button'); 
+        b.className = 'btn-follow'; 
+        b.textContent = s;
+        b.addEventListener('click', () => { if(promptInput) promptInput.value = s; });
+        followupButtons.appendChild(b); 
+      });
     }
     
     if(generateBtn) generateBtn.disabled=false;
@@ -418,8 +454,8 @@
       anim.complete(data.deploy_time || '?');
       setTimeout(() => {
         if(statusArea) statusArea.style.display = 'none';
-        let html = `<strong>🐙 Repo:</strong> <a href="${data.repo_url}" target="_blank">${data.repo_url}</a>`;
-        if(data.pr_url) html += `<br><strong>🔀 PR:</strong> <a href="${data.pr_url}" target="_blank">${data.pr_url}</a>`;
+        let html = `<strong>🐙 Repo:</strong> <a href="${data.repo_url}" target="_blank">${escapeHtml(data.repo_url)}</a>`;
+        if(data.pr_url) html += `<br><strong>🔀 PR:</strong> <a href="${data.pr_url}" target="_blank">${escapeHtml(data.pr_url)}</a>`;
         if(deployLinks) { deployLinks.innerHTML = html; deployLinks.style.display='block'; }
         if(deployDisplay) deployDisplay.innerText = `🐙 GitHub: ${data.repo_url}`;
         if(prInstructions) prInstructions.style.display = 'block'; 
@@ -432,8 +468,10 @@
   }
 
   async function deployToHF() {
-    if(!repoName){ showToast("Deploy to GitHub first."); return; }
-    if(!generatedFiles||!Object.keys(generatedFiles).length){ showToast("Generate first."); return; }
+    // FIX 5: repoName is set after generation, not after GitHub deploy.
+    // The old message "Deploy to GitHub first" was misleading — GitHub is not required for HF deploy.
+    if(!generatedFiles||!Object.keys(generatedFiles).length){ showToast("Generate an app first."); return; }
+    if(!repoName){ showToast("Generate an app first."); return; }
     if(hfDeployBtn) { hfDeployBtn.disabled = true; hfDeployBtn.innerText = '⏳ Deploying...'; }
     showProgress();
     const anim = animateProgress(["Creating Space...", "Linking repo...", "Building app..."]);
@@ -450,7 +488,7 @@
       setTimeout(() => {
         if(statusArea) statusArea.style.display = 'none';
         if(deployLinks) { 
-          deployLinks.innerHTML += `<br><strong>🤗 Live:</strong> <a href="${data.space_url}" target="_blank">${data.space_url}</a>`; 
+          deployLinks.innerHTML += `<br><strong>🤗 Live:</strong> <a href="${data.space_url}" target="_blank">${escapeHtml(data.space_url)}</a>`; 
           deployLinks.style.display='block'; 
         }
         if(deployDisplay) deployDisplay.innerText = `🤗 Live: ${data.space_url}`;
