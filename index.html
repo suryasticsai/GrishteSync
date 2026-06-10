@@ -4,46 +4,55 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-  <title>🌀 GrishteSync — AI Python App Builder · Git · HuggingFace</title>
+  <title>🌀 GrishteSync — AI Python App Builder</title>
   <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
   <style>
     * { margin:0; padding:0; box-sizing:border-box; font-family:system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }
     body { background:#f0f2f5; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; min-height:100vh; padding:1rem; }
     .app-container { width:100%; max-width:700px; background:white; border-radius:1.5rem; box-shadow:0 20px 35px rgba(0,0,0,0.1); overflow:hidden; margin-bottom:2rem; }
-    .header { background:linear-gradient(135deg, #0b1c2c, #1a3a4f, #0e2a36); color:white; padding:1.2rem 1.5rem 0.8rem; display:flex; flex-direction:column; gap:0.6rem; }
-    .top-row { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; }
-    .app-title { font-family:'Pacifico', cursive; font-size:2rem; font-weight:400; display:flex; align-items:center; gap:0.4rem; }
-    .logo-img { height:2.4rem; width:auto; vertical-align:middle; }
-    .btn-connect-group { display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap; }
-    .btn-login, .btn-reset { background:rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.3); color:white; padding:0.3rem 0.8rem; border-radius:2rem; font-size:0.8rem; cursor:pointer; }
-    .btn-login:hover, .btn-reset:hover { background:rgba(255,255,255,0.3); }
-    .btn-reset { background:rgba(255,100,100,0.3); }
-    .btn-disconnect { background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.3); color:white; padding:0.3rem 0.8rem; border-radius:2rem; font-size:0.8rem; cursor:pointer; margin-left:0.3rem; }
-    .version { font-size:0.8rem; background:rgba(255,255,255,0.2); display:inline-block; padding:0.2rem 0.7rem; border-radius:2rem; width:fit-content; }
-    .meta-row { display:flex; flex-wrap:wrap; gap:0.5rem 1rem; font-size:0.75rem; opacity:0.9; }
-    .meta-row span { background:rgba(255,255,255,0.1); padding:0.2rem 0.7rem; border-radius:2rem; }
+    
+    .header { background:linear-gradient(135deg, #0b1c2c, #1a3a4f, #0e2a36); color:white; padding:1.2rem 1.5rem; display:flex; flex-direction:column; gap:0.8rem; }
+    .top-row { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; }
+    .app-title { font-family:'Pacifico', cursive; font-size:1.8rem; font-weight:400; display:flex; align-items:center; gap:0.4rem; }
+    .logo-img { height:2.2rem; width:auto; }
+    .btn-row { display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap; }
+    .btn-login, .btn-reset { background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.25); color:white; padding:0.4rem 0.9rem; border-radius:2rem; font-size:0.8rem; cursor:pointer; }
+    .btn-login:hover, .btn-reset:hover { background:rgba(255,255,255,0.25); }
+    .btn-reset { background:rgba(255,80,80,0.3); }
+    .btn-disconnect { background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); color:white; padding:0.3rem 0.7rem; border-radius:2rem; font-size:0.75rem; cursor:pointer; }
+    .connected-badge { display:inline-flex; align-items:center; gap:0.4rem; background:rgba(255,255,255,0.1); padding:0.3rem 0.8rem; border-radius:2rem; font-size:0.8rem; }
+    .green-dot { width:8px; height:8px; background:#4caf50; border-radius:50%; }
+    .version { font-size:0.75rem; background:rgba(255,255,255,0.15); display:inline-block; padding:0.2rem 0.7rem; border-radius:2rem; width:fit-content; }
+    .meta-row { display:flex; flex-wrap:wrap; gap:0.5rem; font-size:0.75rem; opacity:0.85; }
+    .toggle-section { display:flex; align-items:center; gap:0.6rem; background:rgba(255,255,255,0.08); padding:0.4rem 0.8rem; border-radius:2rem; }
+    .toggle-label { font-size:0.75rem; }
+    .toggle-switch { position:relative; width:44px; height:24px; }
+    .toggle-switch input { opacity:0; width:0; height:0; }
+    .toggle-slider { position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background:#64748b; border-radius:24px; transition:0.3s; }
+    .toggle-slider:before { content:""; position:absolute; height:18px; width:18px; left:3px; bottom:3px; background:white; border-radius:50%; transition:0.3s; }
+    input:checked + .toggle-slider { background:#f59e0b; }
+    input:checked + .toggle-slider:before { transform:translateX(20px); }
+
     .main { padding:1.5rem; }
-    .prompt-label { font-weight:600; margin-bottom:0.5rem; color:#1a3a4f; display:flex; align-items:center; gap:0.5rem; }
-    .clear-draft-btn { font-size:0.75rem; color:#ef4444; cursor:pointer; background:none; border:none; }
-    textarea, input[type=text], select { width:100%; padding:0.8rem; border:2px solid #e2e8f0; border-radius:1rem; font-size:0.95rem; outline:none; margin-top:0.8rem; background:white; }
-    textarea:focus, input[type=text]:focus, select:focus { border-color:#1a3a4f; }
-    .select-row { display:flex; gap:0.5rem; align-items:center; margin-top:0.8rem; }
+    .section-label { font-weight:600; margin-bottom:0.4rem; color:#1a3a4f; display:flex; align-items:center; gap:0.4rem; }
+    textarea, input[type=text], select { width:100%; padding:0.8rem; border:2px solid #e2e8f0; border-radius:1rem; font-size:0.95rem; outline:none; margin-top:0.5rem; background:white; }
+    textarea:focus, input:focus, select:focus { border-color:#1a3a4f; }
+    .select-row { display:flex; gap:0.5rem; align-items:center; margin-top:0.5rem; }
     .select-row select { flex:1; margin-top:0; }
-    .btn-refresh-repos { background:#e2e8f0; border:none; padding:0.5rem 0.8rem; border-radius:2rem; font-size:0.8rem; cursor:pointer; white-space:nowrap; }
+    .btn-refresh { background:#e2e8f0; border:none; padding:0.5rem 0.8rem; border-radius:2rem; font-size:0.8rem; cursor:pointer; }
     .btn-generate { width:100%; margin-top:1rem; padding:0.9rem; background:#1a3a4f; color:white; border:none; border-radius:3rem; font-size:1rem; font-weight:600; cursor:pointer; }
-    .btn-generate:hover { background:#0e2a36; transform:scale(0.98); }
+    .btn-generate:hover { background:#0e2a36; }
     .btn-generate:disabled { background:#9ca3af; cursor:not-allowed; }
-    .draft-section { margin-top:1rem; background:#f8fafc; border-radius:1rem; padding:0.8rem; border:1px solid #e2e8f0; }
-    .draft-header { display:flex; justify-content:space-between; align-items:center; font-weight:600; color:#1a3a4f; cursor:pointer; }
-    .draft-list { margin-top:0.5rem; max-height:150px; overflow-y:auto; }
-    .draft-item { display:flex; justify-content:space-between; align-items:center; padding:0.4rem 0; border-bottom:1px solid #e2e8f0; }
-    .draft-item button { background:none; border:none; cursor:pointer; }
-    .save-draft-btn { margin-top:0.8rem; background:#e2e8f0; border:none; padding:0.5rem 1rem; border-radius:2rem; font-size:0.8rem; cursor:pointer; }
+    .btn-live { background:#10b981; color:white; padding:0.7rem 1.5rem; border:none; border-radius:2rem; font-weight:600; cursor:pointer; font-size:0.9rem; }
+    
+    /* Progress bar */
+    .progress-container { width:100%; height:12px; background:#e2e8f0; border-radius:6px; overflow:hidden; }
+    .progress-bar { height:100%; background:linear-gradient(90deg, #10b981, #f59e0b); border-radius:6px; width:0%; transition:width 0.3s ease; }
+    .progress-text { text-align:center; font-weight:700; font-size:1.2rem; color:#1a3a4f; margin-top:0.4rem; }
+    .progress-step { text-align:center; font-size:0.85rem; color:#64748b; }
+    
     #errorBox { display:none; margin-top:0.8rem; padding:0.8rem; background:#fee2e2; color:#b91c1c; border-radius:0.8rem; font-size:0.85rem; white-space:pre-wrap; word-break:break-word; }
-    .status { margin-top:1.2rem; background:#f8fafc; border-radius:1rem; padding:0.8rem; display:none; flex-direction:column; gap:0.6rem; border:1px solid #e2e8f0; }
-    .step-item { display:flex; align-items:center; gap:0.7rem; font-size:0.85rem; color:#334155; opacity:0.6; }
-    .step-item.active { opacity:1; font-weight:500; color:#1a3a4f; }
-    .step-icon { width:20px; text-align:center; }
+    .status { margin-top:1.2rem; background:#f8fafc; border-radius:1rem; padding:1rem; display:none; flex-direction:column; gap:0.8rem; border:1px solid #e2e8f0; }
     .result-card { margin-top:1.5rem; border:1px solid #e2e8f0; border-radius:1rem; padding:1rem; display:none; background:#fefce8; }
     .section-title { font-weight:600; margin:1rem 0 0.4rem; }
     .file-viewer { margin:1rem 0; }
@@ -59,7 +68,9 @@
     .btn-hf { background:#f59e0b; color:white; }
     .btn-redo { background:#6366f1; color:white; }
     .btn-download { background:#3b82f6; color:white; }
+    .pr-instructions { background:#fff3cd; border:1px solid #ffc107; border-radius:0.8rem; padding:0.8rem; margin-top:0.8rem; font-size:0.85rem; display:none; }
     .deploy-links { margin-top:0.8rem; padding:0.6rem; background:white; border-radius:0.6rem; border:1px solid #e2e8f0; display:none; }
+    .celebration { font-size:1.2rem; text-align:center; padding:1rem; background:#d1fae5; border-radius:1rem; margin-top:1rem; display:none; }
     .toast { position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:#1f2937; color:white; padding:0.7rem 1.2rem; border-radius:2rem; font-size:0.85rem; z-index:1000; animation:fadeInUp 0.3s ease; }
     @keyframes fadeInUp { from{opacity:0; transform:translateX(-50%) translateY(20px);} to{opacity:1; transform:translateX(-50%) translateY(0);} }
     .footer { background:#f1f5f9; text-align:center; padding:0.8rem; font-size:0.7rem; color:#475569; }
@@ -72,13 +83,10 @@
 <div class="app-container">
   <div class="header">
     <div class="top-row">
-      <div class="app-title">
-        <img src="https://i.ibb.co/RGmb4FKk/1781072041102.png" alt="Logo" class="logo-img">
-        GrishteSync
-      </div>
-      <div class="btn-connect-group">
-        <button class="btn-login" id="loginBtn" style="display:none;">🐙 GitHub</button>
-        <span id="gitStatusWrap" style="display:none;"><span id="gitStatus">connected ✅</span><button class="btn-disconnect" id="disconnectGit">✕</button></span>
+      <div class="app-title"><img src="https://i.ibb.co/RGmb4FKk/1781072041102.png" alt="Logo" class="logo-img">GrishteSync</div>
+      <div class="btn-row">
+        <button class="btn-login" id="loginBtn" style="display:none;">🐙 Connect GitHub</button>
+        <span id="gitBadge" style="display:none;" class="connected-badge"><span class="green-dot"></span> <span id="gitUser">@user</span> <button class="btn-disconnect" id="disconnectGit">✕</button></span>
         <button class="btn-reset" id="resetBtn">🔄 Reset</button>
       </div>
     </div>
@@ -86,49 +94,63 @@
     <div class="meta-row">
       <span id="repoDisplay">📁 repo: none</span>
       <span id="deployDisplay">☁️ not deployed</span>
-    </div>
-  </div>
-  <div class="main">
-    <div class="prompt-label">✍️ New App Name (creates GrishteSync-name)</div>
-    <input type="text" id="appNameInput" placeholder="e.g., dad-joke">
-    <div class="prompt-label" style="margin-top:1rem;">📁 Or update an existing repo</div>
-    <div class="select-row">
-      <select id="repoSelect"><option value="">-- Select a repo to update --</option></select>
-      <button class="btn-refresh-repos" id="refreshReposBtn">🔄</button>
-    </div>
-    <div class="prompt-label" style="margin-top:1rem;">✨ What should the app do? <button class="clear-draft-btn" id="clearAutoDraft">Clear</button></div>
-    <textarea id="promptInput" placeholder="Describe your app or update..."></textarea>
-
-    <div class="draft-section" id="draftPanel">
-      <div class="draft-header" id="draftToggle"><span>📝 Drafts</span><span>▼</span></div>
-      <div id="draftContent">
-        <div class="draft-list" id="draftList"></div>
-        <button class="save-draft-btn" id="saveDraftBtn">💾 Save current as draft</button>
-        <button class="save-draft-btn" id="clearAllDraftsBtn" style="background:#fee2e2; margin-top:0.5rem;">🗑️ Clear all drafts</button>
+      <div class="toggle-section">
+        <span class="toggle-label">🤗 HF:</span>
+        <label class="toggle-switch"><input type="checkbox" id="hfToggle" checked><span class="toggle-slider"></span></label>
       </div>
     </div>
+  </div>
+
+  <div class="main">
+    <div class="section-label">✍️ New App Name</div>
+    <input type="text" id="appNameInput" placeholder="e.g., dad-joke (creates GrishteSync-dad-joke)">
+    
+    <div class="section-label" style="margin-top:1rem;">📁 Or update a GrishteSync repo</div>
+    <div class="select-row">
+      <select id="repoSelect"><option value="">-- Connect GitHub to see your repos --</option></select>
+      <button class="btn-refresh" id="refreshReposBtn">🔄</button>
+    </div>
+
+    <div class="section-label" style="margin-top:1rem;">✨ Prompt</div>
+    <textarea id="promptInput" placeholder="Describe your app..."></textarea>
 
     <button class="btn-generate" id="generateBtn">🚀 Generate / Update</button>
     <div id="errorBox"></div>
-    <div class="status" id="statusArea"><div id="stepList"></div></div>
+    
+    <!-- Progress bar area -->
+    <div class="status" id="statusArea">
+      <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+      <div class="progress-text" id="progressText">0%</div>
+      <div class="progress-step" id="progressStep">Starting...</div>
+    </div>
 
     <div class="result-card" id="resultCard">
       <div class="pr-desc" id="prDescription"></div>
       <div class="file-viewer" id="fileViewer"></div>
-      <div class="section-title">📝 Pull Request description (editable)</div>
-      <textarea id="prEditTextarea" rows="5" placeholder="Custom PR description..."></textarea>
-      <div class="followup-section"><strong>✨ Suggested next:</strong><div class="followup-buttons" id="followupButtons"></div></div>
+      <div class="section-title">📝 PR Description (editable)</div>
+      <textarea id="prEditTextarea" rows="4" placeholder="Custom PR description..."></textarea>
+      
+      <div class="pr-instructions" id="prInstructions">
+        ⚠️ <strong>Action needed:</strong> Open the Pull Request and <strong>merge it to main</strong> to complete the deployment.
+      </div>
+
+      <div class="celebration" id="celebrationBox">
+        🎉 <strong>Congratulations!</strong> You just built an AI-powered app with GrishteSync! 🌀
+      </div>
+
       <div class="action-buttons">
         <button class="btn-approve" id="approveBtn" style="display:none;">🐙 Deploy to GitHub</button>
         <button class="btn-hf" id="hfDeployBtn">🤗 Deploy to HF</button>
         <button class="btn-redo" id="redoBtn">🔄 Re‑weave</button>
         <button class="btn-download" id="downloadBtn">📥 Download</button>
       </div>
+      <button class="btn-live" id="liveBtn" style="display:none; width:100%; margin-top:0.8rem;">🔗 Open Live App →</button>
       <div class="deploy-links" id="deployLinks"></div>
     </div>
   </div>
   <div class="footer">GRISHTESYNC — Grishma + Sync. One prompt, one downpour, one release.</div>
 </div>
+
 <div class="about-author">
   <h2>👤 About the Author</h2>
   <p>Crafted by <strong>Suryasticsai</strong> — AI app builder from natural language.</p>
@@ -151,6 +173,8 @@
   let generatedFiles = {};
   let currentPrompt = "";
   let githubToken = localStorage.getItem("github_token") || null;
+  let githubUsername = localStorage.getItem("github_user") || null;
+  let liveSpaceUrl = null;
 
   const versionBadge = document.getElementById('versionBadge');
   const repoDisplay = document.getElementById('repoDisplay');
@@ -161,7 +185,9 @@
   const refreshReposBtn = document.getElementById('refreshReposBtn');
   const generateBtn = document.getElementById('generateBtn');
   const statusArea = document.getElementById('statusArea');
-  const stepListDiv = document.getElementById('stepList');
+  const progressBar = document.getElementById('progressBar');
+  const progressText = document.getElementById('progressText');
+  const progressStep = document.getElementById('progressStep');
   const resultCard = document.getElementById('resultCard');
   const prDescription = document.getElementById('prDescription');
   const fileViewer = document.getElementById('fileViewer');
@@ -171,85 +197,73 @@
   const redoBtn = document.getElementById('redoBtn');
   const downloadBtn = document.getElementById('downloadBtn');
   const loginBtn = document.getElementById('loginBtn');
-  const gitStatusWrap = document.getElementById('gitStatusWrap');
+  const gitBadge = document.getElementById('gitBadge');
+  const gitUser = document.getElementById('gitUser');
   const prEditTextarea = document.getElementById('prEditTextarea');
   const deployLinks = document.getElementById('deployLinks');
   const errorBox = document.getElementById('errorBox');
   const resetBtn = document.getElementById('resetBtn');
   const disconnectGitBtn = document.getElementById('disconnectGit');
-  const draftList = document.getElementById('draftList');
-  const saveDraftBtn = document.getElementById('saveDraftBtn');
-  const clearAllDraftsBtn = document.getElementById('clearAllDraftsBtn');
-  const draftToggle = document.getElementById('draftToggle');
-  const draftContent = document.getElementById('draftContent');
-  const clearAutoDraftBtn = document.getElementById('clearAutoDraft');
+  const hfToggle = document.getElementById('hfToggle');
+  const prInstructions = document.getElementById('prInstructions');
+  const celebrationBox = document.getElementById('celebrationBox');
+  const liveBtn = document.getElementById('liveBtn');
 
   function showToast(msg, d=3000) { const t=document.createElement('div'); t.className='toast'; t.innerText=msg; document.body.appendChild(t); setTimeout(()=>t.remove(), d); }
   function showError(msg) { errorBox.style.display='block'; errorBox.textContent=msg; }
   function hideError() { errorBox.style.display='none'; }
 
   function updateAuthUI() {
-    if (githubToken) { loginBtn.style.display='none'; gitStatusWrap.style.display='inline'; approveBtn.style.display='inline-block'; fetchUserRepos(); }
-    else { loginBtn.style.display='inline-block'; gitStatusWrap.style.display='none'; approveBtn.style.display='none'; }
-    hfDeployBtn.style.display='inline-block'; // Always show HF deploy
+    if (githubToken) {
+      loginBtn.style.display = 'none';
+      gitBadge.style.display = 'inline-flex';
+      gitUser.textContent = githubUsername ? `@${githubUsername}` : 'connected';
+      approveBtn.style.display = 'inline-block';
+      fetchUserRepos();
+    } else {
+      loginBtn.style.display = 'inline-block';
+      gitBadge.style.display = 'none';
+      approveBtn.style.display = 'none';
+      repoSelect.innerHTML = '<option value="">-- Connect GitHub to see your repos --</option>';
+    }
+    hfDeployBtn.style.display = hfToggle.checked ? 'inline-block' : 'none';
   }
+
+  hfToggle.addEventListener('change', updateAuthUI);
 
   async function fetchUserRepos() {
     if (!githubToken) return;
     try {
-      const res = await fetch('https://api.github.com/user/repos?per_page=100&sort=updated', { headers: { Authorization: `token ${githubToken}` } });
+      repoSelect.innerHTML = '<option value="">⏳ Loading...</option>';
+      const res = await fetch('https://api.github.com/user/repos?per_page=100&sort=updated', {
+        headers: { Authorization: `token ${githubToken}` }
+      });
       const repos = await res.json();
-      if (!Array.isArray(repos)) return;
+      if (!Array.isArray(repos)) { repoSelect.innerHTML = '<option value="">-- Error --</option>'; return; }
+      const grishteRepos = repos.filter(r => r.name.toLowerCase().startsWith('grishtesync-'));
       repoSelect.innerHTML = '<option value="">-- Select a repo to update --</option>';
-      repos.forEach(repo => { const o=document.createElement('option'); o.value=repo.full_name; o.textContent=repo.full_name; repoSelect.appendChild(o); });
-    } catch(e) {}
+      if (grishteRepos.length === 0) {
+        repoSelect.innerHTML += '<option value="" disabled>No GrishteSync repos found. Create one first!</option>';
+      } else {
+        grishteRepos.forEach(repo => { const o = document.createElement('option'); o.value = repo.full_name; o.textContent = repo.full_name; repoSelect.appendChild(o); });
+      }
+    } catch(e) { repoSelect.innerHTML = '<option value="">-- Error loading repos --</option>'; }
   }
   refreshReposBtn.addEventListener('click', fetchUserRepos);
 
-  disconnectGitBtn.addEventListener('click', ()=>{ localStorage.removeItem('github_token'); githubToken=null; updateAuthUI(); showToast("🐙 Disconnected."); });
+  disconnectGitBtn.addEventListener('click', ()=>{ localStorage.removeItem('github_token'); localStorage.removeItem('github_user'); githubToken=null; githubUsername=null; updateAuthUI(); showToast("🐙 Disconnected."); });
 
   function resetAndDiagnose() {
-    localStorage.clear(); githubToken=null;
+    localStorage.clear(); githubToken=null; githubUsername=null; liveSpaceUrl=null;
     updateAuthUI(); appNameInput.value=''; promptInput.value=''; resultCard.style.display='none';
     statusArea.style.display='none'; errorBox.style.display='none'; deployLinks.style.display='none';
+    prInstructions.style.display='none'; celebrationBox.style.display='none'; liveBtn.style.display='none';
     repoDisplay.innerText='📁 repo: none'; deployDisplay.innerText='☁️ not deployed';
     showToast("🗑️ Cleared. Checking backend...");
     fetch(`${API_BASE}/`).then(r=>r.text()).then(t=>{ showToast(t.includes("running")?"✅ Backend alive.":"⚠️ Issue."); }).catch(()=>showToast("❌ Cannot reach backend."));
   }
   resetBtn.addEventListener('click', resetAndDiagnose);
-
   loginBtn.addEventListener('click', ()=> window.location.href = AUTH_GITHUB);
-
-  // Drafts
-  function getDrafts() { try { return JSON.parse(localStorage.getItem('grishtesync_drafts')||'[]'); } catch { return []; } }
-  function saveDrafts(d) { localStorage.setItem('grishtesync_drafts', JSON.stringify(d)); }
-  function addDraft(text) { const drafts=getDrafts(); drafts.push({text, time:new Date().toLocaleString()}); saveDrafts(drafts); renderDrafts(); }
-  function deleteDraft(i) { const drafts=getDrafts(); drafts.splice(i,1); saveDrafts(drafts); renderDrafts(); }
-  function loadDraft(i) { const drafts=getDrafts(); if(drafts[i]){ promptInput.value=drafts[i].text; showToast("📝 Draft loaded."); } }
-  function renderDrafts() {
-    const drafts=getDrafts(); draftList.innerHTML='';
-    if(!drafts.length){ draftList.innerHTML='<div style="color:#6b7280;font-size:0.8rem;">No saved drafts.</div>'; return; }
-    drafts.forEach((draft,idx)=>{
-      const div=document.createElement('div'); div.className='draft-item';
-      div.innerHTML=`<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${draft.time} — ${draft.text.slice(0,50)}...</span><button class="load-draft" data-index="${idx}">📋</button><button class="delete-draft" data-index="${idx}">🗑️</button>`;
-      draftList.appendChild(div);
-    });
-    draftList.querySelectorAll('.load-draft').forEach(b=>b.addEventListener('click',e=>loadDraft(parseInt(e.target.dataset.index))));
-    draftList.querySelectorAll('.delete-draft').forEach(b=>b.addEventListener('click',e=>deleteDraft(parseInt(e.target.dataset.index))));
-  }
-  function saveCurrentDraft() { localStorage.setItem('grishtesync_current_draft', promptInput.value); }
-  function loadCurrentDraft() { const s=localStorage.getItem('grishtesync_current_draft'); if(s) promptInput.value=s; }
-  promptInput.addEventListener('input', ()=>{ clearTimeout(window.draftSaveTimeout); window.draftSaveTimeout=setTimeout(saveCurrentDraft,500); });
-  clearAutoDraftBtn.addEventListener('click', ()=>{ localStorage.removeItem('grishtesync_current_draft'); promptInput.value=''; showToast("Cleared."); });
-  let draftPanelOpen=true;
-  draftToggle.addEventListener('click', ()=>{ draftPanelOpen=!draftPanelOpen; draftContent.style.display=draftPanelOpen?'block':'none'; draftToggle.querySelector('span:last-child').innerText=draftPanelOpen?'▼':'▶'; });
-  saveDraftBtn.addEventListener('click', ()=>{ const t=promptInput.value.trim(); if(!t) return showToast("Type something."); addDraft(t); showToast("💾 Saved."); });
-  clearAllDraftsBtn.addEventListener('click', ()=>{ saveDrafts([]); renderDrafts(); showToast("All drafts cleared."); });
-
-  // Status steps
-  function showSteps(steps) { stepListDiv.innerHTML=''; steps.forEach((n,i)=>{ const d=document.createElement('div'); d.className='step-item'; d.id=`step-${i}`; d.innerHTML=`<span class="step-icon">⏳</span><span>${n}</span>`; stepListDiv.appendChild(d); }); }
-  function setStepDone(i) { const e=document.getElementById(`step-${i}`); if(e){ e.querySelector('.step-icon').innerHTML='✅'; e.classList.remove('active'); } }
-  function setStepActive(i) { const e=document.getElementById(`step-${i}`); if(e){ e.classList.add('active'); e.querySelector('.step-icon').innerHTML='⚙️'; } }
 
   function toggleFile(f) { const el=document.getElementById(`file-${f.replace(/[^a-zA-Z0-9]/g,'_')}`); if(el) el.classList.toggle('open'); }
   function renderFileViewer(files) {
@@ -258,7 +272,48 @@
     for(const [f,c] of Object.entries(files)){ const s=f.replace(/[^a-zA-Z0-9]/g,'_'); const d=document.createElement('div'); d.className='file-item'; d.innerHTML=`<div class="file-header" onclick="toggleFile('${f}')"><span>📄 ${f}</span><span>▼</span></div><div class="file-content" id="file-${s}">${c}</div>`; fileViewer.appendChild(d); }
   }
 
-  // Generate
+  function showProgress() {
+    statusArea.style.display = 'flex';
+    resultCard.style.display = 'none';
+    deployLinks.style.display = 'none';
+    prInstructions.style.display = 'none';
+    celebrationBox.style.display = 'none';
+    liveBtn.style.display = 'none';
+    progressBar.style.width = '0%';
+    progressText.textContent = '0%';
+    progressStep.textContent = 'Starting...';
+  }
+
+  function animateProgress(stepMessages, onComplete, deployTime) {
+    let progress = 0;
+    let stepIndex = 0;
+    const interval = setInterval(() => {
+      progress += Math.random() * 12 + 3;
+      if (progress > 90) progress = 90;
+      progressBar.style.width = `${progress}%`;
+      progressText.textContent = `${Math.floor(progress)}%`;
+      if (stepIndex < stepMessages.length && progress > (stepIndex + 1) * (90 / stepMessages.length)) {
+        progressStep.textContent = stepMessages[stepIndex];
+        stepIndex++;
+      }
+    }, 300);
+
+    return {
+      complete: (time) => {
+        clearInterval(interval);
+        progressBar.style.width = '100%';
+        progressText.textContent = '100%';
+        progressStep.textContent = `✅ Completed in ${time}s`;
+      },
+      fail: (msg) => {
+        clearInterval(interval);
+        progressBar.style.width = '0%';
+        progressText.textContent = 'Failed';
+        progressStep.textContent = msg;
+      }
+    };
+  }
+
   async function generatePR() {
     const prompt = promptInput.value.trim();
     if(!prompt) return showToast("⚠️ Enter a prompt.");
@@ -266,19 +321,20 @@
     const selectedRepo = repoSelect.value;
     const newAppName = appNameInput.value.trim();
     repoName = selectedRepo || (newAppName ? `GrishteSync-${newAppName}` : `GrishteSync-${Date.now().toString(36)}`);
-    generateBtn.disabled = true; resultCard.style.display='none'; statusArea.style.display='flex'; deployLinks.style.display='none';
-    const steps = [selectedRepo?"🔍 Fetching current code...":"🔍 Sending prompt...","🧠 Generating...","📁 Creating files...","📝 Preparing result..."];
-    showSteps(steps); let stepIdx=0;
-    const interval = setInterval(()=>{ if(stepIdx<steps.length){ setStepActive(stepIdx); if(stepIdx>0) setStepDone(stepIdx-1); stepIdx++; } }, 1500);
+    generateBtn.disabled = true;
+    showProgress();
+    const anim = animateProgress(["Reading prompt...", "Generating code...", "Creating files..."]);
     const headers = { 'Content-Type':'application/json' };
     if(selectedRepo && githubToken) headers['Authorization'] = `token ${githubToken}`;
     const body = { prompt }; if(selectedRepo) body.repo = selectedRepo;
     try {
       const res = await fetch(API_GENERATE, { method:'POST', headers, body: JSON.stringify(body) });
-      const data = await res.json(); clearInterval(interval); steps.forEach((_,i)=>setStepDone(i));
-      if(data.error){ showToast("❌ "+data.error); showError(data.error); statusArea.style.display='none'; generateBtn.disabled=false; return; }
-      generatedFiles = data.files; renderFileViewer(generatedFiles); finalizeUI(prompt);
-    } catch(e) { clearInterval(interval); showToast("❌ "+e.message); showError(e.message); statusArea.style.display='none'; generateBtn.disabled=false; }
+      const data = await res.json();
+      if(data.error){ anim.fail(data.error); showError(data.error); generateBtn.disabled=false; return; }
+      anim.complete(data.generate_time || '?');
+      generatedFiles = data.files; renderFileViewer(generatedFiles);
+      setTimeout(() => { statusArea.style.display='none'; finalizeUI(prompt); }, 600);
+    } catch(e) { anim.fail(e.message); showError(e.message); generateBtn.disabled=false; }
   }
 
   function finalizeUI(prompt) {
@@ -286,47 +342,63 @@
     if(ver.length!==3||ver.some(isNaN)) ver=[0,0,0];
     ver[2]++; currentVersion = ver.join('.'); versionBadge.innerText = `v${currentVersion}`;
     repoDisplay.innerText = `📁 repo: ${repoName}`; deployDisplay.innerText = '☁️ not deployed';
-    prDescription.innerHTML = `<strong>✨ Generated app</strong><br><em>“${prompt}”</em><br><br><strong>📂 Files:</strong><br>${Object.keys(generatedFiles).map(f=>`- ${f}`).join('\n')||'(none)'}<br><strong>📦 Version:</strong> v${currentVersion}`;
+    prDescription.innerHTML = `<strong>✨ Generated app</strong><br><em>"${prompt}"</em><br><br><strong>📂 Files:</strong><br>${Object.keys(generatedFiles).map(f=>`- ${f}`).join('\n')||'(none)'}<br><strong>📦 Version:</strong> v${currentVersion}`;
     prEditTextarea.value = `GrishteSync update v${currentVersion}\n\nFiles: ${Object.keys(generatedFiles).join(', ')}`;
     const followups = ["Add dark mode","Connect database","Improve UI","Add logging","Add tests"];
     followupButtons.innerHTML = '';
     followups.sort(()=>0.5-Math.random()).slice(0,3).forEach(s=>{ const b=document.createElement('button'); b.className='btn-follow'; b.innerText=s; b.onclick=()=>{ promptInput.value=s; }; followupButtons.appendChild(b); });
-    resultCard.style.display='block'; statusArea.style.display='none'; generateBtn.disabled=false;
+    resultCard.style.display='block'; generateBtn.disabled=false;
     approveBtn.innerText='🐙 Deploy to GitHub'; approveBtn.disabled=false;
     hfDeployBtn.innerText='🤗 Deploy to HF'; hfDeployBtn.disabled=false;
-    deployLinks.innerHTML=''; deployLinks.style.display='none'; hideError();
+    deployLinks.innerHTML=''; deployLinks.style.display='none'; prInstructions.style.display='none'; celebrationBox.style.display='none'; liveBtn.style.display='none'; hideError();
   }
 
-  // Deploy GitHub
   async function deployToGitHub() {
     if(!githubToken){ showToast("Connect GitHub first."); return; }
     if(!generatedFiles||!Object.keys(generatedFiles).length){ showToast("No files."); return; }
-    approveBtn.disabled=true; approveBtn.innerText='⏳ Deploying...';
+    approveBtn.disabled = true; approveBtn.innerText = '⏳ Deploying...';
+    showProgress();
+    const anim = animateProgress(["Creating branch...", "Pushing files...", "Opening PR..."]);
     try {
       const res = await fetch(API_DEPLOY, { method:'POST', headers:{ 'Content-Type':'application/json','Authorization':`token ${githubToken}` }, body: JSON.stringify({ repo_name: repoName, files: generatedFiles, version: currentVersion, pr_description: prEditTextarea.value.trim()||undefined }) });
       const data = await res.json();
-      if(data.error){ showToast("❌ "+data.error); showError(data.error); approveBtn.disabled=false; approveBtn.innerText='🐙 Deploy to GitHub'; return; }
-      let html = `<strong>🐙 GitHub Repo:</strong> <a href="${data.repo_url}" target="_blank">${data.repo_url}</a>`;
-      if(data.pr_url) html += `<br><strong>🔀 Pull Request:</strong> <a href="${data.pr_url}" target="_blank">${data.pr_url}</a>`;
-      deployLinks.innerHTML = html; deployLinks.style.display='block'; deployDisplay.innerText = `🐙 GitHub: ${data.repo_url}`;
-      approveBtn.innerText='✅ Deployed'; approveBtn.disabled=true; showToast("✅ Deployed to GitHub!"); hideError();
-    } catch(e) { showToast("❌ "+e.message); showError(e.message); approveBtn.disabled=false; approveBtn.innerText='🐙 Deploy to GitHub'; }
+      if(data.error){ anim.fail(data.error); showError(data.error); approveBtn.disabled=false; approveBtn.innerText='🐙 Deploy to GitHub'; return; }
+      anim.complete(data.deploy_time || '?');
+      setTimeout(() => {
+        statusArea.style.display = 'none'; resultCard.style.display = 'block';
+        let html = `<strong>🐙 Repo:</strong> <a href="${data.repo_url}" target="_blank">${data.repo_url}</a>`;
+        if(data.pr_url) html += `<br><strong>🔀 PR:</strong> <a href="${data.pr_url}" target="_blank">${data.pr_url}</a>`;
+        deployLinks.innerHTML = html; deployLinks.style.display='block'; deployDisplay.innerText = `🐙 GitHub: ${data.repo_url}`;
+        prInstructions.style.display = 'block'; approveBtn.innerText='✅ Deployed'; approveBtn.disabled=true;
+        showToast(`✅ Deployed in ${data.deploy_time || '?'}s! Open the PR and merge it.`); hideError();
+      }, 600);
+    } catch(e) { anim.fail(e.message); showError(e.message); approveBtn.disabled=false; approveBtn.innerText='🐙 Deploy to GitHub'; }
   }
 
-  // Deploy HF (no token needed — uses backend's personal token)
   async function deployToHF() {
-    if(!repoName){ showToast("No repo defined. Deploy to GitHub first."); return; }
-    if(!generatedFiles||!Object.keys(generatedFiles).length){ showToast("No files. Generate first."); return; }
-    hfDeployBtn.disabled=true; hfDeployBtn.innerText='⏳ Deploying...';
+    if(!repoName){ showToast("Deploy to GitHub first."); return; }
+    if(!generatedFiles||!Object.keys(generatedFiles).length){ showToast("Generate first."); return; }
+    hfDeployBtn.disabled = true; hfDeployBtn.innerText = '⏳ Deploying...';
+    showProgress();
+    const anim = animateProgress(["Creating Space...", "Linking repo...", "Building app..."]);
     try {
       const res = await fetch(API_DEPLOY_HF, { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ repo_full_name: repoName, space_name: repoName.split('/')[1]||'grishte-app', files: generatedFiles }) });
       const data = await res.json();
-      if(data.error){ showToast("❌ "+data.error); showError(data.error); hfDeployBtn.disabled=false; hfDeployBtn.innerText='🤗 Deploy to HF'; return; }
-      deployLinks.innerHTML += `<br><strong>🤗 Live App:</strong> <a href="${data.space_url}" target="_blank">${data.space_url}</a>`;
-      deployLinks.style.display='block'; deployDisplay.innerText = `🤗 Live: ${data.space_url}`;
-      hfDeployBtn.innerText='✅ Live'; hfDeployBtn.disabled=true; showToast("✅ Live on Hugging Face!"); hideError();
-    } catch(e) { showToast("❌ "+e.message); showError(e.message); hfDeployBtn.disabled=false; hfDeployBtn.innerText='🤗 Deploy to HF'; }
+      if(data.error){ anim.fail(data.error); showError(data.error); hfDeployBtn.disabled=false; hfDeployBtn.innerText='🤗 Deploy to HF'; return; }
+      anim.complete(data.deploy_time || '?');
+      liveSpaceUrl = data.space_url;
+      setTimeout(() => {
+        statusArea.style.display = 'none'; resultCard.style.display = 'block';
+        deployLinks.innerHTML += `<br><strong>🤗 Live:</strong> <a href="${data.space_url}" target="_blank">${data.space_url}</a>`;
+        deployLinks.style.display='block'; deployDisplay.innerText = `🤗 Live: ${data.space_url}`;
+        hfDeployBtn.innerText='✅ Live'; hfDeployBtn.disabled=true;
+        liveBtn.style.display = 'block'; celebrationBox.style.display = 'block';
+        showToast(`🎉 App is live! Deployed in ${data.deploy_time || '?'}s`); hideError();
+      }, 600);
+    } catch(e) { anim.fail(e.message); showError(e.message); hfDeployBtn.disabled=false; hfDeployBtn.innerText='🤗 Deploy to HF'; }
   }
+
+  liveBtn.addEventListener('click', ()=>{ if(liveSpaceUrl) window.open(liveSpaceUrl, '_blank'); });
 
   function reweave() { if(currentPrompt){ promptInput.value=currentPrompt; generatePR(); } else showToast("No prompt."); }
   function downloadZip() {
@@ -344,12 +416,19 @@
 
   function handleRedirectTokens() {
     const params = new URLSearchParams(window.location.search);
-    if(params.get('token')){ githubToken=params.get('token'); localStorage.setItem('github_token',githubToken); window.history.replaceState({},document.title,window.location.pathname); showToast("🐙 GitHub connected!"); }
+    if(params.get('token')){
+      githubToken = params.get('token');
+      githubUsername = params.get('github_user') || '';
+      localStorage.setItem('github_token', githubToken);
+      if(githubUsername) localStorage.setItem('github_user', githubUsername);
+      window.history.replaceState({}, document.title, window.location.pathname);
+      showToast(`🐙 Connected as @${githubUsername || 'user'}!`);
+    }
     updateAuthUI();
   }
 
   window.onload = () => {
-    handleRedirectTokens(); updateAuthUI(); renderDrafts(); loadCurrentDraft();
+    handleRedirectTokens(); updateAuthUI();
     versionBadge.innerText='v0.0.0'; repoDisplay.innerText='📁 repo: none'; deployDisplay.innerText='☁️ not deployed';
     if(!window.JSZip){ const s=document.createElement('script'); s.src='https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js'; document.head.appendChild(s); }
   };
