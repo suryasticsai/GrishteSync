@@ -12,9 +12,11 @@
     .top-row { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; }
     .app-title { font-size:2rem; font-weight:700; display:flex; align-items:center; gap:0.4rem; }
     .logo-img { height:2.4rem; width:auto; vertical-align:middle; }
-    .btn-connect-group { display:flex; gap:0.5rem; align-items:center; }
+    .btn-connect-group { display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap; }
     .btn-login { background:rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.3); color:white; padding:0.3rem 0.8rem; border-radius:2rem; font-size:0.8rem; cursor:pointer; }
     .btn-login:hover { background:rgba(255,255,255,0.3); }
+    .btn-reset { background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.3); color:white; padding:0.3rem 0.8rem; border-radius:2rem; font-size:0.8rem; cursor:pointer; }
+    .btn-reset:hover { background:rgba(255,100,100,0.4); }
     .version { font-size:0.8rem; background:rgba(255,255,255,0.2); display:inline-block; padding:0.2rem 0.7rem; border-radius:2rem; width:fit-content; }
     .meta-row { display:flex; flex-wrap:wrap; gap:0.5rem 1rem; font-size:0.75rem; opacity:0.9; }
     .meta-row span { background:rgba(255,255,255,0.1); padding:0.2rem 0.7rem; border-radius:2rem; }
@@ -26,7 +28,6 @@
     .btn-generate:hover { background:#0e2a36; transform:scale(0.98); }
     .btn-generate:disabled { background:#9ca3af; cursor:not-allowed; }
 
-    /* Error box */
     #errorBox { display:none; margin-top:0.8rem; padding:0.8rem; background:#fee2e2; color:#b91c1c; border-radius:0.8rem; font-size:0.85rem; white-space:pre-wrap; word-break:break-word; }
     .status { margin-top:1.2rem; background:#f8fafc; border-radius:1rem; padding:0.8rem; display:none; flex-direction:column; gap:0.6rem; border:1px solid #e2e8f0; }
     .step-item { display:flex; align-items:center; gap:0.7rem; font-size:0.85rem; color:#334155; opacity:0.6; }
@@ -68,6 +69,7 @@
       <div class="btn-connect-group">
         <button class="btn-login" id="loginBtn" style="display:none;">🐙 GitHub</button>
         <button class="btn-login" id="hfLoginBtn" style="display:none;">🤗 HF</button>
+        <button class="btn-reset" id="resetBtn">🔄 Reset</button>
       </div>
     </div>
     <span class="version" id="versionBadge">v0.0.0</span>
@@ -85,18 +87,14 @@
     <textarea id="promptInput" placeholder="Describe your app or update..."></textarea>
     <button class="btn-generate" id="generateBtn">🚀 Generate / Update</button>
 
-    <!-- ERROR BOX – stays visible -->
     <div id="errorBox"></div>
-
     <div class="status" id="statusArea"><div id="stepList"></div></div>
 
     <div class="result-card" id="resultCard">
       <div class="pr-desc" id="prDescription"></div>
       <div class="file-viewer" id="fileViewer"></div>
-
       <div class="section-title">📝 Pull Request description (editable)</div>
       <textarea id="prEditTextarea" rows="5" placeholder="Custom PR description..."></textarea>
-
       <div class="followup-section">
         <strong>✨ Suggested next:</strong>
         <div class="followup-buttons" id="followupButtons"></div>
@@ -125,7 +123,6 @@
 </div>
 
 <script>
-  // ---------- Configuration ----------
   const API_BASE = "https://grishtesync-backend.onrender.com";
   const API_GENERATE = `${API_BASE}/api/generate`;
   const API_DEPLOY = `${API_BASE}/api/deploy`;
@@ -164,18 +161,17 @@
   const prEditTextarea = document.getElementById('prEditTextarea');
   const deployLinks = document.getElementById('deployLinks');
   const errorBox = document.getElementById('errorBox');
+  const resetBtn = document.getElementById('resetBtn');
 
   // ---------- Helpers ----------
   function showToast(msg, duration=3000) {
     const t = document.createElement('div'); t.className='toast'; t.innerText=msg;
     document.body.appendChild(t); setTimeout(()=>t.remove(), duration);
   }
-
   function showError(msg) {
     errorBox.style.display = 'block';
     errorBox.textContent = msg;
   }
-
   function hideError() {
     errorBox.style.display = 'none';
     errorBox.textContent = '';
@@ -222,6 +218,40 @@
     updateAuthUI();
   }
 
+  // ---------- Reset / Diagnostic ----------
+  function resetAndDiagnose() {
+    localStorage.clear();
+    githubToken = null;
+    hfToken = null;
+    updateAuthUI();
+    showToast("🗑️ Tokens cleared. Checking backend...");
+    // Quick backend check
+    fetch(`${API_BASE}/`)
+      .then(r => r.text())
+      .then(txt => {
+        if (txt.includes("running")) {
+          showToast("✅ Backend is alive. You can reconnect now.");
+        } else {
+          showToast("⚠️ Backend responded but with unexpected content.");
+        }
+      })
+      .catch(() => {
+        showToast("❌ Cannot reach backend. Is Render sleeping?");
+      });
+    // Clear UI fields
+    repoInput.value = '';
+    promptInput.value = '';
+    resultCard.style.display = 'none';
+    statusArea.style.display = 'none';
+    errorBox.style.display = 'none';
+    deployLinks.style.display = 'none';
+    repoDisplay.innerText = '📁 repo: none';
+    deployDisplay.innerText = '☁️ not deployed';
+  }
+
+  resetBtn.addEventListener('click', resetAndDiagnose);
+
+  // ---------- Auth buttons ----------
   loginBtn.addEventListener('click', ()=> window.location.href = AUTH_GITHUB);
   hfLoginBtn.addEventListener('click', ()=> window.location.href = AUTH_HF);
 
