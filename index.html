@@ -13,21 +13,32 @@
     .app-title { font-size:2rem; font-weight:700; display:flex; align-items:center; gap:0.4rem; }
     .logo-img { height:2.4rem; width:auto; vertical-align:middle; }
     .btn-connect-group { display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap; }
-    .btn-login { background:rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.3); color:white; padding:0.3rem 0.8rem; border-radius:2rem; font-size:0.8rem; cursor:pointer; }
-    .btn-login:hover { background:rgba(255,255,255,0.3); }
-    .btn-reset { background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.3); color:white; padding:0.3rem 0.8rem; border-radius:2rem; font-size:0.8rem; cursor:pointer; }
-    .btn-reset:hover { background:rgba(255,100,100,0.4); }
+    .btn-login, .btn-reset { background:rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.3); color:white; padding:0.3rem 0.8rem; border-radius:2rem; font-size:0.8rem; cursor:pointer; }
+    .btn-login:hover, .btn-reset:hover { background:rgba(255,255,255,0.3); }
+    .btn-reset { background:rgba(255,100,100,0.3); }
+    .btn-reset:hover { background:rgba(255,100,100,0.5); }
+    .btn-disconnect { background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.3); color:white; padding:0.3rem 0.8rem; border-radius:2rem; font-size:0.8rem; cursor:pointer; margin-left:0.3rem; }
+    .btn-disconnect:hover { background:rgba(255,100,100,0.4); }
     .version { font-size:0.8rem; background:rgba(255,255,255,0.2); display:inline-block; padding:0.2rem 0.7rem; border-radius:2rem; width:fit-content; }
     .meta-row { display:flex; flex-wrap:wrap; gap:0.5rem 1rem; font-size:0.75rem; opacity:0.9; }
     .meta-row span { background:rgba(255,255,255,0.1); padding:0.2rem 0.7rem; border-radius:2rem; }
     .main { padding:1.5rem; }
-    .prompt-label { font-weight:600; margin-bottom:0.5rem; color:#1a3a4f; }
+    .prompt-label { font-weight:600; margin-bottom:0.5rem; color:#1a3a4f; display:flex; align-items:center; gap:0.5rem; }
+    .clear-draft-btn { font-size:0.75rem; color:#ef4444; cursor:pointer; background:none; border:none; }
     textarea, input[type=text] { width:100%; padding:0.8rem; border:2px solid #e2e8f0; border-radius:1rem; font-size:0.95rem; outline:none; margin-top:0.8rem; }
     textarea:focus, input[type=text]:focus { border-color:#1a3a4f; }
     .btn-generate { width:100%; margin-top:1rem; padding:0.9rem; background:#1a3a4f; color:white; border:none; border-radius:3rem; font-size:1rem; font-weight:600; cursor:pointer; }
     .btn-generate:hover { background:#0e2a36; transform:scale(0.98); }
     .btn-generate:disabled { background:#9ca3af; cursor:not-allowed; }
-
+    .draft-section { margin-top:1rem; background:#f8fafc; border-radius:1rem; padding:0.8rem; border:1px solid #e2e8f0; }
+    .draft-header { display:flex; justify-content:space-between; align-items:center; font-weight:600; color:#1a3a4f; cursor:pointer; }
+    .draft-list { margin-top:0.5rem; max-height:150px; overflow-y:auto; }
+    .draft-item { display:flex; justify-content:space-between; align-items:center; padding:0.4rem 0; border-bottom:1px solid #e2e8f0; }
+    .draft-item button { background:none; border:none; cursor:pointer; }
+    .draft-item .load-draft { color:#1a3a4f; font-weight:500; }
+    .draft-item .delete-draft { color:#ef4444; }
+    .save-draft-btn { margin-top:0.8rem; background:#e2e8f0; border:none; padding:0.5rem 1rem; border-radius:2rem; font-size:0.8rem; cursor:pointer; }
+    .save-draft-btn:hover { background:#cbd5e1; }
     #errorBox { display:none; margin-top:0.8rem; padding:0.8rem; background:#fee2e2; color:#b91c1c; border-radius:0.8rem; font-size:0.85rem; white-space:pre-wrap; word-break:break-word; }
     .status { margin-top:1.2rem; background:#f8fafc; border-radius:1rem; padding:0.8rem; display:none; flex-direction:column; gap:0.6rem; border:1px solid #e2e8f0; }
     .step-item { display:flex; align-items:center; gap:0.7rem; font-size:0.85rem; color:#334155; opacity:0.6; }
@@ -68,23 +79,42 @@
       </div>
       <div class="btn-connect-group">
         <button class="btn-login" id="loginBtn" style="display:none;">🐙 GitHub</button>
+        <span id="gitStatusWrap" style="display:none;"><span id="gitStatus">connected ✅</span><button class="btn-disconnect" id="disconnectGit">✕</button></span>
         <button class="btn-login" id="hfLoginBtn" style="display:none;">🤗 HF</button>
+        <span id="hfStatusWrap" style="display:none;"><span id="hfStatus">connected ✅</span><button class="btn-disconnect" id="disconnectHF">✕</button></span>
         <button class="btn-reset" id="resetBtn">🔄 Reset</button>
       </div>
     </div>
     <span class="version" id="versionBadge">v0.0.0</span>
     <div class="meta-row">
-      <span>🐙 Git: <span id="gitStatus">not connected</span></span>
-      <span>🤗 HF: <span id="hfStatus">not connected</span></span>
       <span id="repoDisplay">📁 repo: none</span>
       <span id="deployDisplay">☁️ not deployed</span>
     </div>
   </div>
   <div class="main">
-    <div class="prompt-label">✍️ App name (new) or existing repo (user/repo)</div>
+    <div class="prompt-label">
+      ✍️ App name (new) or existing repo (user/repo)
+    </div>
     <input type="text" id="repoInput" placeholder="e.g., dad-joke or Varakalasai/ai-app-mq772ch6">
-    <div class="prompt-label" style="margin-top:1rem;">✨ What should the app do?</div>
+    <div class="prompt-label" style="margin-top:1rem;">
+      ✨ What should the app do?
+      <button class="clear-draft-btn" id="clearAutoDraft" title="Clear auto-saved prompt">Clear</button>
+    </div>
     <textarea id="promptInput" placeholder="Describe your app or update..."></textarea>
+
+    <!-- Drafts section -->
+    <div class="draft-section" id="draftPanel">
+      <div class="draft-header" id="draftToggle">
+        <span>📝 Drafts</span>
+        <span>▼</span>
+      </div>
+      <div id="draftContent">
+        <div class="draft-list" id="draftList"></div>
+        <button class="save-draft-btn" id="saveDraftBtn">💾 Save current as draft</button>
+        <button class="save-draft-btn" id="clearAllDraftsBtn" style="background:#fee2e2; margin-top:0.5rem;">🗑️ Clear all drafts</button>
+      </div>
+    </div>
+
     <button class="btn-generate" id="generateBtn">🚀 Generate / Update</button>
 
     <div id="errorBox"></div>
@@ -158,10 +188,20 @@
   const hfLoginBtn = document.getElementById('hfLoginBtn');
   const gitStatus = document.getElementById('gitStatus');
   const hfStatus = document.getElementById('hfStatus');
+  const gitStatusWrap = document.getElementById('gitStatusWrap');
+  const hfStatusWrap = document.getElementById('hfStatusWrap');
   const prEditTextarea = document.getElementById('prEditTextarea');
   const deployLinks = document.getElementById('deployLinks');
   const errorBox = document.getElementById('errorBox');
   const resetBtn = document.getElementById('resetBtn');
+  const disconnectGitBtn = document.getElementById('disconnectGit');
+  const disconnectHFBtn = document.getElementById('disconnectHF');
+  const draftList = document.getElementById('draftList');
+  const saveDraftBtn = document.getElementById('saveDraftBtn');
+  const clearAllDraftsBtn = document.getElementById('clearAllDraftsBtn');
+  const draftToggle = document.getElementById('draftToggle');
+  const draftContent = document.getElementById('draftContent');
+  const clearAutoDraftBtn = document.getElementById('clearAutoDraft');
 
   // ---------- Helpers ----------
   function showToast(msg, duration=3000) {
@@ -177,68 +217,51 @@
     errorBox.textContent = '';
   }
 
+  // ---------- Auth UI ----------
   function updateAuthUI() {
     if (githubToken) {
       loginBtn.style.display = 'none';
-      gitStatus.innerText = 'connected ✅';
+      gitStatusWrap.style.display = 'inline';
       approveBtn.style.display = 'inline-block';
     } else {
       loginBtn.style.display = 'inline-block';
-      gitStatus.innerText = 'not connected';
+      gitStatusWrap.style.display = 'none';
       approveBtn.style.display = 'none';
     }
     if (hfToken) {
       hfLoginBtn.style.display = 'none';
-      hfStatus.innerText = 'connected ✅';
+      hfStatusWrap.style.display = 'inline';
       hfDeployBtn.style.display = 'inline-block';
     } else {
       hfLoginBtn.style.display = 'inline-block';
-      hfStatus.innerText = 'not connected';
+      hfStatusWrap.style.display = 'none';
       hfDeployBtn.style.display = 'none';
     }
   }
 
-  function handleRedirectTokens() {
-    const params = new URLSearchParams(window.location.search);
-    let changed = false;
-    if (params.get('token')) {
-      githubToken = params.get('token');
-      localStorage.setItem('github_token', githubToken);
-      changed = true;
-    }
-    if (params.get('hf_token')) {
-      hfToken = params.get('hf_token');
-      localStorage.setItem('hf_token', hfToken);
-      changed = true;
-    }
-    if (changed) {
-      window.history.replaceState({}, document.title, window.location.pathname);
-      showToast("Connected successfully!");
-    }
+  // ---------- Disconnect ----------
+  function disconnectGitHub() {
+    localStorage.removeItem('github_token');
+    githubToken = null;
     updateAuthUI();
+    showToast("🐙 Disconnected from GitHub.");
   }
+  function disconnectHF() {
+    localStorage.removeItem('hf_token');
+    hfToken = null;
+    updateAuthUI();
+    showToast("🤗 Disconnected from Hugging Face.");
+  }
+  disconnectGitBtn.addEventListener('click', disconnectGitHub);
+  disconnectHFBtn.addEventListener('click', disconnectHF);
 
-  // ---------- Reset / Diagnostic ----------
+  // ---------- Reset ----------
   function resetAndDiagnose() {
     localStorage.clear();
     githubToken = null;
     hfToken = null;
+    // also clear drafts? localStorage.clear() already does
     updateAuthUI();
-    showToast("🗑️ Tokens cleared. Checking backend...");
-    // Quick backend check
-    fetch(`${API_BASE}/`)
-      .then(r => r.text())
-      .then(txt => {
-        if (txt.includes("running")) {
-          showToast("✅ Backend is alive. You can reconnect now.");
-        } else {
-          showToast("⚠️ Backend responded but with unexpected content.");
-        }
-      })
-      .catch(() => {
-        showToast("❌ Cannot reach backend. Is Render sleeping?");
-      });
-    // Clear UI fields
     repoInput.value = '';
     promptInput.value = '';
     resultCard.style.display = 'none';
@@ -247,13 +270,123 @@
     deployLinks.style.display = 'none';
     repoDisplay.innerText = '📁 repo: none';
     deployDisplay.innerText = '☁️ not deployed';
+    showToast("🗑️ Tokens cleared. Checking backend...");
+    fetch(`${API_BASE}/`)
+      .then(r => r.text())
+      .then(txt => {
+        if (txt.includes("running")) showToast("✅ Backend is alive.");
+        else showToast("⚠️ Backend responded unexpectedly.");
+      })
+      .catch(() => showToast("❌ Cannot reach backend."));
+    renderDrafts(); // refresh draft UI (will be empty)
   }
-
   resetBtn.addEventListener('click', resetAndDiagnose);
 
-  // ---------- Auth buttons ----------
+  // ---------- Auth redirects ----------
   loginBtn.addEventListener('click', ()=> window.location.href = AUTH_GITHUB);
   hfLoginBtn.addEventListener('click', ()=> window.location.href = AUTH_HF);
+
+  // ---------- Drafts management ----------
+  function getDrafts() {
+    try { return JSON.parse(localStorage.getItem('grishtesync_drafts') || '[]'); }
+    catch { return []; }
+  }
+  function saveDrafts(drafts) {
+    localStorage.setItem('grishtesync_drafts', JSON.stringify(drafts));
+  }
+  function addDraft(text) {
+    const drafts = getDrafts();
+    drafts.push({ text, time: new Date().toLocaleString() });
+    saveDrafts(drafts);
+    renderDrafts();
+  }
+  function deleteDraft(index) {
+    const drafts = getDrafts();
+    drafts.splice(index, 1);
+    saveDrafts(drafts);
+    renderDrafts();
+  }
+  function clearAllDrafts() {
+    saveDrafts([]);
+    renderDrafts();
+    showToast("🗑️ All drafts cleared.");
+  }
+  function loadDraft(index) {
+    const drafts = getDrafts();
+    if (drafts[index]) {
+      promptInput.value = drafts[index].text;
+      showToast("📝 Draft loaded.");
+    }
+  }
+  function renderDrafts() {
+    const drafts = getDrafts();
+    draftList.innerHTML = '';
+    if (drafts.length === 0) {
+      draftList.innerHTML = '<div style="color:#6b7280; font-size:0.8rem;">No saved drafts.</div>';
+    } else {
+      drafts.forEach((draft, idx) => {
+        const div = document.createElement('div');
+        div.className = 'draft-item';
+        div.innerHTML = `
+          <span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${draft.time} — ${draft.text.slice(0, 50)}...</span>
+          <button class="load-draft" data-index="${idx}">📋</button>
+          <button class="delete-draft" data-index="${idx}">🗑️</button>
+        `;
+        draftList.appendChild(div);
+      });
+      // add event listeners
+      draftList.querySelectorAll('.load-draft').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const idx = parseInt(e.target.getAttribute('data-index'));
+          loadDraft(idx);
+        });
+      });
+      draftList.querySelectorAll('.delete-draft').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const idx = parseInt(e.target.getAttribute('data-index'));
+          deleteDraft(idx);
+        });
+      });
+    }
+  }
+
+  // Auto-save current prompt
+  function saveCurrentDraft() {
+    localStorage.setItem('grishtesync_current_draft', promptInput.value);
+  }
+  function loadCurrentDraft() {
+    const saved = localStorage.getItem('grishtesync_current_draft');
+    if (saved) promptInput.value = saved;
+  }
+  function clearCurrentDraft() {
+    localStorage.removeItem('grishtesync_current_draft');
+    promptInput.value = '';
+    showToast("🗑️ Auto‑saved prompt cleared.");
+  }
+
+  promptInput.addEventListener('input', () => {
+    // debounce save
+    clearTimeout(window.draftSaveTimeout);
+    window.draftSaveTimeout = setTimeout(saveCurrentDraft, 500);
+  });
+  clearAutoDraftBtn.addEventListener('click', clearCurrentDraft);
+
+  // Draft panel toggle
+  let draftPanelOpen = true;
+  draftToggle.addEventListener('click', () => {
+    draftPanelOpen = !draftPanelOpen;
+    draftContent.style.display = draftPanelOpen ? 'block' : 'none';
+    draftToggle.querySelector('span:last-child').innerText = draftPanelOpen ? '▼' : '▶';
+  });
+
+  // Save draft button
+  saveDraftBtn.addEventListener('click', () => {
+    const text = promptInput.value.trim();
+    if (!text) return showToast("⚠️ Type something to save.");
+    addDraft(text);
+    showToast("💾 Draft saved.");
+  });
+  clearAllDraftsBtn.addEventListener('click', clearAllDrafts);
 
   // ---------- Status steps ----------
   function showSteps(steps) {
@@ -483,8 +616,14 @@
   redoBtn.onclick = reweave;
   downloadBtn.onclick = downloadZip;
 
+  // ---------- Initialization ----------
   window.onload = () => {
+    // load tokens
     handleRedirectTokens();
+    updateAuthUI();
+    // load drafts
+    renderDrafts();
+    loadCurrentDraft();
     versionBadge.innerText = 'v0.0.0';
     repoDisplay.innerText = '📁 repo: none';
     deployDisplay.innerText = '☁️ not deployed';
@@ -493,6 +632,27 @@
       document.head.appendChild(s);
     }
   };
+
+  // token redirect handler
+  function handleRedirectTokens() {
+    const params = new URLSearchParams(window.location.search);
+    let changed = false;
+    if (params.get('token')) {
+      githubToken = params.get('token');
+      localStorage.setItem('github_token', githubToken);
+      changed = true;
+    }
+    if (params.get('hf_token')) {
+      hfToken = params.get('hf_token');
+      localStorage.setItem('hf_token', hfToken);
+      changed = true;
+    }
+    if (changed) {
+      window.history.replaceState({}, document.title, window.location.pathname);
+      showToast("Connected successfully!");
+    }
+    updateAuthUI();
+  }
 </script>
 </body>
 </html>
