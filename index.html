@@ -9,32 +9,23 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <style>
-        * {
-            font-family: 'Inter', sans-serif;
-        }
+        * { font-family: 'Inter', sans-serif; }
         body {
             background: linear-gradient(145deg, #f6f9fc 0%, #eef2f5 100%);
             padding: 2rem 1rem;
         }
-        /* Glassmorphism card effect */
         .glass-card {
             background: rgba(255, 255, 255, 0.92);
             backdrop-filter: blur(2px);
             border-radius: 2rem;
             box-shadow: 0 20px 40px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.02);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
-        .glass-card:hover {
-            box-shadow: 0 25px 45px rgba(0,0,0,0.12);
-        }
-        /* Header gradient */
         .hero-gradient {
             background: linear-gradient(105deg, #0a1c2a 0%, #1f4a62 100%);
             border-radius: 2rem 2rem 2rem 2rem;
             padding: 1.5rem 2rem;
             color: white;
         }
-        /* Buttons */
         .btn-primary-custom {
             background: linear-gradient(95deg, #1f4a62, #0e2e3e);
             border: none;
@@ -46,7 +37,6 @@
         .btn-primary-custom:hover {
             background: linear-gradient(95deg, #2d607c, #124052);
             transform: translateY(-2px);
-            box-shadow: 0 8px 18px rgba(0,0,0,0.15);
         }
         .btn-outline-light-custom {
             border-radius: 40px;
@@ -58,21 +48,17 @@
         }
         .btn-outline-light-custom:hover {
             background: rgba(255,255,255,0.25);
-            color: white;
         }
-        /* Form controls */
         textarea, input, select {
             border-radius: 1rem !important;
             border: 1px solid #dee2e6 !important;
             padding: 0.75rem 1rem !important;
-            transition: all 0.2s;
             width: 100%;
         }
         textarea:focus, input:focus, select:focus {
             border-color: #1f4a62 !important;
             box-shadow: 0 0 0 3px rgba(31,74,98,0.2) !important;
         }
-        /* File viewer panels */
         .file-item {
             background: white;
             border-radius: 1rem;
@@ -88,15 +74,13 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #e9ecef;
         }
         .file-content textarea {
-            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-family: 'SF Mono', monospace;
             font-size: 0.85rem;
             background: #1a2634;
             color: #eef2ff;
             border-radius: 0 !important;
-            border: none !important;
             resize: vertical;
         }
         .save-file-btn {
@@ -107,38 +91,6 @@
             border-radius: 30px;
             margin: 0.5rem 0.8rem 0.8rem auto;
             display: inline-block;
-            width: auto;
-        }
-        .save-file-btn:hover {
-            background: #1e465c;
-        }
-        /* Progress bar */
-        .progress-custom {
-            height: 10px;
-            border-radius: 10px;
-            background: #e2e8f0;
-        }
-        .badge-framework {
-            background: #e9ecef;
-            color: #1f4a62;
-            padding: 0.3rem 0.8rem;
-            border-radius: 30px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-        footer {
-            background: rgba(0,0,0,0.03);
-            backdrop-filter: blur(8px);
-            border-top: 1px solid rgba(0,0,0,0.05);
-        }
-        .footer-logo-blur {
-            filter: blur(2px);
-            opacity: 0.7;
-            transition: filter 0.2s;
-        }
-        .footer-logo-blur:hover {
-            filter: blur(0);
-            opacity: 1;
         }
         .toggle-switch-modern {
             width: 48px;
@@ -148,6 +100,7 @@
             position: relative;
             cursor: pointer;
             transition: 0.2s;
+            display: inline-block;
         }
         .toggle-switch-modern input {
             opacity: 0;
@@ -164,9 +117,6 @@
             border-radius: 50%;
             transition: 0.2s;
         }
-        input:checked + .toggle-switch-modern {
-            background: #f59e0b;
-        }
         input:checked + .toggle-switch-modern .toggle-slider-modern {
             transform: translateX(24px);
         }
@@ -174,23 +124,31 @@
             background: #fffef7;
             border-left: 4px solid #f59e0b;
         }
-        @media (max-width: 768px) {
-            body { padding: 0.8rem; }
-            .hero-gradient { padding: 1rem; }
+        footer {
+            background: rgba(0,0,0,0.03);
+            backdrop-filter: blur(8px);
+        }
+        .footer-logo-blur {
+            filter: blur(2px);
+            opacity: 0.7;
+            transition: filter 0.2s;
+        }
+        .footer-logo-blur:hover {
+            filter: blur(0);
+            opacity: 1;
         }
     </style>
 </head>
 <body>
 
 <div class="container-lg px-0 px-md-2" style="max-width: 1200px;">
-    <!-- Main App Card -->
     <div class="glass-card overflow-hidden">
         <!-- Header -->
         <div class="hero-gradient">
             <div class="d-flex flex-wrap justify-content-between align-items-center">
                 <div class="d-flex align-items-center gap-3">
                     <img src="https://i.ibb.co/RGmb4FKk/1781072041102.png" alt="GrishteSync Logo" style="height: 48px;">
-                    <h1 class="display-6 fw-semibold mb-0" style="font-weight: 600; letter-spacing: -0.5px;">GrishteSync</h1>
+                    <h1 class="display-6 fw-semibold mb-0">GrishteSync</h1>
                 </div>
                 <div class="d-flex gap-2 mt-2 mt-sm-0">
                     <button class="btn-outline-light-custom" id="loginBtn" style="display:none;"><i class="fab fa-github me-1"></i> Connect GitHub</button>
@@ -202,8 +160,8 @@
                 </div>
             </div>
             <div class="d-flex flex-wrap justify-content-between align-items-center mt-3 gap-2">
-                <div><span class="badge bg-light text-dark rounded-pill px-3 py-2" id="versionBadge">v0.0.0</span></div>
-                <div class="d-flex gap-3">
+                <span class="badge bg-light text-dark rounded-pill px-3 py-2" id="versionBadge">v0.0.0</span>
+                <div class="d-flex gap-3 align-items-center">
                     <span id="repoDisplay"><i class="far fa-folder-open me-1"></i> repo: none</span>
                     <span id="deployDisplay"><i class="fas fa-cloud-upload-alt me-1"></i> not deployed</span>
                     <div class="d-flex align-items-center gap-2">
@@ -219,7 +177,6 @@
 
         <!-- Main Content -->
         <div class="p-4 p-md-5">
-            <!-- App Name & Repo select -->
             <div class="row g-4 mb-4">
                 <div class="col-md-6">
                     <label class="fw-semibold mb-2"><i class="fas fa-pen-fancy me-1"></i> New App Name</label>
@@ -234,30 +191,29 @@
                 </div>
             </div>
 
-            <!-- Prompt area -->
             <div class="mb-4">
                 <label class="fw-semibold mb-2"><i class="fas fa-comment-dots me-1"></i> Describe your app</label>
-                <textarea id="promptInput" rows="3" class="form-control" placeholder="Example: A Flask app that shows random motivational quotes with an image ..."></textarea>
+                <textarea id="promptInput" rows="3" class="form-control" placeholder="Example: A Gradio app that greets the user with a text input"></textarea>
             </div>
 
             <button class="btn btn-primary-custom w-100 py-2 fw-bold" id="generateBtn"><i class="fas fa-magic me-2"></i> Generate / Update</button>
             <div id="errorBox" class="alert alert-danger mt-3 small" style="display:none;"></div>
 
-            <!-- Progress Status -->
+            <!-- Progress -->
             <div class="status mt-4 p-3 bg-light rounded-4" id="statusArea" style="display:none;">
                 <div class="progress-custom w-100"><div class="progress-bar bg-warning" id="progressBar" style="width:0%"></div></div>
                 <div class="text-center fw-bold mt-2" id="progressText">0%</div>
                 <div class="text-center small text-secondary" id="progressStep">Starting...</div>
             </div>
 
-            <!-- Result Card with Editable Files -->
+            <!-- Result Card -->
             <div class="result-card mt-4 p-3 rounded-4 border" id="resultCard" style="display:none;">
                 <div id="prDescription" class="small text-secondary mb-2"></div>
-                <div id="frameworkBadge" class="badge-framework d-inline-flex mb-2"></div>
+                <div id="frameworkBadge" class="badge bg-secondary text-white d-inline-flex mb-2"></div>
                 <div id="fileViewer" class="file-viewer"></div>
 
                 <div class="mt-3">
-                    <label class="fw-semibold mb-1">📝 Pull Request Description (editable)</label>
+                    <label class="fw-semibold mb-1">📝 PR Description (editable)</label>
                     <textarea id="prEditTextarea" rows="3" class="form-control"></textarea>
                 </div>
 
@@ -276,7 +232,7 @@
             </div>
         </div>
 
-        <!-- Footer with blurred logo -->
+        <!-- Footer -->
         <footer class="text-center p-4 small text-secondary border-top">
             <div class="d-flex justify-content-center gap-4 align-items-center flex-wrap">
                 <img src="https://i.ibb.co/RGmb4FKk/1781072041102.png" alt="GrishteSync" style="height: 28px;" class="footer-logo-blur">
@@ -322,7 +278,6 @@
     const showError = (msg) => { const e = $('errorBox'); if(e){ e.style.display='block'; e.innerHTML = `<i class="fas fa-circle-exclamation me-1"></i> ${msg}`; } };
     const hideError = () => { const e = $('errorBox'); if(e) e.style.display='none'; };
 
-    // Helper fetch that returns JSON
     async function safeFetch(url, options = {}) {
         const res = await fetch(url, options);
         const text = await res.text();
@@ -331,7 +286,7 @@
         }
     }
 
-    // ---------- UI Helpers ----------
+    // UI update
     function updateAuthUI() {
         const loginBtn = $('loginBtn');
         const gitBadge = $('gitBadge');
@@ -350,9 +305,12 @@
             const repoSelect = $('repoSelect');
             if(repoSelect) repoSelect.innerHTML = '<option>-- Connect GitHub to see repos --</option>';
         }
+        // HF toggle visibility of HF deploy button
         const hfToggle = $('hfToggle');
         const hfBtn = $('hfDeployBtn');
-        if(hfBtn) hfBtn.style.display = (hfToggle && hfToggle.checked) ? 'inline-block' : 'none';
+        if(hfBtn && hfToggle) {
+            hfBtn.style.display = hfToggle.checked ? 'inline-block' : 'none';
+        }
     }
 
     async function fetchUserRepos() {
@@ -405,7 +363,6 @@
             `;
             container.appendChild(div);
         }
-        // Attach save events
         document.querySelectorAll('.save-file-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -447,6 +404,8 @@
         if(celeb) celeb.style.display = 'none';
         const live = $('liveBtn');
         if(live) live.style.display = 'none';
+        const copyBtn = $('copyUrlBtn');
+        if(copyBtn) copyBtn.style.display = 'none';
         const progBar = $('progressBar');
         if(progBar) progBar.style.width = '0%';
         const progText = $('progressText');
@@ -535,13 +494,15 @@
         const hfBtn = $('hfDeployBtn');
         if(hfBtn) { hfBtn.disabled=false; hfBtn.innerHTML='<i class="fas fa-cloud-upload-alt me-1"></i> Deploy to HF'; }
         const linksDiv = $('deployLinks');
-        if(linksDiv) linksDiv.innerHTML='';
+        if(linksDiv) { linksDiv.innerHTML = ''; linksDiv.style.display = 'none'; }
         const prInst = $('prInstructions');
-        if(prInst) prInst.style.display='none';
+        if(prInst) prInst.style.display = 'none';
         const celeb = $('celebrationBox');
-        if(celeb) celeb.style.display='none';
+        if(celeb) celeb.style.display = 'none';
         const live = $('liveBtn');
-        if(live) live.style.display='none';
+        if(live) live.style.display = 'none';
+        const copyBtn = $('copyUrlBtn');
+        if(copyBtn) copyBtn.style.display = 'none';
         hideError();
     }
 
@@ -568,17 +529,18 @@
             }
             setTimeout(() => {
                 const statusDiv = $('statusArea');
-                if(statusDiv) statusDiv.style.display='none';
+                if(statusDiv) statusDiv.style.display = 'none';
                 const linksDiv = $('deployLinks');
                 if(linksDiv) {
-                    linksDiv.innerHTML = `<i class="fab fa-github"></i> <a href="${data.repo_url}" target="_blank">${data.repo_url}</a>`;
-                    if(data.pr_url) linksDiv.innerHTML += `<br><i class="fas fa-code-branch"></i> PR: <a href="${data.pr_url}" target="_blank">${data.pr_url}</a>`;
-                    linksDiv.style.display='block';
+                    let html = `<i class="fab fa-github"></i> <a href="${data.repo_url}" target="_blank">${data.repo_url}</a>`;
+                    if(data.pr_url) html += `<br><i class="fas fa-code-branch"></i> PR: <a href="${data.pr_url}" target="_blank">${data.pr_url}</a>`;
+                    linksDiv.innerHTML = html;
+                    linksDiv.style.display = 'block';
                 }
                 const deploySpan = $('deployDisplay');
                 if(deploySpan) deploySpan.innerHTML = `<i class="fab fa-github me-1"></i> GitHub: ${data.repo_url}`;
                 const prInst = $('prInstructions');
-                if(prInst) prInst.style.display='block';
+                if(prInst) prInst.style.display = 'block';
                 if(approveBtn) { approveBtn.innerHTML='✅ Deployed'; approveBtn.disabled=true; }
                 showToast(`✅ GitHub deploy done in ${data.deploy_time}s. Merge the PR.`);
                 hideError();
@@ -604,12 +566,12 @@
             liveSpaceUrl = data.space_url;
             setTimeout(() => {
                 const statusDiv = $('statusArea');
-                if(statusDiv) statusDiv.style.display='none';
+                if(statusDiv) statusDiv.style.display = 'none';
                 const linksDiv = $('deployLinks');
                 if(linksDiv) {
                     if(linksDiv.innerHTML) linksDiv.innerHTML += `<br>`;
                     linksDiv.innerHTML += `<i class="fas fa-rocket"></i> <strong>HF Space:</strong> <a href="${data.space_url}" target="_blank">${data.space_url}</a>`;
-                    linksDiv.style.display='block';
+                    linksDiv.style.display = 'block';
                 }
                 const deploySpan = $('deployDisplay');
                 if(deploySpan) deploySpan.innerHTML = `<i class="fas fa-cloud-upload-alt me-1"></i> HF: ${data.space_url}`;
