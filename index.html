@@ -167,66 +167,73 @@
   let githubUsername = localStorage.getItem("github_user") || null;
   let liveSpaceUrl = null;
 
-  const versionBadge = document.getElementById('versionBadge');
-  const repoDisplay = document.getElementById('repoDisplay');
-  const deployDisplay = document.getElementById('deployDisplay');
-  const promptInput = document.getElementById('promptInput');
-  const appNameInput = document.getElementById('appNameInput');
-  const repoSelect = document.getElementById('repoSelect');
-  const refreshReposBtn = document.getElementById('refreshReposBtn');
-  const generateBtn = document.getElementById('generateBtn');
-  const statusArea = document.getElementById('statusArea');
-  const progressBar = document.getElementById('progressBar');
-  const progressText = document.getElementById('progressText');
-  const progressStep = document.getElementById('progressStep');
-  const resultCard = document.getElementById('resultCard');
-  const prDescription = document.getElementById('prDescription');
-  const fileViewer = document.getElementById('fileViewer');
-  const followupButtons = document.getElementById('followupButtons');
-  const approveBtn = document.getElementById('approveBtn');
-  const hfDeployBtn = document.getElementById('hfDeployBtn');
-  const redoBtn = document.getElementById('redoBtn');
-  const downloadBtn = document.getElementById('downloadBtn');
-  const loginBtn = document.getElementById('loginBtn');
-  const gitBadge = document.getElementById('gitBadge');
-  const gitUser = document.getElementById('gitUser');
-  const prEditTextarea = document.getElementById('prEditTextarea');
-  const deployLinks = document.getElementById('deployLinks');
-  const errorBox = document.getElementById('errorBox');
-  const resetBtn = document.getElementById('resetBtn');
-  const disconnectGitBtn = document.getElementById('disconnectGit');
-  const hfToggle = document.getElementById('hfToggle');
-  const prInstructions = document.getElementById('prInstructions');
-  const celebrationBox = document.getElementById('celebrationBox');
-  const liveBtn = document.getElementById('liveBtn');
+  // DOM refs with null safety
+  const $ = (id) => document.getElementById(id);
+  const versionBadge = $('versionBadge');
+  const repoDisplay = $('repoDisplay');
+  const deployDisplay = $('deployDisplay');
+  const promptInput = $('promptInput');
+  const appNameInput = $('appNameInput');
+  const repoSelect = $('repoSelect');
+  const refreshReposBtn = $('refreshReposBtn');
+  const generateBtn = $('generateBtn');
+  const statusArea = $('statusArea');
+  const progressBar = $('progressBar');
+  const progressText = $('progressText');
+  const progressStep = $('progressStep');
+  const resultCard = $('resultCard');
+  const prDescription = $('prDescription');
+  const fileViewer = $('fileViewer');
+  const followupButtons = $('followupButtons');
+  const approveBtn = $('approveBtn');
+  const hfDeployBtn = $('hfDeployBtn');
+  const redoBtn = $('redoBtn');
+  const downloadBtn = $('downloadBtn');
+  const loginBtn = $('loginBtn');
+  const gitBadge = $('gitBadge');
+  const gitUser = $('gitUser');
+  const prEditTextarea = $('prEditTextarea');
+  const deployLinks = $('deployLinks');
+  const errorBox = $('errorBox');
+  const resetBtn = $('resetBtn');
+  const disconnectGitBtn = $('disconnectGit');
+  const hfToggle = $('hfToggle');
+  const prInstructions = $('prInstructions');
+  const celebrationBox = $('celebrationBox');
+  const liveBtn = $('liveBtn');
 
-  function showToast(msg, d=3000) { const t=document.createElement('div'); t.className='toast'; t.innerText=msg; document.body.appendChild(t); setTimeout(()=>t.remove(), d); }
-  function showError(msg) { errorBox.style.display='block'; errorBox.textContent=msg; }
-  function hideError() { errorBox.style.display='none'; }
+  function showToast(msg, d=3000) { 
+    const t=document.createElement('div'); t.className='toast'; t.innerText=msg; 
+    document.body.appendChild(t); setTimeout(()=>t.remove(), d); 
+  }
+  function showError(msg) { if(errorBox){ errorBox.style.display='block'; errorBox.textContent=msg; } }
+  function hideError() { if(errorBox) errorBox.style.display='none'; }
 
   function updateAuthUI() {
     if (githubToken) {
-      loginBtn.style.display = 'none';
-      gitBadge.style.display = 'inline-flex';
-      gitUser.textContent = githubUsername ? `@${githubUsername}` : 'connected';
-      approveBtn.style.display = 'inline-block';
+      if(loginBtn) loginBtn.style.display = 'none';
+      if(gitBadge) gitBadge.style.display = 'inline-flex';
+      if(gitUser) gitUser.textContent = githubUsername ? `@${githubUsername}` : 'connected';
+      if(approveBtn) approveBtn.style.display = 'inline-block';
       fetchUserRepos();
     } else {
-      loginBtn.style.display = 'inline-block';
-      gitBadge.style.display = 'none';
-      approveBtn.style.display = 'none';
-      repoSelect.innerHTML = '<option value="">-- Connect GitHub to see your repos --</option>';
+      if(loginBtn) loginBtn.style.display = 'inline-block';
+      if(gitBadge) gitBadge.style.display = 'none';
+      if(approveBtn) approveBtn.style.display = 'none';
+      if(repoSelect) repoSelect.innerHTML = '<option value="">-- Connect GitHub to see your repos --</option>';
     }
-    hfDeployBtn.style.display = hfToggle.checked ? 'inline-block' : 'none';
+    if(hfDeployBtn) hfDeployBtn.style.display = hfToggle && hfToggle.checked ? 'inline-block' : 'none';
   }
 
-  hfToggle.addEventListener('change', updateAuthUI);
+  if(hfToggle) hfToggle.addEventListener('change', updateAuthUI);
 
   async function fetchUserRepos() {
-    if (!githubToken) return;
+    if (!githubToken || !repoSelect) return;
     try {
       repoSelect.innerHTML = '<option value="">⏳ Loading...</option>';
-      const res = await fetch('https://api.github.com/user/repos?per_page=100&sort=updated', { headers: { Authorization: `token ${githubToken}` } });
+      const res = await fetch('https://api.github.com/user/repos?per_page=100&sort=updated', { 
+        headers: { Authorization: `token ${githubToken}` } 
+      });
       const repos = await res.json();
       if (!Array.isArray(repos)) { repoSelect.innerHTML = '<option value="">-- Error --</option>'; return; }
       const grishteRepos = repos.filter(r => r.name.toLowerCase().startsWith('grishtesync-'));
@@ -234,43 +241,71 @@
       if (grishteRepos.length === 0) {
         repoSelect.innerHTML += '<option value="" disabled>No GrishteSync repos found. Create one first!</option>';
       } else {
-        grishteRepos.forEach(repo => { const o = document.createElement('option'); o.value = repo.full_name; o.textContent = repo.full_name; repoSelect.appendChild(o); });
+        grishteRepos.forEach(repo => { 
+          const o = document.createElement('option'); 
+          o.value = repo.full_name; 
+          o.textContent = repo.full_name; 
+          repoSelect.appendChild(o); 
+        });
       }
     } catch(e) { repoSelect.innerHTML = '<option value="">-- Error loading repos --</option>'; }
   }
-  refreshReposBtn.addEventListener('click', fetchUserRepos);
+  if(refreshReposBtn) refreshReposBtn.addEventListener('click', fetchUserRepos);
 
-  disconnectGitBtn.addEventListener('click', ()=>{ localStorage.removeItem('github_token'); localStorage.removeItem('github_user'); githubToken=null; githubUsername=null; updateAuthUI(); showToast("🐙 Disconnected."); });
+  if(disconnectGitBtn) disconnectGitBtn.addEventListener('click', ()=>{ 
+    localStorage.removeItem('github_token'); localStorage.removeItem('github_user'); 
+    githubToken=null; githubUsername=null; updateAuthUI(); showToast("🐙 Disconnected."); 
+  });
 
   function resetAndDiagnose() {
     localStorage.clear(); githubToken=null; githubUsername=null; liveSpaceUrl=null;
-    updateAuthUI(); appNameInput.value=''; promptInput.value=''; resultCard.style.display='none';
-    statusArea.style.display='none'; errorBox.style.display='none'; deployLinks.style.display='none';
-    prInstructions.style.display='none'; celebrationBox.style.display='none'; liveBtn.style.display='none';
-    repoDisplay.innerText='📁 repo: none'; deployDisplay.innerText='☁️ not deployed';
+    updateAuthUI(); 
+    if(appNameInput) appNameInput.value=''; 
+    if(promptInput) promptInput.value=''; 
+    if(resultCard) resultCard.style.display='none';
+    if(statusArea) statusArea.style.display='none'; 
+    if(errorBox) errorBox.style.display='none'; 
+    if(deployLinks) deployLinks.style.display='none';
+    if(prInstructions) prInstructions.style.display='none'; 
+    if(celebrationBox) celebrationBox.style.display='none'; 
+    if(liveBtn) liveBtn.style.display='none';
+    if(repoDisplay) repoDisplay.innerText='📁 repo: none'; 
+    if(deployDisplay) deployDisplay.innerText='☁️ not deployed';
     showToast("🗑️ Cleared. Checking backend...");
-    fetch(`${API_BASE}/`).then(r=>r.text()).then(t=>{ showToast(t.includes("running")?"✅ Backend alive.":"⚠️ Issue."); }).catch(()=>showToast("❌ Cannot reach backend."));
+    fetch(`${API_BASE}/`).then(r=>r.text()).then(t=>{ 
+      showToast(t.includes("running")?"✅ Backend alive.":"⚠️ Issue."); 
+    }).catch(()=>showToast("❌ Cannot reach backend."));
   }
-  resetBtn.addEventListener('click', resetAndDiagnose);
-  loginBtn.addEventListener('click', ()=> window.location.href = AUTH_GITHUB);
+  if(resetBtn) resetBtn.addEventListener('click', resetAndDiagnose);
+  if(loginBtn) loginBtn.addEventListener('click', ()=> window.location.href = AUTH_GITHUB);
 
-  function toggleFile(f) { const el=document.getElementById(`file-${f.replace(/[^a-zA-Z0-9]/g,'_')}`); if(el) el.classList.toggle('open'); }
+  function toggleFile(f) { 
+    const el = document.getElementById(`file-${f.replace(/[^a-zA-Z0-9]/g,'_')}`); 
+    if(el) el.classList.toggle('open'); 
+  }
   function renderFileViewer(files) {
+    if(!fileViewer) return;
     fileViewer.innerHTML='';
     if(!files||!Object.keys(files).length) return;
-    for(const [f,c] of Object.entries(files)){ const s=f.replace(/[^a-zA-Z0-9]/g,'_'); const d=document.createElement('div'); d.className='file-item'; d.innerHTML=`<div class="file-header" onclick="toggleFile('${f}')"><span>📄 ${f}</span><span>▼</span></div><div class="file-content" id="file-${s}">${c}</div>`; fileViewer.appendChild(d); }
+    for(const [f,c] of Object.entries(files)){ 
+      const s=f.replace(/[^a-zA-Z0-9]/g,'_'); 
+      const d=document.createElement('div'); 
+      d.className='file-item'; 
+      d.innerHTML=`<div class="file-header" onclick="toggleFile('${f}')"><span>📄 ${f}</span><span>▼</span></div><div class="file-content" id="file-${s}">${c}</div>`; 
+      fileViewer.appendChild(d); 
+    }
   }
 
   function showProgress() {
-    statusArea.style.display = 'flex';
-    resultCard.style.display = 'none';
-    deployLinks.style.display = 'none';
-    prInstructions.style.display = 'none';
-    celebrationBox.style.display = 'none';
-    liveBtn.style.display = 'none';
-    progressBar.style.width = '0%';
-    progressText.textContent = '0%';
-    progressStep.textContent = 'Starting...';
+    if(statusArea) statusArea.style.display = 'flex';
+    if(resultCard) resultCard.style.display = 'none';
+    if(deployLinks) deployLinks.style.display = 'none';
+    if(prInstructions) prInstructions.style.display = 'none';
+    if(celebrationBox) celebrationBox.style.display = 'none';
+    if(liveBtn) liveBtn.style.display = 'none';
+    if(progressBar) progressBar.style.width = '0%';
+    if(progressText) progressText.textContent = '0%';
+    if(progressStep) progressStep.textContent = 'Starting...';
   }
 
   function animateProgress(stepMessages) {
@@ -279,27 +314,37 @@
     const interval = setInterval(() => {
       progress += Math.random() * 12 + 3;
       if (progress > 90) progress = 90;
-      progressBar.style.width = `${progress}%`;
-      progressText.textContent = `${Math.floor(progress)}%`;
-      if (stepIndex < stepMessages.length && progress > (stepIndex + 1) * (90 / stepMessages.length)) {
+      if(progressBar) progressBar.style.width = `${progress}%`;
+      if(progressText) progressText.textContent = `${Math.floor(progress)}%`;
+      if(progressStep && stepIndex < stepMessages.length && progress > (stepIndex + 1) * (90 / stepMessages.length)) {
         progressStep.textContent = stepMessages[stepIndex];
         stepIndex++;
       }
     }, 300);
     return {
-      complete: (time) => { clearInterval(interval); progressBar.style.width='100%'; progressText.textContent='100%'; progressStep.textContent=`✅ Completed in ${time}s`; },
-      fail: (msg) => { clearInterval(interval); progressBar.style.width='0%'; progressText.textContent='Failed'; progressStep.textContent=msg; }
+      complete: (time) => { 
+        clearInterval(interval); 
+        if(progressBar) progressBar.style.width='100%'; 
+        if(progressText) progressText.textContent='100%'; 
+        if(progressStep) progressStep.textContent=`✅ Completed in ${time}s`; 
+      },
+      fail: (msg) => { 
+        clearInterval(interval); 
+        if(progressBar) progressBar.style.width='0%'; 
+        if(progressText) progressText.textContent='Failed'; 
+        if(progressStep) progressStep.textContent=msg; 
+      }
     };
   }
 
   async function generatePR() {
-    const prompt = promptInput.value.trim();
+    const prompt = promptInput ? promptInput.value.trim() : '';
     if(!prompt) return showToast("⚠️ Enter a prompt.");
     currentPrompt = prompt; hideError();
-    const selectedRepo = repoSelect.value;
-    const newAppName = appNameInput.value.trim();
+    const selectedRepo = repoSelect ? repoSelect.value : '';
+    const newAppName = appNameInput ? appNameInput.value.trim() : '';
     repoName = selectedRepo || (newAppName ? `GrishteSync-${newAppName}` : `GrishteSync-${Date.now().toString(36)}`);
-    generateBtn.disabled = true;
+    if(generateBtn) generateBtn.disabled = true;
     showProgress();
     const anim = animateProgress(["Reading prompt...", "Generating code...", "Creating files..."]);
     const headers = { 'Content-Type':'application/json' };
@@ -308,89 +353,144 @@
     try {
       const res = await fetch(API_GENERATE, { method:'POST', headers, body: JSON.stringify(body) });
       const data = await res.json();
-      if(data.error){ anim.fail(data.error); showError(data.error); generateBtn.disabled=false; return; }
+      if(data.error){ anim.fail(data.error); showError(data.error); if(generateBtn) generateBtn.disabled=false; return; }
       anim.complete(data.generate_time || '?');
       generatedFiles = data.files; renderFileViewer(generatedFiles);
-      setTimeout(() => { statusArea.style.display='none'; finalizeUI(prompt); }, 600);
-    } catch(e) { anim.fail(e.message); showError(e.message); generateBtn.disabled=false; }
+      setTimeout(() => { 
+        if(statusArea) statusArea.style.display='none'; 
+        if(resultCard) resultCard.style.display='block'; 
+        finalizeUI(prompt); 
+      }, 600);
+    } catch(e) { anim.fail(e.message); showError(e.message); if(generateBtn) generateBtn.disabled=false; }
   }
 
   function finalizeUI(prompt) {
     let ver = currentVersion.split('.').map(Number);
     if(ver.length!==3||ver.some(isNaN)) ver=[0,0,0];
-    ver[2]++; currentVersion = ver.join('.'); versionBadge.innerText = `v${currentVersion}`;
-    repoDisplay.innerText = `📁 repo: ${repoName}`; deployDisplay.innerText = '☁️ not deployed';
-    prDescription.innerHTML = `<strong>✨ Generated app</strong><br><em>"${prompt}"</em><br><br><strong>📂 Files:</strong><br>${Object.keys(generatedFiles).map(f=>`- ${f}`).join('\n')||'(none)'}<br><strong>📦 Version:</strong> v${currentVersion}`;
-    prEditTextarea.value = `GrishteSync update v${currentVersion}\n\nFiles: ${Object.keys(generatedFiles).join(', ')}`;
-    const followups = ["Add dark mode","Connect database","Improve UI","Add logging","Add tests"];
-    followupButtons.innerHTML = '';
-    followups.sort(()=>0.5-Math.random()).slice(0,3).forEach(s=>{ const b=document.createElement('button'); b.className='btn-follow'; b.innerText=s; b.onclick=()=>{ promptInput.value=s; }; followupButtons.appendChild(b); });
-    resultCard.style.display='block'; generateBtn.disabled=false;
-    approveBtn.innerText='🐙 Deploy to GitHub'; approveBtn.disabled=false;
-    hfDeployBtn.innerText='🤗 Deploy to HF'; hfDeployBtn.disabled=false;
-    deployLinks.innerHTML=''; deployLinks.style.display='none'; prInstructions.style.display='none'; celebrationBox.style.display='none'; liveBtn.style.display='none'; hideError();
+    ver[2]++; currentVersion = ver.join('.'); 
+    if(versionBadge) versionBadge.innerText = `v${currentVersion}`;
+    if(repoDisplay) repoDisplay.innerText = `📁 repo: ${repoName}`; 
+    if(deployDisplay) deployDisplay.innerText = '☁️ not deployed';
+    
+    if(prDescription) {
+        prDescription.innerHTML = `<strong>✨ Generated app</strong><br><em>"${prompt}"</em><br><br><strong>📂 Files:</strong><br>${Object.keys(generatedFiles).map(f=>`- ${f}`).join('\n')||'(none)'}<br><strong>📦 Version:</strong> v${currentVersion}`;
+    }
+    if(prEditTextarea) {
+        prEditTextarea.value = `GrishteSync update v${currentVersion}\n\nFiles: ${Object.keys(generatedFiles).join(', ')}`;
+    }
+    
+    if(followupButtons) {
+        const followups = ["Add dark mode","Connect database","Improve UI","Add logging","Add tests"];
+        followupButtons.innerHTML = '';
+        followups.sort(()=>0.5-Math.random()).slice(0,3).forEach(s=>{ 
+            const b=document.createElement('button'); 
+            b.className='btn-follow'; 
+            b.innerText=s; 
+            b.onclick=()=>{ if(promptInput) promptInput.value=s; }; 
+            followupButtons.appendChild(b); 
+        });
+    }
+    
+    if(generateBtn) generateBtn.disabled=false;
+    if(approveBtn) { approveBtn.innerText='🐙 Deploy to GitHub'; approveBtn.disabled=false; }
+    if(hfDeployBtn) { hfDeployBtn.innerText='🤗 Deploy to HF'; hfDeployBtn.disabled=false; }
+    if(deployLinks) { deployLinks.innerHTML=''; deployLinks.style.display='none'; }
+    if(prInstructions) prInstructions.style.display='none'; 
+    if(celebrationBox) celebrationBox.style.display='none'; 
+    if(liveBtn) liveBtn.style.display='none'; 
+    hideError();
   }
 
   async function deployToGitHub() {
     if(!githubToken){ showToast("Connect GitHub first."); return; }
     if(!generatedFiles||!Object.keys(generatedFiles).length){ showToast("No files."); return; }
-    approveBtn.disabled = true; approveBtn.innerText = '⏳ Deploying...';
+    if(approveBtn) { approveBtn.disabled = true; approveBtn.innerText = '⏳ Deploying...'; }
     showProgress();
     const anim = animateProgress(["Creating branch...", "Pushing files...", "Opening PR..."]);
     try {
-      const res = await fetch(API_DEPLOY, { method:'POST', headers:{ 'Content-Type':'application/json','Authorization':`token ${githubToken}` }, body: JSON.stringify({ repo_name: repoName, files: generatedFiles, version: currentVersion, pr_description: prEditTextarea.value.trim()||undefined }) });
+      const res = await fetch(API_DEPLOY, { 
+        method:'POST', 
+        headers:{ 'Content-Type':'application/json','Authorization':`token ${githubToken}` }, 
+        body: JSON.stringify({ repo_name: repoName, files: generatedFiles, version: currentVersion, pr_description: prEditTextarea ? prEditTextarea.value.trim() : undefined }) 
+      });
       const data = await res.json();
-      if(data.error){ anim.fail(data.error); showError(data.error); approveBtn.disabled=false; approveBtn.innerText='🐙 Deploy to GitHub'; return; }
+      if(data.error){ anim.fail(data.error); showError(data.error); if(approveBtn){ approveBtn.disabled=false; approveBtn.innerText='🐙 Deploy to GitHub'; } return; }
       anim.complete(data.deploy_time || '?');
       setTimeout(() => {
-        statusArea.style.display = 'none';
+        if(statusArea) statusArea.style.display = 'none';
         let html = `<strong>🐙 Repo:</strong> <a href="${data.repo_url}" target="_blank">${data.repo_url}</a>`;
         if(data.pr_url) html += `<br><strong>🔀 PR:</strong> <a href="${data.pr_url}" target="_blank">${data.pr_url}</a>`;
-        deployLinks.innerHTML = html; deployLinks.style.display='block'; deployDisplay.innerText = `🐙 GitHub: ${data.repo_url}`;
-        prInstructions.style.display = 'block'; approveBtn.innerText='✅ Deployed'; approveBtn.disabled=true;
-        resultCard.style.display = 'block'; showToast(`✅ Deployed in ${data.deploy_time||'?'}s! Merge the PR.`); hideError();
+        if(deployLinks) { deployLinks.innerHTML = html; deployLinks.style.display='block'; }
+        if(deployDisplay) deployDisplay.innerText = `🐙 GitHub: ${data.repo_url}`;
+        if(prInstructions) prInstructions.style.display = 'block'; 
+        if(approveBtn) { approveBtn.innerText='✅ Deployed'; approveBtn.disabled=true; }
+        if(resultCard) resultCard.style.display = 'block'; 
+        showToast(`✅ Deployed in ${data.deploy_time||'?'}s! Merge the PR.`); 
+        hideError();
       }, 600);
-    } catch(e) { anim.fail(e.message); showError(e.message); approveBtn.disabled=false; approveBtn.innerText='🐙 Deploy to GitHub'; }
+    } catch(e) { anim.fail(e.message); showError(e.message); if(approveBtn){ approveBtn.disabled=false; approveBtn.innerText='🐙 Deploy to GitHub'; } }
   }
 
   async function deployToHF() {
     if(!repoName){ showToast("Deploy to GitHub first."); return; }
     if(!generatedFiles||!Object.keys(generatedFiles).length){ showToast("Generate first."); return; }
-    hfDeployBtn.disabled = true; hfDeployBtn.innerText = '⏳ Deploying...';
+    if(hfDeployBtn) { hfDeployBtn.disabled = true; hfDeployBtn.innerText = '⏳ Deploying...'; }
     showProgress();
     const anim = animateProgress(["Creating Space...", "Linking repo...", "Building app..."]);
     try {
-      const res = await fetch(API_DEPLOY_HF, { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ repo_full_name: repoName, space_name: repoName.split('/')[1]||'grishte-app', files: generatedFiles }) });
+      const res = await fetch(API_DEPLOY_HF, { 
+        method:'POST', 
+        headers:{ 'Content-Type':'application/json' }, 
+        body: JSON.stringify({ repo_full_name: repoName, space_name: repoName.split('/')[1]||'grishte-app', files: generatedFiles }) 
+      });
       const data = await res.json();
-      if(data.error){ anim.fail(data.error); showError(data.error); hfDeployBtn.disabled=false; hfDeployBtn.innerText='🤗 Deploy to HF'; return; }
+      if(data.error){ anim.fail(data.error); showError(data.error); if(hfDeployBtn){ hfDeployBtn.disabled=false; hfDeployBtn.innerText='🤗 Deploy to HF'; } return; }
       anim.complete(data.deploy_time || '?');
       liveSpaceUrl = data.space_url;
       setTimeout(() => {
-        statusArea.style.display = 'none';
-        deployLinks.innerHTML += `<br><strong>🤗 Live:</strong> <a href="${data.space_url}" target="_blank">${data.space_url}</a>`;
-        deployLinks.style.display='block'; deployDisplay.innerText = `🤗 Live: ${data.space_url}`;
-        hfDeployBtn.innerText='✅ Live'; hfDeployBtn.disabled=true;
-        liveBtn.style.display = 'block'; celebrationBox.style.display = 'block';
-        resultCard.style.display = 'block'; showToast(`🎉 App is live! ${data.deploy_time||'?'}s`); hideError();
+        if(statusArea) statusArea.style.display = 'none';
+        if(deployLinks) { 
+          deployLinks.innerHTML += `<br><strong>🤗 Live:</strong> <a href="${data.space_url}" target="_blank">${data.space_url}</a>`; 
+          deployLinks.style.display='block'; 
+        }
+        if(deployDisplay) deployDisplay.innerText = `🤗 Live: ${data.space_url}`;
+        if(hfDeployBtn) { hfDeployBtn.innerText='✅ Live'; hfDeployBtn.disabled=true; }
+        if(liveBtn) liveBtn.style.display = 'block'; 
+        if(celebrationBox) celebrationBox.style.display = 'block';
+        if(resultCard) resultCard.style.display = 'block'; 
+        showToast(`🎉 App is live! ${data.deploy_time||'?'}s`); 
+        hideError();
       }, 600);
-    } catch(e) { anim.fail(e.message); showError(e.message); hfDeployBtn.disabled=false; hfDeployBtn.innerText='🤗 Deploy to HF'; }
+    } catch(e) { anim.fail(e.message); showError(e.message); if(hfDeployBtn){ hfDeployBtn.disabled=false; hfDeployBtn.innerText='🤗 Deploy to HF'; } }
   }
 
-  liveBtn.addEventListener('click', ()=>{ if(liveSpaceUrl) window.open(liveSpaceUrl, '_blank'); });
+  if(liveBtn) liveBtn.addEventListener('click', ()=>{ if(liveSpaceUrl) window.open(liveSpaceUrl, '_blank'); });
 
-  function reweave() { if(currentPrompt){ promptInput.value=currentPrompt; generatePR(); } else showToast("No prompt."); }
+  function reweave() { if(currentPrompt){ if(promptInput) promptInput.value=currentPrompt; generatePR(); } else showToast("No prompt."); }
   function downloadZip() {
     if(!generatedFiles||!Object.keys(generatedFiles).length) return showToast("No files.");
-    if(!window.JSZip){ const s=document.createElement('script'); s.src='https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js'; s.onload=()=>downloadZip(); document.head.appendChild(s); return; }
-    const zip=new JSZip(); for(const [f,c] of Object.entries(generatedFiles)) zip.file(f,c);
-    zip.generateAsync({type:'blob'}).then(b=>{ const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=`${repoName.replace('/','_')}.zip`; a.click(); });
+    if(!window.JSZip){ 
+      const s=document.createElement('script'); 
+      s.src='https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js'; 
+      s.onload=()=>downloadZip(); 
+      document.head.appendChild(s); 
+      return; 
+    }
+    const zip=new JSZip(); 
+    for(const [f,c] of Object.entries(generatedFiles)) zip.file(f,c);
+    zip.generateAsync({type:'blob'}).then(b=>{ 
+      const a=document.createElement('a'); 
+      a.href=URL.createObjectURL(b); 
+      a.download=`${repoName.replace('/','_')}.zip`; 
+      a.click(); 
+    });
   }
 
-  generateBtn.onclick = generatePR;
-  approveBtn.onclick = deployToGitHub;
-  hfDeployBtn.onclick = deployToHF;
-  redoBtn.onclick = reweave;
-  downloadBtn.onclick = downloadZip;
+  if(generateBtn) generateBtn.onclick = generatePR;
+  if(approveBtn) approveBtn.onclick = deployToGitHub;
+  if(hfDeployBtn) hfDeployBtn.onclick = deployToHF;
+  if(redoBtn) redoBtn.onclick = reweave;
+  if(downloadBtn) downloadBtn.onclick = downloadZip;
 
   function handleRedirectTokens() {
     const params = new URLSearchParams(window.location.search);
@@ -406,9 +506,16 @@
   }
 
   window.onload = () => {
-    handleRedirectTokens(); updateAuthUI();
-    versionBadge.innerText='v0.0.0'; repoDisplay.innerText='📁 repo: none'; deployDisplay.innerText='☁️ not deployed';
-    if(!window.JSZip){ const s=document.createElement('script'); s.src='https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js'; document.head.appendChild(s); }
+    handleRedirectTokens(); 
+    updateAuthUI();
+    if(versionBadge) versionBadge.innerText='v0.0.0'; 
+    if(repoDisplay) repoDisplay.innerText='📁 repo: none'; 
+    if(deployDisplay) deployDisplay.innerText='☁️ not deployed';
+    if(!window.JSZip){ 
+      const s=document.createElement('script'); 
+      s.src='https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js'; 
+      document.head.appendChild(s); 
+    }
   };
 </script>
 </body>
