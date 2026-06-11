@@ -2,246 +2,141 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GrishteSync · AI App Builder</title>
-    <!-- Bootstrap 5 + Icons + Fonts -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <style>
-        * { font-family: 'Inter', sans-serif; }
-        body {
-            background: linear-gradient(145deg, #f6f9fc 0%, #eef2f5 100%);
-            padding: 2rem 1rem;
-        }
-        .glass-card {
-            background: rgba(255, 255, 255, 0.92);
-            backdrop-filter: blur(2px);
-            border-radius: 2rem;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.02);
-        }
-        .hero-gradient {
-            background: linear-gradient(105deg, #0a1c2a 0%, #1f4a62 100%);
-            border-radius: 2rem 2rem 2rem 2rem;
-            padding: 1.5rem 2rem;
-            color: white;
-        }
-        .btn-primary-custom {
-            background: linear-gradient(95deg, #1f4a62, #0e2e3e);
-            border: none;
-            border-radius: 40px;
-            padding: 0.6rem 1.8rem;
-            font-weight: 600;
-            transition: all 0.2s;
-        }
-        .btn-primary-custom:hover {
-            background: linear-gradient(95deg, #2d607c, #124052);
-            transform: translateY(-2px);
-        }
-        .btn-outline-light-custom {
-            border-radius: 40px;
-            border: 1px solid rgba(255,255,255,0.4);
-            background: rgba(255,255,255,0.1);
-            color: white;
-            padding: 0.5rem 1.2rem;
-            font-weight: 500;
-        }
-        .btn-outline-light-custom:hover {
-            background: rgba(255,255,255,0.25);
-        }
-        textarea, input, select {
-            border-radius: 1rem !important;
-            border: 1px solid #dee2e6 !important;
-            padding: 0.75rem 1rem !important;
-            width: 100%;
-        }
-        textarea:focus, input:focus, select:focus {
-            border-color: #1f4a62 !important;
-            box-shadow: 0 0 0 3px rgba(31,74,98,0.2) !important;
-        }
-        .file-item {
-            background: white;
-            border-radius: 1rem;
-            margin-bottom: 1rem;
-            border: 1px solid #e9ecef;
-            overflow: hidden;
-        }
-        .file-header {
-            background: #f8fafc;
-            padding: 0.8rem 1.2rem;
-            cursor: pointer;
-            font-weight: 600;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .file-content textarea {
-            font-family: 'SF Mono', monospace;
-            font-size: 0.85rem;
-            background: #1a2634;
-            color: #eef2ff;
-            border-radius: 0 !important;
-            resize: vertical;
-        }
-        .save-file-btn {
-            background: #2b5e7a;
-            border: none;
-            font-size: 0.75rem;
-            padding: 0.3rem 1rem;
-            border-radius: 30px;
-            margin: 0.5rem 0.8rem 0.8rem auto;
-            display: inline-block;
-        }
-        .toggle-switch-modern {
-            width: 48px;
-            height: 24px;
-            background: #adb5bd;
-            border-radius: 30px;
-            position: relative;
-            cursor: pointer;
-            transition: 0.2s;
-            display: inline-block;
-        }
-        .toggle-switch-modern input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-        .toggle-slider-modern {
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            width: 20px;
-            height: 20px;
-            background: white;
-            border-radius: 50%;
-            transition: 0.2s;
-        }
-        input:checked + .toggle-switch-modern .toggle-slider-modern {
-            transform: translateX(24px);
-        }
-        .result-card {
-            background: #fffef7;
-            border-left: 4px solid #f59e0b;
-        }
-        footer {
-            background: rgba(0,0,0,0.03);
-            backdrop-filter: blur(8px);
-        }
-        .footer-logo-blur {
-            filter: blur(2px);
-            opacity: 0.7;
-            transition: filter 0.2s;
-        }
-        .footer-logo-blur:hover {
-            filter: blur(0);
-            opacity: 1;
-        }
+        body { background: linear-gradient(145deg, #f6f9fc 0%, #eef2f5 100%); padding: 2rem 1rem; font-family: 'Segoe UI', system-ui; }
+        .glass-card { background: rgba(255,255,255,0.95); border-radius: 2rem; box-shadow: 0 20px 40px rgba(0,0,0,0.08); }
+        .hero-gradient { background: linear-gradient(105deg, #0a1c2a 0%, #1f4a62 100%); border-radius: 2rem; padding: 1.5rem 2rem; color: white; }
+        .btn-primary-custom { background: linear-gradient(95deg, #1f4a62, #0e2e3e); border: none; border-radius: 40px; padding: 0.6rem 1.8rem; font-weight: 600; }
+        .btn-primary-custom:hover { background: #124052; transform: translateY(-2px); }
+        .btn-outline-light-custom { border-radius: 40px; border: 1px solid rgba(255,255,255,0.4); background: rgba(255,255,255,0.1); color: white; padding: 0.5rem 1.2rem; }
+        .result-panel { background: #f8fafc; border-radius: 1rem; padding: 1rem; margin-top: 1rem; border-left: 4px solid #10b981; }
+        .toggle-switch-modern { width: 48px; height: 24px; background: #adb5bd; border-radius: 30px; position: relative; cursor: pointer; display: inline-block; }
+        .toggle-switch-modern input { opacity: 0; width: 0; height: 0; }
+        .toggle-slider-modern { position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; background: white; border-radius: 50%; transition: 0.2s; }
+        input:checked + .toggle-switch-modern { background: #f59e0b; }
+        input:checked + .toggle-switch-modern .toggle-slider-modern { transform: translateX(24px); }
+        .file-item { background: white; border-radius: 1rem; margin-bottom: 1rem; border: 1px solid #e9ecef; }
+        .file-header { background: #f8fafc; padding: 0.8rem 1.2rem; cursor: pointer; font-weight: 600; display: flex; justify-content: space-between; }
+        .file-content textarea { font-family: monospace; background: #1e293b; color: #e2e8f0; border: none; width: 100%; padding: 0.8rem; }
+        .save-file-btn { background: #2b5e7a; border: none; color: white; border-radius: 30px; margin: 0.5rem; }
+        .console-log { background: #1a1e24; color: #c9d1d9; padding: 0.8rem; border-radius: 0.5rem; font-family: monospace; font-size: 0.8rem; max-height: 200px; overflow-y: auto; }
     </style>
 </head>
 <body>
-
-<div class="container-lg px-0 px-md-2" style="max-width: 1200px;">
+<div class="container-lg" style="max-width: 1300px;">
     <div class="glass-card overflow-hidden">
-        <!-- Header -->
         <div class="hero-gradient">
             <div class="d-flex flex-wrap justify-content-between align-items-center">
-                <div class="d-flex align-items-center gap-3">
-                    <img src="https://i.ibb.co/RGmb4FKk/1781072041102.png" alt="GrishteSync Logo" style="height: 48px;">
-                    <h1 class="display-6 fw-semibold mb-0">GrishteSync</h1>
-                </div>
-                <div class="d-flex gap-2 mt-2 mt-sm-0">
-                    <button class="btn-outline-light-custom" id="loginBtn" style="display:none;"><i class="fab fa-github me-1"></i> Connect GitHub</button>
-                    <span id="gitBadge" style="display:none;" class="badge bg-light text-dark px-3 py-2 rounded-pill d-flex align-items-center gap-2">
-                        <i class="fab fa-github"></i> <span id="gitUser">@user</span>
-                        <button class="btn btn-sm btn-link text-dark p-0 ms-1" id="disconnectGit"><i class="fas fa-times-circle"></i></button>
-                    </span>
-                    <button class="btn-outline-light-custom" id="resetBtn"><i class="fas fa-undo-alt me-1"></i> Reset</button>
+                <div><h1 class="display-6 fw-semibold">GrishteSync</h1></div>
+                <div class="d-flex gap-2">
+                    <button class="btn-outline-light-custom" id="loginBtn" style="display:none;"><i class="fab fa-github"></i> Connect GitHub</button>
+                    <span id="gitBadge" style="display:none;" class="badge bg-light text-dark px-3 py-2 rounded-pill"><i class="fab fa-github"></i> <span id="gitUser">@user</span> <button class="btn btn-sm btn-link text-dark" id="disconnectGit">✕</button></span>
+                    <button class="btn-outline-light-custom" id="hfConnectBtn"><i class="fab fa-huggingface"></i> Connect 🤗</button>
+                    <span id="hfBadge" style="display:none;" class="badge bg-light text-dark px-3 py-2 rounded-pill"><i class="fab fa-huggingface"></i> HF ready <button class="btn btn-sm btn-link text-dark" id="disconnectHF">✕</button></span>
+                    <button class="btn-outline-light-custom" id="resetBtn"><i class="fas fa-undo-alt"></i> Reset</button>
                 </div>
             </div>
-            <div class="d-flex flex-wrap justify-content-between align-items-center mt-3 gap-2">
-                <span class="badge bg-light text-dark rounded-pill px-3 py-2" id="versionBadge">v0.0.0</span>
+            <div class="d-flex flex-wrap justify-content-between mt-3">
+                <span class="badge bg-light text-dark rounded-pill" id="versionBadge">v0.0.0</span>
                 <div class="d-flex gap-3 align-items-center">
-                    <span id="repoDisplay"><i class="far fa-folder-open me-1"></i> repo: none</span>
-                    <span id="deployDisplay"><i class="fas fa-cloud-upload-alt me-1"></i> not deployed</span>
+                    <span id="repoDisplay"><i class="far fa-folder-open"></i> repo: none</span>
                     <div class="d-flex align-items-center gap-2">
-                        <span class="small">🤗 HF Space</span>
-                        <label class="toggle-switch-modern" style="position:relative;">
-                            <input type="checkbox" id="hfToggle" checked>
-                            <span class="toggle-slider-modern"></span>
-                        </label>
+                        <span>🤗 Deploy</span>
+                        <label class="toggle-switch-modern"><input type="checkbox" id="hfToggle" checked><span class="toggle-slider-modern"></span></label>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Main Content -->
-        <div class="p-4 p-md-5">
+        <div class="p-4">
             <div class="row g-4 mb-4">
                 <div class="col-md-6">
-                    <label class="fw-semibold mb-2"><i class="fas fa-pen-fancy me-1"></i> New App Name</label>
-                    <input type="text" id="appNameInput" class="form-control" placeholder="e.g., smart-dashboard">
+                    <label class="fw-semibold">New App Name</label>
+                    <input type="text" id="appNameInput" class="form-control" placeholder="e.g., my-dashboard">
                 </div>
                 <div class="col-md-6">
-                    <label class="fw-semibold mb-2"><i class="fas fa-sync-alt me-1"></i> Update existing repo</label>
-                    <div class="d-flex gap-2">
-                        <select id="repoSelect" class="form-select"><option>-- Connect GitHub to see repos --</option></select>
-                        <button class="btn btn-outline-secondary rounded-pill" id="refreshReposBtn"><i class="fas fa-arrows-rotate"></i></button>
-                    </div>
+                    <label class="fw-semibold">Update existing repo</label>
+                    <div class="d-flex gap-2"><select id="repoSelect" class="form-select"></select><button class="btn btn-secondary" id="refreshReposBtn"><i class="fas fa-sync"></i></button></div>
                 </div>
             </div>
 
-            <div class="mb-4">
-                <label class="fw-semibold mb-2"><i class="fas fa-comment-dots me-1"></i> Describe your app</label>
-                <textarea id="promptInput" rows="3" class="form-control" placeholder="Example: A Gradio app that greets the user with a text input"></textarea>
+            <!-- File browser -->
+            <div id="repoFileBrowser" style="display:none; margin-top: 1rem;">
+                <hr>
+                <h6><i class="fas fa-code-branch"></i> Repo Files</h6>
+                <div id="fileTree" class="list-group list-group-flush mb-2" style="max-height: 200px; overflow-y: auto;"></div>
+                <div id="fileEditorPanel" style="display:none;">
+                    <label>Editing: <strong id="editFileName"></strong></label>
+                    <textarea id="fileEditArea" rows="6" class="form-control font-monospace mb-2"></textarea>
+                    <button id="commitFileChanges" class="btn btn-sm btn-primary">💾 Commit & PR</button>
+                </div>
             </div>
 
-            <button class="btn btn-primary-custom w-100 py-2 fw-bold" id="generateBtn"><i class="fas fa-magic me-2"></i> Generate / Update</button>
+            <div class="mb-4 mt-3">
+                <label class="fw-semibold">Describe your app (or improvement)</label>
+                <textarea id="promptInput" rows="3" class="form-control" placeholder="Example: Add a dark mode toggle to the existing app"></textarea>
+            </div>
+            <button class="btn btn-primary-custom w-100" id="generateBtn"><i class="fas fa-magic"></i> Generate / Improve</button>
             <div id="errorBox" class="alert alert-danger mt-3 small" style="display:none;"></div>
 
             <!-- Progress -->
-            <div class="status mt-4 p-3 bg-light rounded-4" id="statusArea" style="display:none;">
-                <div class="progress-custom w-100"><div class="progress-bar bg-warning" id="progressBar" style="width:0%"></div></div>
-                <div class="text-center fw-bold mt-2" id="progressText">0%</div>
-                <div class="text-center small text-secondary" id="progressStep">Starting...</div>
+            <div id="statusArea" class="mt-4 p-3 bg-light rounded-4" style="display:none;">
+                <div class="progress mb-2"><div id="progressBar" class="progress-bar bg-warning" style="width:0%"></div></div>
+                <div id="progressText" class="text-center fw-bold">0%</div>
+                <div id="progressStep" class="text-center small">Starting...</div>
             </div>
 
             <!-- Result Card -->
-            <div class="result-card mt-4 p-3 rounded-4 border" id="resultCard" style="display:none;">
-                <div id="prDescription" class="small text-secondary mb-2"></div>
-                <div id="frameworkBadge" class="badge bg-secondary text-white d-inline-flex mb-2"></div>
-                <div id="fileViewer" class="file-viewer"></div>
+            <div id="resultCard" class="mt-4 p-3 rounded-4 border" style="display:none;">
+                <div id="prDescription" class="small text-secondary"></div>
+                <div id="frameworkBadge" class="badge bg-secondary mb-2"></div>
+                <div id="fileViewer"></div>
+                <textarea id="prEditTextarea" rows="3" class="form-control mt-2" placeholder="PR description"></textarea>
 
-                <div class="mt-3">
-                    <label class="fw-semibold mb-1">📝 PR Description (editable)</label>
-                    <textarea id="prEditTextarea" rows="3" class="form-control"></textarea>
+                <div class="mt-3 d-flex gap-2">
+                    <button class="btn btn-success flex-fill" id="approveBtn" style="display:none;"><i class="fab fa-github"></i> Deploy to GitHub</button>
+                    <button class="btn btn-warning flex-fill text-dark" id="hfDeployBtn"><i class="fab fa-huggingface"></i> Deploy to HF</button>
                 </div>
 
-                <div class="action-buttons d-flex flex-wrap gap-2 mt-3">
-                    <button class="btn btn-success rounded-pill flex-fill" id="approveBtn" style="display:none;"><i class="fab fa-github me-1"></i> Deploy to GitHub</button>
-                    <button class="btn btn-warning rounded-pill flex-fill text-dark" id="hfDeployBtn"><i class="fas fa-cloud-upload-alt me-1"></i> Deploy to HF</button>
-                    <button class="btn btn-secondary rounded-pill flex-fill" id="redoBtn"><i class="fas fa-redo-alt me-1"></i> Re-weave</button>
-                    <button class="btn btn-info rounded-pill flex-fill text-white" id="downloadBtn"><i class="fas fa-download me-1"></i> Download ZIP</button>
+                <!-- GitHub Result Panel -->
+                <div id="githubResultPanel" class="result-panel" style="display:none;">
+                    <i class="fab fa-github me-2"></i><strong>GitHub Deployment</strong><br>
+                    <span id="githubRepoLink"></span><br>
+                    <span id="githubPRLink"></span>
                 </div>
-                <button class="btn btn-primary mt-3 w-100 rounded-pill" id="liveBtn" style="display:none;"><i class="fas fa-external-link-alt me-1"></i> Open Live App</button>
 
-                <div id="prInstructions" class="alert alert-warning mt-3 small" style="display:none;"><i class="fas fa-exclamation-triangle me-1"></i> Action needed: merge the Pull Request on GitHub to finalise deployment.</div>
-                <div id="deployLinks" class="small bg-light p-2 rounded-3 mt-2" style="display:none;"></div>
-                <div id="celebrationBox" class="alert alert-success mt-2 text-center" style="display:none;"><i class="fas fa-trophy me-1"></i> Congratulations! App is live on Hugging Face.</div>
-                <button id="copyUrlBtn" class="btn btn-sm btn-outline-secondary mt-2" style="display:none;"><i class="far fa-copy"></i> Copy Space URL</button>
+                <!-- HF Result Panel -->
+                <div id="hfResultPanel" class="result-panel" style="display:none;">
+                    <i class="fab fa-huggingface me-2"></i><strong>Hugging Face Space</strong><br>
+                    <span id="hfSpaceLink"></span>
+                    <button id="copyUrlBtn" class="btn btn-sm btn-outline-secondary mt-2"><i class="far fa-copy"></i> Copy URL</button>
+                    <button id="liveBtn" class="btn btn-sm btn-primary mt-2"><i class="fas fa-external-link-alt"></i> Open Live App</button>
+                    <button id="viewLogsBtn" class="btn btn-sm btn-info mt-2"><i class="fas fa-terminal"></i> View Logs</button>
+                </div>
+
+                <!-- Console logs panel -->
+                <div id="consolePanel" style="display:none; margin-top: 1rem;">
+                    <hr>
+                    <h6><i class="fas fa-terminal"></i> Deployment Console</h6>
+                    <pre id="logOutput" class="console-log"></pre>
+                    <button id="refreshLogsBtn" class="btn btn-sm btn-secondary">🔄 Refresh</button>
+                </div>
+
+                <div class="mt-3 d-flex gap-2">
+                    <button class="btn btn-secondary flex-fill" id="redoBtn"><i class="fas fa-redo-alt"></i> Re-weave</button>
+                    <button class="btn btn-info flex-fill text-white" id="downloadBtn"><i class="fas fa-download"></i> Download ZIP</button>
+                </div>
+                <div id="prInstructions" class="alert alert-warning mt-2 small" style="display:none;">⚠️ Merge the PR on GitHub to complete deployment.</div>
             </div>
         </div>
 
-        <!-- Footer -->
-        <footer class="text-center p-4 small text-secondary border-top">
-            <div class="d-flex justify-content-center gap-4 align-items-center flex-wrap">
-                <img src="https://i.ibb.co/RGmb4FKk/1781072041102.png" alt="GrishteSync" style="height: 28px;" class="footer-logo-blur">
-                <span>✧ crafted by <strong>Suryasticsai</strong> ✧</span>
-                <a href="https://github.com/suryasticsai" target="_blank" class="text-decoration-none text-secondary"><i class="fab fa-github"></i> GitHub</a>
-                <a href="https://linkedin.com/in/suryasticsai" target="_blank" class="text-decoration-none text-secondary"><i class="fab fa-linkedin"></i> LinkedIn</a>
-                <a href="mailto:suryasticsai@gmail.com" class="text-decoration-none text-secondary"><i class="far fa-envelope"></i> Contact</a>
-            </div>
-            <div class="mt-2 opacity-50 small">GRISHTESYNC — from prompt to production. One downpour, one release.</div>
+        <footer class="text-center p-3 small text-secondary border-top">
+            <span>✧ crafted with ❤️ by <strong>Suryasticsai</strong> ✧ | <a href="https://github.com/suryasticsai" target="_blank">GitHub</a> | <a href="https://linkedin.com/in/suryasticsai" target="_blank">LinkedIn</a> | <a href="mailto:suryasticsai@gmail.com">Contact</a></span>
+            <div class="mt-1 opacity-50">GrishteSync — from prompt to production</div>
         </footer>
     </div>
 </div>
@@ -254,6 +149,8 @@
     const API_GENERATE = `${API_BASE}/api/generate`;
     const API_DEPLOY = `${API_BASE}/api/deploy`;
     const API_DEPLOY_HF = `${API_BASE}/api/deploy-hf`;
+    const API_REPO_FILES = `${API_BASE}/api/repo-files`;
+    const API_HF_LOGS = `${API_BASE}/api/hf-logs`;
     const AUTH_GITHUB = `${API_BASE}/auth/login`;
 
     let currentVersion = "0.0.0";
@@ -262,385 +159,311 @@
     let currentPrompt = "";
     let githubToken = localStorage.getItem("github_token") || null;
     let githubUsername = localStorage.getItem("github_user") || null;
+    let hfToken = localStorage.getItem("hf_token") || null;
     let liveSpaceUrl = null;
+    let currentSpaceFullName = null;
 
-    // DOM helpers
     const $ = id => document.getElementById(id);
-    const showToast = (msg, duration=3000) => {
-        const toastDiv = document.createElement('div');
-        toastDiv.className = 'position-fixed bottom-0 start-50 translate-middle-x bg-dark text-white px-4 py-2 rounded-pill shadow mb-3';
-        toastDiv.style.zIndex = '9999';
-        toastDiv.style.fontSize = '0.85rem';
-        toastDiv.innerHTML = `<i class="fas fa-info-circle me-1"></i> ${msg}`;
-        document.body.appendChild(toastDiv);
-        setTimeout(() => toastDiv.remove(), duration);
-    };
-    const showError = (msg) => { const e = $('errorBox'); if(e){ e.style.display='block'; e.innerHTML = `<i class="fas fa-circle-exclamation me-1"></i> ${msg}`; } };
+    const showToast = (msg) => { alert(msg); }; // replace with nicer toast if desired
+    const showError = (msg) => { const e = $('errorBox'); if(e){ e.style.display='block'; e.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${msg}`; } };
     const hideError = () => { const e = $('errorBox'); if(e) e.style.display='none'; };
 
     async function safeFetch(url, options = {}) {
         const res = await fetch(url, options);
         const text = await res.text();
-        try { return JSON.parse(text); } catch(e) {
-            throw new Error(`Server returned non-JSON (${res.status}): ${text.slice(0,200)}`);
-        }
+        try { return JSON.parse(text); } catch(e) { throw new Error(`Server error (${res.status}): ${text.slice(0,200)}`); }
     }
 
-    // UI update
     function updateAuthUI() {
         const loginBtn = $('loginBtn');
         const gitBadge = $('gitBadge');
         const gitUser = $('gitUser');
         const approveBtn = $('approveBtn');
+        const hfConnectBtn = $('hfConnectBtn');
+        const hfBadge = $('hfBadge');
         if (githubToken) {
             if(loginBtn) loginBtn.style.display = 'none';
             if(gitBadge) gitBadge.style.display = 'inline-flex';
-            if(gitUser) gitUser.textContent = githubUsername ? `@${githubUsername}` : 'connected';
+            if(gitUser) gitUser.textContent = githubUsername || 'user';
             if(approveBtn) approveBtn.style.display = 'inline-block';
             fetchUserRepos();
         } else {
             if(loginBtn) loginBtn.style.display = 'inline-block';
             if(gitBadge) gitBadge.style.display = 'none';
             if(approveBtn) approveBtn.style.display = 'none';
-            const repoSelect = $('repoSelect');
-            if(repoSelect) repoSelect.innerHTML = '<option>-- Connect GitHub to see repos --</option>';
         }
-        // HF toggle visibility of HF deploy button
+        if (hfToken) {
+            if(hfConnectBtn) hfConnectBtn.style.display = 'none';
+            if(hfBadge) hfBadge.style.display = 'inline-flex';
+        } else {
+            if(hfConnectBtn) hfConnectBtn.style.display = 'inline-block';
+            if(hfBadge) hfBadge.style.display = 'none';
+        }
         const hfToggle = $('hfToggle');
-        const hfBtn = $('hfDeployBtn');
-        if(hfBtn && hfToggle) {
-            hfBtn.style.display = hfToggle.checked ? 'inline-block' : 'none';
-        }
+        const hfDeployBtn = $('hfDeployBtn');
+        if(hfDeployBtn && hfToggle) hfDeployBtn.style.display = hfToggle.checked ? 'inline-block' : 'none';
     }
 
     async function fetchUserRepos() {
         if (!githubToken) return;
         const repoSelect = $('repoSelect');
-        if(!repoSelect) return;
         try {
-            repoSelect.innerHTML = '<option>⏳ Loading...</option>';
-            const repos = await safeFetch('https://api.github.com/user/repos?per_page=100&sort=updated', {
-                headers: { Authorization: `token ${githubToken}` }
-            });
-            if (!Array.isArray(repos)) throw new Error('Invalid repos');
+            repoSelect.innerHTML = '<option>Loading...</option>';
+            const repos = await safeFetch('https://api.github.com/user/repos?per_page=100', { headers: { Authorization: `token ${githubToken}` } });
             const grishteRepos = repos.filter(r => r.name.toLowerCase().startsWith('grishtesync-'));
-            repoSelect.innerHTML = '<option value="">-- Update an existing GrishteSync repo --</option>';
-            if(grishteRepos.length === 0) repoSelect.innerHTML += '<option disabled>No GrishteSync repos found. Create one first.</option>';
-            else grishteRepos.forEach(repo => { const opt = document.createElement('option'); opt.value = repo.full_name; opt.textContent = repo.full_name; repoSelect.appendChild(opt); });
-        } catch(e) { repoSelect.innerHTML = '<option>-- Error loading repos --</option>'; showError(e.message); }
+            repoSelect.innerHTML = '<option value="">-- Update existing repo --</option>';
+            grishteRepos.forEach(repo => { const opt = document.createElement('option'); opt.value = repo.full_name; opt.textContent = repo.full_name; repoSelect.appendChild(opt); });
+        } catch(e) { repoSelect.innerHTML = '<option>Error loading repos</option>'; }
     }
 
+    // File browser & editor
+    async function loadRepoFiles() {
+        const repoFull = $('repoSelect').value;
+        if (!repoFull || !githubToken) return;
+        try {
+            const data = await safeFetch(API_REPO_FILES, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ repo: repoFull, token: githubToken })
+            });
+            if (data.error) throw new Error(data.error);
+            const fileTree = $('fileTree');
+            fileTree.innerHTML = '';
+            data.files.forEach(file => {
+                const btn = document.createElement('button');
+                btn.className = 'list-group-item list-group-item-action small';
+                btn.innerHTML = `<i class="far fa-file-code"></i> ${file.path}`;
+                btn.onclick = () => loadAndEditFile(file);
+                fileTree.appendChild(btn);
+            });
+            $('repoFileBrowser').style.display = 'block';
+        } catch(e) { showError(e.message); }
+    }
+
+    async function loadAndEditFile(file) {
+        const contentResp = await fetch(file.download_url);
+        const content = await contentResp.text();
+        $('editFileName').innerText = file.path;
+        $('fileEditArea').value = content;
+        $('fileEditorPanel').style.display = 'block';
+        $('commitFileChanges').onclick = async () => {
+            await commitFileChange(file.path, $('fileEditArea').value, file.sha);
+        };
+    }
+
+    async function commitFileChange(filePath, newContent, sha) {
+        const repoFull = $('repoSelect').value;
+        const branchName = `edit-${Date.now()}`;
+        // Use the deploy API to commit a single file (creates PR)
+        const resp = await safeFetch(API_DEPLOY, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `token ${githubToken}` },
+            body: JSON.stringify({
+                repo_name: repoFull.split('/')[1],
+                files: { [filePath]: newContent },
+                version: currentVersion,
+                pr_description: `Manual edit of ${filePath} via GrishteSync`
+            })
+        });
+        if (resp.error) showError(resp.error);
+        else {
+            showToast(`Committed to branch ${resp.branch}, PR: ${resp.pr_url}`);
+            $('githubResultPanel').style.display = 'block';
+            $('githubRepoLink').innerHTML = `<i class="fab fa-github"></i> <a href="${resp.repo_url}" target="_blank">${resp.repo_url}</a>`;
+            $('githubPRLink').innerHTML = `<i class="fas fa-code-branch"></i> <a href="${resp.pr_url}" target="_blank">Pull Request</a>`;
+        }
+    }
+
+    // Framework detection, renderers
     function detectFramework(files) {
         for (let [name, content] of Object.entries(files)) {
             if (name.endsWith('.py')) {
                 const lower = content.toLowerCase();
-                if (lower.includes('flask')) return '🐍 Flask (Docker)';
-                if (lower.includes('gradio')) return '🎨 Gradio';
-                if (lower.includes('streamlit')) return '📊 Streamlit';
+                if (lower.includes('flask')) return 'Flask (Docker)';
+                if (lower.includes('gradio')) return 'Gradio';
+                if (lower.includes('streamlit')) return 'Streamlit';
             }
         }
-        return '❓ Unknown';
+        return 'Unknown';
     }
 
     function renderFileViewer(files) {
         const container = $('fileViewer');
         if(!container) return;
         container.innerHTML = '';
-        if(!files || !Object.keys(files).length) return;
         for (const [filename, content] of Object.entries(files)) {
             const safeId = filename.replace(/[^a-zA-Z0-9]/g, '_');
             const div = document.createElement('div');
             div.className = 'file-item';
             div.innerHTML = `
-                <div class="file-header" onclick="window.toggleFileContent('${safeId}')">
-                    <span><i class="far fa-file-code me-2"></i> ${filename}</span>
+                <div class="file-header" onclick="window.toggleFile('${safeId}')">
+                    <span><i class="far fa-file-code"></i> ${filename}</span>
                     <i class="fas fa-chevron-down"></i>
                 </div>
-                <div class="file-content" id="file-${safeId}" style="display:none;">
-                    <textarea id="textarea-${safeId}" class="form-control font-monospace" rows="10" style="background:#1e293b; color:#e2e8f0;">${escapeHtml(content)}</textarea>
-                    <button class="save-file-btn btn btn-sm btn-light mt-2 ms-2" data-filename="${filename}" data-id="${safeId}">💾 Save Changes</button>
+                <div id="file-${safeId}" style="display:none;">
+                    <textarea id="textarea-${safeId}" rows="8" class="form-control font-monospace">${escapeHtml(content)}</textarea>
+                    <button class="save-file-btn btn btn-sm" data-filename="${filename}" data-id="${safeId}">💾 Save</button>
                 </div>
             `;
             container.appendChild(div);
         }
         document.querySelectorAll('.save-file-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const filename = btn.getAttribute('data-filename');
-                const id = btn.getAttribute('data-id');
+                const filename = btn.dataset.filename;
+                const id = btn.dataset.id;
                 const textarea = document.getElementById(`textarea-${id}`);
                 if(textarea && generatedFiles[filename]) {
                     generatedFiles[filename] = textarea.value;
-                    showToast(`✅ ${filename} saved`);
+                    showToast(`Saved ${filename}`);
                 }
             });
         });
     }
+    window.toggleFile = (id) => { const el = $(`file-${id}`); if(el) el.style.display = el.style.display === 'none' ? 'block' : 'none'; };
+    function escapeHtml(str) { return str.replace(/[&<>]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m])); }
 
-    window.toggleFileContent = (id) => {
-        const el = document.getElementById(`file-${id}`);
-        if(el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
-    };
-
-    function escapeHtml(str) {
-        return str.replace(/[&<>]/g, function(m) {
-            if(m === '&') return '&amp;';
-            if(m === '<') return '&lt;';
-            if(m === '>') return '&gt;';
-            return m;
-        });
-    }
-
-    function showProgress() {
-        const status = $('statusArea');
-        const result = $('resultCard');
-        if(status) status.style.display = 'flex';
-        if(result) result.style.display = 'none';
-        const links = $('deployLinks');
-        if(links) links.style.display = 'none';
-        const prInst = $('prInstructions');
-        if(prInst) prInst.style.display = 'none';
-        const celeb = $('celebrationBox');
-        if(celeb) celeb.style.display = 'none';
-        const live = $('liveBtn');
-        if(live) live.style.display = 'none';
-        const copyBtn = $('copyUrlBtn');
-        if(copyBtn) copyBtn.style.display = 'none';
-        const progBar = $('progressBar');
-        if(progBar) progBar.style.width = '0%';
-        const progText = $('progressText');
-        if(progText) progText.textContent = '0%';
-        const step = $('progressStep');
-        if(step) step.textContent = 'Starting...';
-    }
-
+    function showProgress() { $('statusArea').style.display='flex'; $('resultCard').style.display='none'; }
     function animateProgress(steps) {
-        let progress = 0, idx = 0;
-        const interval = setInterval(() => {
-            progress += Math.random() * 10 + 2;
-            if(progress > 90) progress = 90;
-            const progBar = $('progressBar');
-            const progText = $('progressText');
-            if(progBar) progBar.style.width = `${progress}%`;
-            if(progText) progText.textContent = `${Math.floor(progress)}%`;
-            const stepDiv = $('progressStep');
-            if(stepDiv && idx < steps.length && progress > (idx+1) * (90/steps.length)) {
-                stepDiv.textContent = steps[idx];
-                idx++;
-            }
-        }, 400);
-        return {
-            complete: (time) => { clearInterval(interval); if($('progressBar')) $('progressBar').style.width='100%'; if($('progressText')) $('progressText').textContent='100%'; if($('progressStep')) $('progressStep').textContent=`✅ Done in ${time}s`; },
-            fail: (msg) => { clearInterval(interval); if($('progressBar')) $('progressBar').style.width='0%'; if($('progressText')) $('progressText').textContent='Failed'; if($('progressStep')) $('progressStep').textContent=msg; }
-        };
+        let progress=0, idx=0;
+        const interval = setInterval(() => { progress+=Math.random()*10+2; if(progress>90) progress=90; $('progressBar').style.width=progress+'%'; $('progressText').innerText=Math.floor(progress)+'%'; if(idx<steps.length && progress>(idx+1)*(90/steps.length)) $('progressStep').innerText=steps[idx++]; }, 400);
+        return { complete: (t)=>{ clearInterval(interval); $('progressBar').style.width='100%'; $('progressText').innerText='100%'; $('progressStep').innerText=`Done in ${t}s`; }, fail: (msg)=>{ clearInterval(interval); $('progressBar').style.width='0%'; $('progressText').innerText='Failed'; $('progressStep').innerText=msg; } };
     }
 
+    // Generate / Improve
     async function generatePR() {
         const prompt = $('promptInput')?.value.trim();
-        if(!prompt) return showToast("Enter a prompt");
+        if(!prompt) return alert("Enter a prompt");
         currentPrompt = prompt;
         hideError();
         const selectedRepo = $('repoSelect')?.value;
         const newName = $('appNameInput')?.value.trim();
         repoName = selectedRepo || (newName ? `GrishteSync-${newName}` : `GrishteSync-${Date.now().toString(36)}`);
-        const genBtn = $('generateBtn');
-        if(genBtn) genBtn.disabled = true;
+        $('generateBtn').disabled = true;
         showProgress();
-        const anim = animateProgress(["Reading prompt...", "Generating code...", "Preparing files..."]);
+        const anim = animateProgress(["Reading prompt...","Generating code...","Preparing files..."]);
         const headers = { 'Content-Type':'application/json' };
         if(selectedRepo && githubToken) headers['Authorization'] = `token ${githubToken}`;
-        const body = { prompt };
-        if(selectedRepo) body.repo = selectedRepo;
         try {
-            const data = await safeFetch(API_GENERATE, { method:'POST', headers, body: JSON.stringify(body) });
-            if(data.error) { anim.fail(data.error); showError(data.error); if(genBtn) genBtn.disabled=false; return; }
+            const data = await safeFetch(API_GENERATE, { method:'POST', headers, body: JSON.stringify({ prompt, repo: selectedRepo }) });
+            if(data.error) throw new Error(data.error);
             anim.complete(data.generate_time || '?');
             generatedFiles = data.files;
             renderFileViewer(generatedFiles);
-            setTimeout(() => {
-                const statusArea = $('statusArea');
-                if(statusArea) statusArea.style.display = 'none';
-                const resultCard = $('resultCard');
-                if(resultCard) resultCard.style.display = 'block';
-                finalizeUI(prompt);
-            }, 500);
-        } catch(e) { anim.fail(e.message); showError(e.message); if(genBtn) genBtn.disabled=false; }
+            setTimeout(() => { $('statusArea').style.display='none'; $('resultCard').style.display='block'; finalizeUI(prompt); }, 500);
+        } catch(e) { anim.fail(e.message); showError(e.message); } finally { $('generateBtn').disabled = false; }
     }
 
     function finalizeUI(prompt) {
         let ver = currentVersion.split('.').map(Number);
-        if(ver.length!==3 || ver.some(isNaN)) ver=[0,0,0];
+        if(ver.length!==3) ver=[0,0,0];
         ver[2]++; currentVersion = ver.join('.');
-        const verBadge = $('versionBadge');
-        if(verBadge) verBadge.innerText = `v${currentVersion}`;
-        const repoDisplaySpan = $('repoDisplay');
-        if(repoDisplaySpan) repoDisplaySpan.innerHTML = `<i class="far fa-folder-open me-1"></i> repo: ${repoName}`;
-        const deploySpan = $('deployDisplay');
-        if(deploySpan) deploySpan.innerHTML = `<i class="fas fa-cloud-upload-alt me-1"></i> not deployed`;
-
-        const prDesc = $('prDescription');
-        if(prDesc) prDesc.innerHTML = `<strong>✨ Generated app</strong><br><em>"${prompt}"</em><br><strong>Files:</strong> ${Object.keys(generatedFiles).join(', ')}<br><strong>Version:</strong> v${currentVersion}`;
-        const editArea = $('prEditTextarea');
-        if(editArea) editArea.value = `GrishteSync update v${currentVersion}\n\nFiles: ${Object.keys(generatedFiles).join(', ')}`;
-
-        const framework = detectFramework(generatedFiles);
-        const badgeFrame = $('frameworkBadge');
-        if(badgeFrame) badgeFrame.innerHTML = `<i class="fas fa-cube me-1"></i> ${framework}`;
-
-        const genBtn = $('generateBtn');
-        if(genBtn) genBtn.disabled = false;
-        const approve = $('approveBtn');
-        if(approve) { approve.disabled=false; approve.innerHTML='<i class="fab fa-github me-1"></i> Deploy to GitHub'; }
-        const hfBtn = $('hfDeployBtn');
-        if(hfBtn) { hfBtn.disabled=false; hfBtn.innerHTML='<i class="fas fa-cloud-upload-alt me-1"></i> Deploy to HF'; }
-        const linksDiv = $('deployLinks');
-        if(linksDiv) { linksDiv.innerHTML = ''; linksDiv.style.display = 'none'; }
-        const prInst = $('prInstructions');
-        if(prInst) prInst.style.display = 'none';
-        const celeb = $('celebrationBox');
-        if(celeb) celeb.style.display = 'none';
-        const live = $('liveBtn');
-        if(live) live.style.display = 'none';
-        const copyBtn = $('copyUrlBtn');
-        if(copyBtn) copyBtn.style.display = 'none';
-        hideError();
+        $('versionBadge').innerText = `v${currentVersion}`;
+        $('repoDisplay').innerHTML = `<i class="far fa-folder-open"></i> repo: ${repoName}`;
+        $('prDescription').innerHTML = `<strong>Generated</strong><br><em>"${prompt}"</em><br>Files: ${Object.keys(generatedFiles).join(', ')}`;
+        $('prEditTextarea').value = `GrishteSync update v${currentVersion}\nFiles: ${Object.keys(generatedFiles).join(', ')}`;
+        $('frameworkBadge').innerHTML = `Framework: ${detectFramework(generatedFiles)}`;
+        $('githubResultPanel').style.display = 'none';
+        $('hfResultPanel').style.display = 'none';
+        $('consolePanel').style.display = 'none';
+        $('approveBtn').disabled = false; $('approveBtn').innerHTML = '<i class="fab fa-github"></i> Deploy to GitHub';
+        $('hfDeployBtn').disabled = false; $('hfDeployBtn').innerHTML = '<i class="fab fa-huggingface"></i> Deploy to HF';
     }
 
+    // GitHub deploy
     async function deployToGitHub() {
-        if(!githubToken) return showToast("Connect GitHub first.");
-        if(!Object.keys(generatedFiles).length) return showToast("No files generated.");
-        const approveBtn = $('approveBtn');
-        if(approveBtn) { approveBtn.disabled=true; approveBtn.innerHTML='⏳ Deploying...'; }
+        if(!githubToken) return alert("Connect GitHub first.");
+        if(!Object.keys(generatedFiles).length) return alert("Generate first.");
+        $('approveBtn').disabled = true; $('approveBtn').innerHTML = '⏳ Deploying...';
         showProgress();
-        const anim = animateProgress(["Creating branch...", "Pushing files...", "Opening PR..."]);
+        const anim = animateProgress(["Creating branch","Pushing files","Opening PR"]);
         try {
-            const data = await safeFetch(API_DEPLOY, {
-                method:'POST',
-                headers:{ 'Content-Type':'application/json','Authorization':`token ${githubToken}` },
-                body: JSON.stringify({ repo_name: repoName, files: generatedFiles, version: currentVersion, pr_description: $('prEditTextarea')?.value.trim() })
-            });
-            if(data.error) { anim.fail(data.error); showError(data.error); if(approveBtn){ approveBtn.disabled=false; approveBtn.innerHTML='<i class="fab fa-github me-1"></i> Deploy to GitHub'; } return; }
-            anim.complete(data.deploy_time || '?');
-            if(data.username && repoName) {
-                const base = repoName.includes('/') ? repoName.split('/').pop() : repoName;
-                repoName = `${data.username}/${base}`;
-                const repoDisplaySpan = $('repoDisplay');
-                if(repoDisplaySpan) repoDisplaySpan.innerHTML = `<i class="far fa-folder-open me-1"></i> repo: ${repoName}`;
-            }
+            const data = await safeFetch(API_DEPLOY, { method:'POST', headers:{ 'Content-Type':'application/json', Authorization:`token ${githubToken}` }, body: JSON.stringify({ repo_name: repoName, files: generatedFiles, version: currentVersion, pr_description: $('prEditTextarea').value }) });
+            if(data.error) throw new Error(data.error);
+            anim.complete(data.deploy_time);
+            if(data.username && repoName) { repoName = `${data.username}/${repoName.replace(/.*\//,'')}`; $('repoDisplay').innerHTML = `<i class="far fa-folder-open"></i> repo: ${repoName}`; }
             setTimeout(() => {
-                const statusDiv = $('statusArea');
-                if(statusDiv) statusDiv.style.display = 'none';
-                const linksDiv = $('deployLinks');
-                if(linksDiv) {
-                    let html = `<i class="fab fa-github"></i> <a href="${data.repo_url}" target="_blank">${data.repo_url}</a>`;
-                    if(data.pr_url) html += `<br><i class="fas fa-code-branch"></i> PR: <a href="${data.pr_url}" target="_blank">${data.pr_url}</a>`;
-                    linksDiv.innerHTML = html;
-                    linksDiv.style.display = 'block';
-                }
-                const deploySpan = $('deployDisplay');
-                if(deploySpan) deploySpan.innerHTML = `<i class="fab fa-github me-1"></i> GitHub: ${data.repo_url}`;
-                const prInst = $('prInstructions');
-                if(prInst) prInst.style.display = 'block';
-                if(approveBtn) { approveBtn.innerHTML='✅ Deployed'; approveBtn.disabled=true; }
-                showToast(`✅ GitHub deploy done in ${data.deploy_time}s. Merge the PR.`);
-                hideError();
-            }, 600);
-        } catch(e) { anim.fail(e.message); showError(e.message); if(approveBtn){ approveBtn.disabled=false; approveBtn.innerHTML='<i class="fab fa-github me-1"></i> Deploy to GitHub'; } }
+                $('statusArea').style.display = 'none';
+                $('githubResultPanel').style.display = 'block';
+                $('githubRepoLink').innerHTML = `<i class="fab fa-github"></i> <a href="${data.repo_url}" target="_blank">${data.repo_url}</a>`;
+                $('githubPRLink').innerHTML = `<i class="fas fa-code-branch"></i> <a href="${data.pr_url}" target="_blank">Pull Request</a>`;
+                $('prInstructions').style.display = 'block';
+                $('approveBtn').innerHTML = '✅ Deployed'; $('approveBtn').disabled = true;
+                showToast("GitHub deploy successful");
+            }, 500);
+        } catch(e) { anim.fail(e.message); showError(e.message); $('approveBtn').disabled = false; $('approveBtn').innerHTML = '<i class="fab fa-github"></i> Deploy to GitHub'; }
     }
 
+    // HF deploy & logs
     async function deployToHF() {
-        if(!repoName) return showToast("Generate and (optionally) deploy to GitHub first.");
-        if(!Object.keys(generatedFiles).length) return showToast("No files.");
-        const hfBtn = $('hfDeployBtn');
-        if(hfBtn) { hfBtn.disabled=true; hfBtn.innerHTML='⏳ Deploying...'; }
+        if(!repoName) return alert("Generate a repo first.");
+        if(!hfToken) return alert("Please connect Hugging Face first (click 'Connect 🤗').");
+        if(!Object.keys(generatedFiles).length) return alert("Generate code first.");
+        $('hfDeployBtn').disabled = true; $('hfDeployBtn').innerHTML = '⏳ Deploying...';
         showProgress();
-        const anim = animateProgress(["Creating Space...", "Uploading files...", "Building app..."]);
+        const anim = animateProgress(["Creating Space","Uploading files","Building"]);
         try {
-            const data = await safeFetch(API_DEPLOY_HF, {
-                method:'POST',
-                headers:{ 'Content-Type':'application/json' },
-                body: JSON.stringify({ repo_full_name: repoName, space_name: repoName.split('/')[1] || 'grishte-app', files: generatedFiles })
-            });
-            if(data.error) { anim.fail(data.error); showError(data.error); if(hfBtn){ hfBtn.disabled=false; hfBtn.innerHTML='<i class="fas fa-cloud-upload-alt me-1"></i> Deploy to HF'; } return; }
-            anim.complete(data.deploy_time || '?');
+            const data = await safeFetch(API_DEPLOY_HF, { method:'POST', headers:{ 'Content-Type':'application/json', 'X-HF-Token': hfToken, 'Authorization': githubToken ? `token ${githubToken}` : '' }, body: JSON.stringify({ repo_full_name: repoName, space_name: repoName.split('/')[1] || 'grishte-app', files: generatedFiles, github_token: githubToken, hf_token: hfToken }) });
+            if(data.error) throw new Error(data.error);
+            anim.complete(data.deploy_time);
             liveSpaceUrl = data.space_url;
+            currentSpaceFullName = data.space_full_name;
             setTimeout(() => {
-                const statusDiv = $('statusArea');
-                if(statusDiv) statusDiv.style.display = 'none';
-                const linksDiv = $('deployLinks');
-                if(linksDiv) {
-                    if(linksDiv.innerHTML) linksDiv.innerHTML += `<br>`;
-                    linksDiv.innerHTML += `<i class="fas fa-rocket"></i> <strong>HF Space:</strong> <a href="${data.space_url}" target="_blank">${data.space_url}</a>`;
-                    linksDiv.style.display = 'block';
-                }
-                const deploySpan = $('deployDisplay');
-                if(deploySpan) deploySpan.innerHTML = `<i class="fas fa-cloud-upload-alt me-1"></i> HF: ${data.space_url}`;
-                if(hfBtn) { hfBtn.innerHTML='✅ Live'; hfBtn.disabled=true; }
-                const liveBtn = $('liveBtn');
-                if(liveBtn) liveBtn.style.display = 'block';
-                const celeb = $('celebrationBox');
-                if(celeb) celeb.style.display = 'block';
-                const copyBtn = $('copyUrlBtn');
-                if(copyBtn) {
-                    copyBtn.style.display = 'inline-block';
-                    copyBtn.onclick = () => { navigator.clipboard.writeText(data.space_url); showToast("URL copied!"); };
-                }
-                showToast(`🎉 App live! ${data.deploy_time}s`);
-                hideError();
-            }, 600);
-        } catch(e) { anim.fail(e.message); showError(e.message); if(hfBtn){ hfBtn.disabled=false; hfBtn.innerHTML='<i class="fas fa-cloud-upload-alt me-1"></i> Deploy to HF'; } }
+                $('statusArea').style.display = 'none';
+                $('hfResultPanel').style.display = 'block';
+                $('hfSpaceLink').innerHTML = `<i class="fab fa-huggingface"></i> <a href="${data.space_url}" target="_blank">${data.space_url}</a>`;
+                $('copyUrlBtn').onclick = () => { navigator.clipboard.writeText(data.space_url); alert("URL copied!"); };
+                $('liveBtn').onclick = () => window.open(data.space_url, '_blank');
+                $('viewLogsBtn').onclick = () => fetchSpaceLogs(currentSpaceFullName);
+                $('hfDeployBtn').innerHTML = '✅ Live'; $('hfDeployBtn').disabled = true;
+                showToast("HF Space live!");
+            }, 500);
+        } catch(e) { anim.fail(e.message); showError(e.message); $('hfDeployBtn').disabled = false; $('hfDeployBtn').innerHTML = '<i class="fab fa-huggingface"></i> Deploy to HF'; }
     }
 
-    // Event bindings
+    async function fetchSpaceLogs(spaceFullName) {
+        if (!hfToken) return;
+        try {
+            const data = await safeFetch(API_HF_LOGS, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ space_name: spaceFullName, hf_token: hfToken })
+            });
+            const logDiv = $('logOutput');
+            if (data.logs && data.logs.length) {
+                let logText = '';
+                data.logs.forEach(entry => { logText += (entry.logs || JSON.stringify(entry)) + '\n'; });
+                logDiv.innerText = logText;
+            } else {
+                logDiv.innerText = data.error || 'No logs available yet.';
+            }
+            $('consolePanel').style.display = 'block';
+        } catch(e) { logDiv.innerText = 'Error fetching logs: ' + e.message; $('consolePanel').style.display = 'block'; }
+    }
+
+    // Event listeners
     $('generateBtn')?.addEventListener('click', generatePR);
     $('approveBtn')?.addEventListener('click', deployToGitHub);
     $('hfDeployBtn')?.addEventListener('click', deployToHF);
-    $('redoBtn')?.addEventListener('click', () => { if(currentPrompt) { if($('promptInput')) $('promptInput').value = currentPrompt; generatePR(); } else showToast("No previous prompt."); });
-    $('downloadBtn')?.addEventListener('click', () => {
-        if(!Object.keys(generatedFiles).length) return showToast("No files to download.");
-        if(!window.JSZip) return showToast("Wait for JSZip to load.");
-        const zip = new JSZip();
-        for(const [name, content] of Object.entries(generatedFiles)) zip.file(name, content);
-        zip.generateAsync({type:'blob'}).then(blob => { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `${repoName.replace('/','_')}.zip`; a.click(); });
-    });
-    $('liveBtn')?.addEventListener('click', () => { if(liveSpaceUrl) window.open(liveSpaceUrl, '_blank'); });
+    $('redoBtn')?.addEventListener('click', () => { if(currentPrompt) { $('promptInput').value = currentPrompt; generatePR(); } });
+    $('downloadBtn')?.addEventListener('click', () => { if(!window.JSZip) return; const zip=new JSZip(); for(let [n,c] of Object.entries(generatedFiles)) zip.file(n,c); zip.generateAsync({type:'blob'}).then(b=>{ const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=`${repoName.replace('/','_')}.zip`; a.click(); }); });
     $('refreshReposBtn')?.addEventListener('click', fetchUserRepos);
-    $('resetBtn')?.addEventListener('click', () => {
-        localStorage.clear(); githubToken=null; githubUsername=null; liveSpaceUrl=null;
-        updateAuthUI();
-        if($('appNameInput')) $('appNameInput').value='';
-        if($('promptInput')) $('promptInput').value='';
-        if($('resultCard')) $('resultCard').style.display='none';
-        showToast("Reset complete.");
-    });
+    $('resetBtn')?.addEventListener('click', () => { localStorage.clear(); location.reload(); });
     $('loginBtn')?.addEventListener('click', () => window.location.href = AUTH_GITHUB);
-    $('disconnectGit')?.addEventListener('click', () => {
-        localStorage.removeItem('github_token'); localStorage.removeItem('github_user');
-        githubToken=null; githubUsername=null;
-        updateAuthUI(); showToast("Disconnected from GitHub.");
-    });
+    $('disconnectGit')?.addEventListener('click', () => { localStorage.removeItem('github_token'); localStorage.removeItem('github_user'); location.reload(); });
+    $('hfConnectBtn')?.addEventListener('click', () => { const token = prompt("Enter your Hugging Face token (with write permissions):"); if(token) { localStorage.setItem('hf_token', token); location.reload(); } });
+    $('disconnectHF')?.addEventListener('click', () => { localStorage.removeItem('hf_token'); location.reload(); });
     $('hfToggle')?.addEventListener('change', updateAuthUI);
+    $('repoSelect')?.addEventListener('change', () => { if ($('repoSelect').value) loadRepoFiles(); });
+    $('refreshLogsBtn')?.addEventListener('click', () => { if(currentSpaceFullName) fetchSpaceLogs(currentSpaceFullName); });
 
     function handleRedirectTokens() {
-        const params = new URLSearchParams(window.location.search);
-        const token = params.get('token');
-        const user = params.get('github_user');
-        if(token) {
-            githubToken = token;
-            githubUsername = user || '';
-            localStorage.setItem('github_token', githubToken);
-            if(githubUsername) localStorage.setItem('github_user', githubUsername);
-            window.history.replaceState({}, document.title, window.location.pathname);
-            showToast(`Connected as @${githubUsername || 'user'}`);
-        }
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+        const user = urlParams.get('github_user');
+        if(token) { localStorage.setItem('github_token', token); if(user) localStorage.setItem('github_user', user); window.history.replaceState({}, '', window.location.pathname); }
         updateAuthUI();
     }
-
-    window.onload = () => {
-        safeFetch(`${API_BASE}/`).catch(()=>{});
-        handleRedirectTokens();
-        updateAuthUI();
-    };
+    window.onload = () => { handleRedirectTokens(); updateAuthUI(); };
 </script>
 </body>
 </html>
