@@ -4,17 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <title>GrishteSync · AI App Builder</title>
-    <!-- Font Awesome 6 (free) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- Google Fonts (Inter) -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             background: #f5f7fb;
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, sans-serif;
@@ -22,25 +15,13 @@
             padding-bottom: 32px;
             color: #1e293b;
         }
-
-        /* Main container – card based */
-        .app-container {
-            max-width: 700px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        /* Cards */
+        .app-container { max-width: 700px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
         .card {
             background: white;
             border-radius: 28px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
             overflow: hidden;
-            transition: transform 0.1s ease;
         }
-
         .card-header {
             padding: 18px 20px 8px 20px;
             font-weight: 600;
@@ -50,17 +31,8 @@
             gap: 10px;
             border-bottom: 1px solid #f0f2f5;
         }
-
-        .card-header i {
-            font-size: 1.3rem;
-            color: #1f4a62;
-        }
-
-        .card-content {
-            padding: 16px 20px 20px 20px;
-        }
-
-        /* Header special */
+        .card-header i { font-size: 1.3rem; color: #1f4a62; }
+        .card-content { padding: 16px 20px 20px 20px; }
         .main-header {
             background: linear-gradient(105deg, #0a1c2a 0%, #1f4a62 100%);
             border-radius: 28px;
@@ -73,19 +45,8 @@
             gap: 12px;
             box-shadow: 0 8px 20px rgba(0,0,0,0.1);
         }
-
-        .logo-area {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .logo-area h1 {
-            font-size: 1.6rem;
-            font-weight: 700;
-            letter-spacing: -0.3px;
-        }
-
+        .logo-area { display: flex; align-items: center; gap: 12px; }
+        .logo-area h1 { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.3px; }
         .badge-version {
             background: rgba(255,255,255,0.2);
             padding: 4px 12px;
@@ -93,12 +54,7 @@
             font-size: 0.75rem;
             font-weight: 500;
         }
-
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-        }
-
+        .action-buttons { display: flex; gap: 10px; }
         .btn-outline-light {
             background: rgba(255,255,255,0.15);
             border: none;
@@ -113,11 +69,7 @@
             cursor: pointer;
             transition: background 0.2s;
         }
-
-        .btn-outline-light:hover {
-            background: rgba(255,255,255,0.3);
-        }
-
+        .btn-outline-light:hover { background: rgba(255,255,255,0.3); }
         .github-badge {
             background: white;
             color: #1f4a62;
@@ -128,12 +80,7 @@
             align-items: center;
             gap: 8px;
         }
-
-        /* Form elements */
-        .form-group {
-            margin-bottom: 18px;
-        }
-
+        .form-group { margin-bottom: 18px; }
         label {
             font-weight: 600;
             font-size: 0.85rem;
@@ -141,7 +88,6 @@
             display: block;
             color: #334155;
         }
-
         input, select, textarea {
             width: 100%;
             padding: 14px 16px;
@@ -152,17 +98,11 @@
             font-family: inherit;
             transition: border 0.2s;
         }
-
         input:focus, select:focus, textarea:focus {
             outline: none;
             border-color: #1f4a62;
             box-shadow: 0 0 0 3px rgba(31,74,98,0.1);
         }
-
-        button {
-            cursor: pointer;
-        }
-
         .btn-primary {
             background: linear-gradient(95deg, #1f4a62, #0e2e3e);
             border: none;
@@ -178,11 +118,7 @@
             gap: 8px;
             transition: all 0.2s;
         }
-
-        .btn-primary:active {
-            transform: scale(0.98);
-        }
-
+        .btn-primary:active { transform: scale(0.98); }
         .btn-secondary {
             background: #eef2ff;
             border: none;
@@ -191,7 +127,6 @@
             font-weight: 600;
             color: #1f4a62;
         }
-
         .result-panel {
             background: #f8fafc;
             border-radius: 20px;
@@ -199,8 +134,6 @@
             margin-top: 16px;
             border-left: 4px solid #10b981;
         }
-
-        /* File viewer */
         .file-item {
             background: white;
             border-radius: 20px;
@@ -243,15 +176,11 @@
             border-radius: 16px;
             font-family: monospace;
             font-size: 0.75rem;
-            max-height: 200px;
+            max-height: 300px;
             overflow-y: auto;
             white-space: pre-wrap;
         }
-        .toggle-switch {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        .toggle-switch { display: flex; align-items: center; gap: 10px; }
         .toggle-switch input {
             width: 48px;
             height: 24px;
@@ -262,9 +191,7 @@
             cursor: pointer;
             transition: 0.2s;
         }
-        .toggle-switch input:checked {
-            background: #f59e0b;
-        }
+        .toggle-switch input:checked { background: #f59e0b; }
         .toggle-switch input::before {
             content: "";
             width: 20px;
@@ -276,14 +203,8 @@
             left: 4px;
             transition: 0.2s;
         }
-        .toggle-switch input:checked::before {
-            transform: translateX(24px);
-        }
-        .flex-between {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+        .toggle-switch input:checked::before { transform: translateX(24px); }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; }
         .gap-2 { gap: 8px; }
         .mt-2 { margin-top: 12px; }
         .mb-2 { margin-bottom: 12px; }
@@ -302,6 +223,8 @@
             .card-header { padding: 14px 16px; }
             .card-content { padding: 12px 16px; }
         }
+        .alert-danger { background: #fee2e2; color: #b91c1c; border-radius: 20px; padding: 12px; margin-top: 12px; }
+        .btn-warning { background: #f59e0b; color: white; border: none; border-radius: 30px; padding: 6px 12px; font-size: 0.8rem; }
     </style>
 </head>
 <body>
@@ -326,7 +249,7 @@
         </div>
     </div>
 
-    <!-- App name & repo card -->
+    <!-- App & Repo Card -->
     <div class="card">
         <div class="card-header"><i class="fas fa-pen-fancy"></i> App & Repo</div>
         <div class="card-content">
@@ -344,7 +267,7 @@
         </div>
     </div>
 
-    <!-- AI Mode & Prompt card -->
+    <!-- AI Mode & Prompt -->
     <div class="card">
         <div class="card-header"><i class="fas fa-brain"></i> AI Mode</div>
         <div class="card-content">
@@ -366,7 +289,7 @@
         </div>
     </div>
 
-    <!-- Progress & Result card (dynamic) -->
+    <!-- Progress Card -->
     <div id="statusArea" style="display:none;">
         <div class="card">
             <div class="card-content">
@@ -377,6 +300,7 @@
         </div>
     </div>
 
+    <!-- Result Card (dynamic) -->
     <div id="resultCard" style="display:none;">
         <div class="card">
             <div class="card-header"><i class="fas fa-code"></i> Generated Files</div>
@@ -389,13 +313,13 @@
                     <button class="btn-primary" id="approveBtn" style="display:none;"><i class="fab fa-github"></i> Deploy to GitHub</button>
                     <button class="btn-primary" id="hfDeployBtn" style="background:#f59e0b;"><i class="fab fa-huggingface"></i> Deploy to HF</button>
                 </div>
-                <!-- GitHub result panel -->
+                <!-- GitHub Result Panel -->
                 <div id="githubResultPanel" class="result-panel" style="display:none;">
                     <i class="fab fa-github"></i> <strong>GitHub Deployment</strong><br>
                     <span id="githubRepoLink"></span><br>
                     <span id="githubPRLink"></span>
                 </div>
-                <!-- HF result panel -->
+                <!-- HF Result Panel -->
                 <div id="hfResultPanel" class="result-panel" style="display:none;">
                     <i class="fab fa-huggingface"></i> <strong>Hugging Face Space</strong><br>
                     <span id="hfSpaceLink"></span>
@@ -405,10 +329,16 @@
                         <button id="viewLogsBtn" class="btn-secondary" style="padding: 8px 12px;"><i class="fas fa-terminal"></i> Logs</button>
                     </div>
                 </div>
-                <div id="consolePanel" style="display:none; margin-top: 16px;">
-                    <div class="card-header" style="padding-left:0;"><i class="fas fa-terminal"></i> Build Logs</div>
-                    <pre id="logOutput" class="console-log"></pre>
-                    <button id="refreshLogsBtn" class="btn-secondary" style="margin-top:8px;">🔄 Refresh</button>
+                <!-- Deploy Error Box with Retry -->
+                <div id="deployErrorBox" class="alert-danger" style="display:none;">
+                    <span id="deployErrorMessage"></span>
+                    <button id="retryDeployBtn" class="btn-warning" style="margin-left: 12px;">🔄 Retry</button>
+                </div>
+                <!-- Live Console -->
+                <div id="liveConsole" style="display:none; margin-top: 16px;">
+                    <div class="card-header" style="padding-left:0;"><i class="fas fa-terminal"></i> Live Build Console</div>
+                    <pre id="consoleOutput" class="console-log"></pre>
+                    <button id="refreshLogsBtn" class="btn-secondary" style="margin-top:8px;">🔄 Refresh Logs</button>
                 </div>
                 <div style="display: flex; gap: 12px; margin-top: 16px;">
                     <button class="btn-secondary" id="redoBtn"><i class="fas fa-redo-alt"></i> Re-weave</button>
@@ -419,7 +349,7 @@
         </div>
     </div>
 
-    <!-- File browser card (hidden until repo selected) -->
+    <!-- File Browser Card -->
     <div id="repoFileBrowser" style="display:none;">
         <div class="card">
             <div class="card-header"><i class="fas fa-code-branch"></i> Repo Files</div>
@@ -442,7 +372,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script>
-    // ---------- Configuration (same as before, but with mobile-friendly UI) ----------
+    // ---------- Configuration ----------
     const API_BASE = "https://grishtesync-backend.onrender.com";
     const API_GENERATE = `${API_BASE}/api/generate`;
     const API_DEPLOY = `${API_BASE}/api/deploy`;
@@ -459,6 +389,10 @@
     let githubUsername = localStorage.getItem("github_user") || null;
     let liveSpaceUrl = null;
     let currentSpaceFullName = null;
+    let consoleInterval = null;
+    let lastLogCount = 0;
+    let lastDeployType = null;
+    let lastDeployParams = null;
 
     const $ = id => document.getElementById(id);
     const showToast = (msg) => { alert(msg); };
@@ -504,7 +438,7 @@
         } catch(e) { repoSelect.innerHTML = '<option>Error loading repos</option>'; }
     }
 
-    // File browser & editor
+    // File browser & editor (unchanged)
     async function loadRepoFiles() {
         const repoFull = $('repoSelect').value;
         if (!repoFull || !githubToken) return;
@@ -618,6 +552,55 @@
         return { complete: (t)=>{ clearInterval(interval); $('progressBar').style.width='100%'; $('progressText').innerText='100%'; $('progressStep').innerText=`Done in ${t}s`; }, fail: (msg)=>{ clearInterval(interval); $('progressBar').style.width='0%'; $('progressText').innerText='Failed'; $('progressStep').innerText=msg; } };
     }
 
+    // Live console functions
+    function appendToConsole(message) {
+        const consoleDiv = $('#consoleOutput');
+        if (consoleDiv) {
+            consoleDiv.innerText += message + '\n';
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+        }
+    }
+
+    function stopLiveLogs() {
+        if (consoleInterval) {
+            clearInterval(consoleInterval);
+            consoleInterval = null;
+        }
+    }
+
+    async function startHFLiveLogs(spaceFullName) {
+        if (consoleInterval) stopLiveLogs();
+        $('#liveConsole').style.display = 'block';
+        $('#consoleOutput').innerText = 'Connecting to Hugging Face build logs...\n';
+        lastLogCount = 0;
+        const fetchLogs = async () => {
+            try {
+                const data = await safeFetch(API_HF_LOGS, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ space_name: spaceFullName })
+                });
+                if (data.logs && data.logs.length > lastLogCount) {
+                    const newLogs = data.logs.slice(lastLogCount);
+                    newLogs.forEach(entry => {
+                        appendToConsole(entry.logs || JSON.stringify(entry));
+                    });
+                    lastLogCount = data.logs.length;
+                }
+                // Check status (approx)
+                if (data.logs && data.logs.length > 0 && data.logs[data.logs.length-1].logs && data.logs[data.logs.length-1].logs.includes("Space is running")) {
+                    appendToConsole('[✓ Space is live!]');
+                    stopLiveLogs();
+                }
+            } catch(e) {
+                appendToConsole('[Error fetching logs: ' + e.message + ']');
+            }
+        };
+        fetchLogs();
+        consoleInterval = setInterval(fetchLogs, 3000);
+    }
+
+    // Generation & deployment
     async function generatePR() {
         const prompt = $('promptInput')?.value.trim();
         if(!prompt) return showToast("Enter a prompt");
@@ -652,7 +635,9 @@
         $('frameworkBadge').innerHTML = `Framework: ${detectFramework(generatedFiles)}`;
         $('githubResultPanel').style.display = 'none';
         $('hfResultPanel').style.display = 'none';
-        $('consolePanel').style.display = 'none';
+        $('deployErrorBox').style.display = 'none';
+        stopLiveLogs();
+        $('#liveConsole').style.display = 'none';
         $('approveBtn').disabled = false; $('approveBtn').innerHTML = '<i class="fab fa-github"></i> Deploy to GitHub';
         $('hfDeployBtn').disabled = false; $('hfDeployBtn').innerHTML = '<i class="fab fa-huggingface"></i> Deploy to HF';
     }
@@ -676,8 +661,29 @@
                 $('prInstructions').style.display = 'block';
                 $('approveBtn').innerHTML = '✅ Deployed'; $('approveBtn').disabled = true;
                 showToast("GitHub deploy successful");
+                // Hide any error box
+                $('deployErrorBox').style.display = 'none';
             }, 500);
-        } catch(e) { anim.fail(e.message); showError(e.message); $('approveBtn').disabled = false; $('approveBtn').innerHTML = '<i class="fab fa-github"></i> Deploy to GitHub'; }
+        } catch(e) {
+            anim.fail(e.message);
+            showError(e.message);
+            // Store for retry
+            lastDeployType = 'github';
+            lastDeployParams = {
+                repo_name: repoName,
+                files: generatedFiles,
+                version: currentVersion,
+                pr_description: $('prEditTextarea').value
+            };
+            const errorBox = $('#deployErrorBox');
+            const errorMsg = $('#deployErrorMessage');
+            const retryBtn = $('#retryDeployBtn');
+            errorMsg.innerText = e.message;
+            errorBox.style.display = 'block';
+            retryBtn.style.display = 'inline-block';
+            $('approveBtn').disabled = false;
+            $('approveBtn').innerHTML = '<i class="fab fa-github"></i> Deploy to GitHub';
+        }
     }
 
     async function deployToHF() {
@@ -698,24 +704,46 @@
                 $('hfSpaceLink').innerHTML = `<i class="fab fa-huggingface"></i> <a href="${data.space_url}" target="_blank">${data.space_url}</a>`;
                 $('copyUrlBtn').onclick = () => { navigator.clipboard.writeText(data.space_url); showToast("URL copied!"); };
                 $('liveBtn').onclick = () => window.open(data.space_url, '_blank');
-                $('viewLogsBtn').onclick = () => fetchSpaceLogs(currentSpaceFullName);
+                $('viewLogsBtn').onclick = () => startHFLiveLogs(currentSpaceFullName);
                 $('hfDeployBtn').innerHTML = '✅ Live'; $('hfDeployBtn').disabled = true;
                 showToast("HF Space live!");
+                $('deployErrorBox').style.display = 'none';
+                // Start live logs automatically
+                startHFLiveLogs(currentSpaceFullName);
             }, 500);
-        } catch(e) { anim.fail(e.message); showError(e.message); $('hfDeployBtn').disabled = false; $('hfDeployBtn').innerHTML = '<i class="fab fa-huggingface"></i> Deploy to HF'; }
+        } catch(e) {
+            anim.fail(e.message);
+            showError(e.message);
+            lastDeployType = 'hf';
+            lastDeployParams = {
+                repo_full_name: repoName,
+                space_name: repoName.split('/')[1] || 'grishte-app',
+                files: generatedFiles,
+                github_token: githubToken
+            };
+            const errorBox = $('#deployErrorBox');
+            const errorMsg = $('#deployErrorMessage');
+            const retryBtn = $('#retryDeployBtn');
+            errorMsg.innerText = e.message;
+            errorBox.style.display = 'block';
+            retryBtn.style.display = 'inline-block';
+            $('hfDeployBtn').disabled = false;
+            $('hfDeployBtn').innerHTML = '<i class="fab fa-huggingface"></i> Deploy to HF';
+        }
     }
 
-    async function fetchSpaceLogs(spaceFullName) {
-        try {
-            const data = await safeFetch(API_HF_LOGS, { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ space_name: spaceFullName }) });
-            const logDiv = $('logOutput');
-            if (data.logs && data.logs.length) {
-                let logText = '';
-                data.logs.forEach(entry => { logText += (entry.logs || JSON.stringify(entry)) + '\n'; });
-                logDiv.innerText = logText;
-            } else { logDiv.innerText = data.error || 'No logs available yet.'; }
-            $('consolePanel').style.display = 'block';
-        } catch(e) { logDiv.innerText = 'Error: ' + e.message; $('consolePanel').style.display = 'block'; }
+    async function retryDeployment() {
+        if (!lastDeployType || !lastDeployParams) return;
+        const errorBox = $('#deployErrorBox');
+        errorBox.style.display = 'none';
+        if (lastDeployType === 'github') {
+            // Re-run deployToGitHub with stored params (but function uses global generatedFiles, so we set them)
+            generatedFiles = lastDeployParams.files;
+            await deployToGitHub();
+        } else if (lastDeployType === 'hf') {
+            generatedFiles = lastDeployParams.files;
+            await deployToHF();
+        }
     }
 
     // Event listeners
@@ -730,7 +758,8 @@
     $('disconnectGit')?.addEventListener('click', () => { localStorage.removeItem('github_token'); localStorage.removeItem('github_user'); location.reload(); });
     $('hfToggle')?.addEventListener('change', updateAuthUI);
     $('repoSelect')?.addEventListener('change', () => { if ($('repoSelect').value) loadRepoFiles(); });
-    $('refreshLogsBtn')?.addEventListener('click', () => { if(currentSpaceFullName) fetchSpaceLogs(currentSpaceFullName); });
+    $('refreshLogsBtn')?.addEventListener('click', () => { if(currentSpaceFullName) startHFLiveLogs(currentSpaceFullName); });
+    $('retryDeployBtn')?.addEventListener('click', retryDeployment);
 
     function handleRedirectTokens() {
         const urlParams = new URLSearchParams(window.location.search);
