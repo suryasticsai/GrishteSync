@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="GrishteSync - Prompt 2 Product. Your free software agent is ready. AI-powered workflow to turn prompts into production-ready code instantly.">
+  <meta name="keywords" content="AI, software agent, SaaS, prompt to product, coding assistant, cyberpunk, emerald">
+  <meta name="author" content="GrishteSync">
+  <meta name="theme-color" content="#10B981">
+  <title>GrishteSync | Prompt 2 Product</title>
+  <!-- Google Fonts & Tailwind + Font Awesome -->
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- Custom CSS Variables & Overrides -->
+  <link rel="stylesheet" href="styles.css"> <!-- Our existing builder styles -->
+  <style>
+    /* Additional overrides to match the new template */
+    :root {
+      --bg-primary: #F9FDFB;
+      --bg-surface: #FFFFFF;
+      --text-primary: #022c1a;
+      --text-secondary: #064E3B;
+      --accent-emerald: #10B981;
+      --accent-forest: #064E3B;
+      --card-border: rgba(16, 185, 129, 0.2);
+      --glow-neon: 0 0 12px rgba(16, 185, 129, 0.5);
+      --glow-strong: 0 0 20px rgba(16, 185, 129, 0.7);
+      --particle-color: #10B981;
+      --particle-line: rgba(16, 185, 129, 0.4);
+    }
+    body.dark {
+      --bg-primary: #051B11;
+      --bg-surface: #0A2C1E;
+      --text-primary: #E2F0EA;
+      --text-secondary: #A7F3D0;
+      --accent-emerald: #34D399;
+      --accent-forest: #059669;
+      --card-border: rgba(52, 211, 153, 0.4);
+      --glow-neon: 0 0 15px rgba(52, 211, 153, 0.6);
+      --glow-strong: 0 0 25px rgba(52, 211, 153, 0.8);
+      --particle-color: #34D399;
+      --particle-line: rgba(52, 211, 153, 0.5);
+    }
+    /* make builder cards also use neon-card style */
+    .neon-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--card-border);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.03), 0 0 0 1px rgba(16,185,129,0.1);
+      transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    }
+    .neon-card:hover {
+      border-color: var(--accent-emerald);
+      box-shadow: var(--glow-neon), 0 12px 28px rgba(0,0,0,0.08);
+      transform: translateY(-4px);
+    }
+    /* ensure file viewer inside builder works with template */
+    .file-item {
+      background: var(--bg-surface);
+      border: 1px solid var(--card-border);
+      border-radius: 1rem;
+    }
+    .file-header {
+      background: rgba(16, 185, 129, 0.05);
+    }
+    .console-log {
+      background: #0a2c1e;
+      color: #cbd5e1;
+    }
+    body.dark .console-log {
+      background: #051B11;
+      color: #e2e8f0;
+    }
+  </style>
+</head>
+<body class="antialiased">
+
+  <!-- Sticky CTA Button (floating) -->
+  <a href="#agent-console" class="sticky-cta group" aria-label="Start building now">
+    <i class="fas fa-bolt text-xl"></i>
+    <span class="absolute right-full mr-3 whitespace-nowrap bg-black/70 text-white text-sm px-3 py-1 rounded-full opacity-0 group-hover:opacity-100 transition pointer-events-none">Launch Agent Console →</span>
+  </a>
+
+  <!-- Header: same as template -->
+  <header class="relative z-30 pt-6 px-4 md:px-8">
+    <div class="max-w-7xl mx-auto text-center">
+      <div class="mb-3">
+        <h1 class="text-4xl md:text-5xl font-bold tracking-tight bg-gradient-to-r from-emerald-600 to-forest-700 bg-clip-text text-transparent">GrishteSync</h1>
+        <p class="text-emerald-700 dark:text-emerald-300 font-mono text-sm md:text-base tracking-wide mt-1 glow-text">Prompt 2 Product — Your free software agent is ready.</p>
+      </div>
+      <div class="flex justify-between items-center md:justify-center relative mt-2">
+        <button id="hamburgerBtn" class="hamburger-btn p-2 rounded-md text-emerald-700 dark:text-emerald-300 focus:outline-none z-30 md:hidden">
+          <i class="fas fa-bars text-2xl"></i>
+        </button>
+        <div class="flex gap-3 absolute right-0 top-0 md:static">
+          <button id="themeToggle" class="w-9 h-9 rounded-full bg-white/20 backdrop-blur-sm border border-emerald-300/40 flex items-center justify-center text-emerald-700 dark:text-emerald-300 transition">
+            <i class="fas fa-moon dark:hidden"></i>
+            <i class="fas fa-sun hidden dark:inline"></i>
+          </button>
+        </div>
+      </div>
+      <nav id="navMenu" class="mobile-nav fixed top-0 right-0 h-full w-64 bg-surface shadow-2xl z-40 p-6 pt-20 flex flex-col gap-5 md:static md:w-auto md:h-auto md:bg-transparent md:flex-row md:p-0 md:gap-8 md:justify-center md:shadow-none transition-transform duration-300">
+        <a href="#home" class="nav-link text-lg font-medium hover:text-emerald-600 transition border-b-2 border-transparent hover:border-emerald-500 py-1">Home</a>
+        <a href="#features" class="nav-link text-lg font-medium hover:text-emerald-600 transition">Features</a>
+        <a href="#stats" class="nav-link text-lg font-medium hover:text-emerald-600 transition">Stats</a>
+        <a href="#pricing" class="nav-link text-lg font-medium hover:text-emerald-600 transition">Pricing</a>
+        <a href="#faq" class="nav-link text-lg font-medium hover:text-emerald-600 transition">FAQ</a>
+        <a href="#agent-console" class="nav-link text-lg font-medium hover:text-emerald-600 transition">Agent Console</a>
+        <a href="#newsletter" class="nav-link text-lg font-medium hover:text-emerald-600 transition">Subscribe</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero Section with Particle Canvas (unchanged) -->
+    <section id="home" class="relative overflow-hidden py-20 md:py-28 px-4">
+      <canvas id="heroCanvas" class="absolute top-0 left-0 w-full h-full"></canvas>
+      <div class="hero-content max-w-4xl mx-auto text-center relative z-10">
+        <div class="inline-block px-4 py-1 rounded-full bg-emerald-100/50 dark:bg-emerald-900/40 backdrop-blur-sm text-emerald-800 dark:text-emerald-200 text-sm font-mono mb-6 border border-emerald-300/40">
+          <i class="fas fa-microchip mr-1"></i> AI AGENT v2.0
+        </div>
+        <h2 class="text-5xl md:text-7xl font-bold leading-tight tracking-tight"><span class="bg-gradient-to-r from-emerald-500 to-forest-600 bg-clip-text text-transparent">From Prompt</span><br>to Production in Seconds</h2>
+        <p class="text-xl md:text-2xl text-gray-700 dark:text-gray-200 mt-6 max-w-2xl mx-auto">GrishteSync's autonomous AI agent builds, tests, and deploys your software instantly. Zero setup, infinite creativity.</p>
+        <div class="flex flex-wrap gap-4 justify-center mt-10">
+          <a href="#agent-console" class="btn-primary px-8 py-3 rounded-full text-lg shadow-lg inline-flex items-center gap-2"><i class="fas fa-rocket"></i> Start Building Free</a>
+          <a href="#features" class="px-8 py-3 rounded-full border border-emerald-500 text-emerald-700 dark:text-emerald-300 bg-white/10 backdrop-blur-sm font-medium hover:bg-emerald-50 dark:hover:bg-emerald-900/30 transition">Explore Agent <i class="fas fa-arrow-right ml-1"></i></a>
+        </div>
+      </div>
+      <div class="parallax-layer absolute -bottom-20 -left-20 w-72 h-72 bg-emerald-200/20 dark:bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" data-speed="0.2"></div>
+      <div class="parallax-layer absolute top-32 right-0 w-96 h-96 bg-forest-300/10 dark:bg-emerald-400/5 rounded-full blur-3xl pointer-events-none" data-speed="-0.15"></div>
+    </section>
+
+    <!-- Features Section (unchanged) -->
+    <section id="features" class="py-24 px-4 relative">
+      <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-16 fade-up">
+          <span class="text-emerald-600 font-semibold tracking-wider uppercase">Powerful Capabilities</span>
+          <h3 class="text-4xl md:text-5xl font-bold mt-2">Your AI Software Agent</h3>
+          <p class="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto mt-4">One prompt → Complete product. The future of development is here.</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div class="neon-card rounded-2xl p-6 fade-up"><div class="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-900/50 flex items-center justify-center text-emerald-600 text-2xl mb-5"><i class="fas fa-brain"></i></div><h4 class="text-xl font-bold">Intelligent Parsing</h4><p class="mt-2 text-gray-600 dark:text-gray-300">Transforms natural language prompts into executable architecture with context-aware reasoning.</p></div>
+          <div class="neon-card rounded-2xl p-6 fade-up" data-delay="100"><div class="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-900/50 flex items-center justify-center text-emerald-600 text-2xl mb-5"><i class="fas fa-code-branch"></i></div><h4 class="text-xl font-bold">Full-stack Generation</h4><p class="mt-2 text-gray-600 dark:text-gray-300">Backend, frontend, and database schemas auto-generated, tested and deployed.</p></div>
+          <div class="neon-card rounded-2xl p-6 fade-up" data-delay="200"><div class="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-900/50 flex items-center justify-center text-emerald-600 text-2xl mb-5"><i class="fas fa-cloud-upload-alt"></i></div><h4 class="text-xl font-bold">One-Click Cloud</h4><p class="mt-2 text-gray-600 dark:text-gray-300">Seamless deployment to AWS, Vercel or any serverless environment.</p></div>
+          <div class="neon-card rounded-2xl p-6 fade-up" data-delay="300"><div class="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-900/50 flex items-center justify-center text-emerald-600 text-2xl mb-5"><i class="fas fa-shield-alt"></i></div><h4 class="text-xl font-bold">Secure by Design</h4><p class="mt-2 text-gray-600 dark:text-gray-300">Enterprise-grade encryption, zero-knowledge prompts and GDPR ready.</p></div>
+        </div>
+        <div class="mt-16 text-center fade-up">
+          <img src="https://placehold.co/800x200/064E3B/10B981?text=GrishteSync+Live+Demo+Preview" alt="product preview" class="rounded-2xl shadow-2xl border border-emerald-200/50 mx-auto max-w-full">
+        </div>
+      </div>
+    </section>
+
+    <!-- Animated Statistics (unchanged) -->
+    <section id="stats" class="py-20 bg-emerald-50/30 dark:bg-emerald-950/20 px-4">
+      <div class="max-w-6xl mx-auto">
+        <div class="text-center mb-12"><h3 class="text-3xl font-bold">Trusted by innovators worldwide</h3></div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+          <div class="stat-card fade-up"><div class="text-5xl font-black text-emerald-600 counter" data-target="15420">0</div><p class="mt-2 text-gray-600 dark:text-gray-300">Projects Generated</p></div>
+          <div class="stat-card fade-up"><div class="text-5xl font-black text-emerald-600 counter" data-target="847">0</div><p class="mt-2 text-gray-600 dark:text-gray-300">Active Agents</p></div>
+          <div class="stat-card fade-up"><div class="text-5xl font-black text-emerald-600 counter" data-target="3.2" data-decimals="1">0</div><p class="mt-2 text-gray-600 dark:text-gray-300">Avg. seconds to deploy</p></div>
+          <div class="stat-card fade-up"><div class="text-5xl font-black text-emerald-600 counter" data-target="99.9">0</div><p class="mt-2 text-gray-600 dark:text-gray-300">Uptime SLA</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== NEW AGENT CONSOLE SECTION ========== -->
+    <section id="agent-console" class="py-24 px-4">
+      <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-12 fade-up">
+          <span class="text-emerald-600 font-semibold tracking-wider uppercase"><i class="fas fa-terminal mr-1"></i> Live Agent Console</span>
+          <h3 class="text-4xl md:text-5xl font-bold mt-2">Build, Edit, Deploy</h3>
+          <p class="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto mt-4">Describe your app – AI generates code. Edit files, deploy to GitHub or Hugging Face. All in one place.</p>
+        </div>
+
+        <!-- The entire builder UI goes inside this card -->
+        <div class="neon-card rounded-2xl p-6 md:p-8 fade-up">
+          <!-- App name & repo select (same as before) -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div>
+              <label class="block text-sm font-medium mb-1">New App Name</label>
+              <input type="text" id="appNameInput" placeholder="e.g., my-dashboard" class="w-full px-4 py-2 rounded-xl border border-emerald-300/50 bg-white/50 dark:bg-gray-800/50">
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">Update existing repo</label>
+              <div class="flex gap-2">
+                <select id="repoSelect" class="flex-1 px-4 py-2 rounded-xl border border-emerald-300/50 bg-white/50 dark:bg-gray-800/50"></select>
+                <button id="refreshReposBtn" class="btn-secondary px-4 rounded-xl"><i class="fas fa-sync"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI Mode & Prompt -->
+          <div class="mb-6">
+            <label class="block text-sm font-medium mb-1">🧠 AI Mode</label>
+            <select id="promptTypeSelect" class="w-full px-4 py-2 rounded-xl border border-emerald-300/50 bg-white/50 dark:bg-gray-800/50 mb-4">
+              <option value="generate">✨ Generate new app</option>
+              <option value="fix">🔧 Fix bugs</option>
+              <option value="improve_ui">🎨 Improve UI/UX</option>
+              <option value="add_feature">➕ Add feature</option>
+              <option value="refactor">📦 Refactor code</option>
+              <option value="diagnose">🩺 Diagnose & Fix</option>
+            </select>
+            <label class="block text-sm font-medium mb-1">Describe your request</label>
+            <textarea id="promptInput" rows="3" class="w-full px-4 py-2 rounded-xl border border-emerald-300/50 bg-white/50 dark:bg-gray-800/50" placeholder="Example: Add a dark mode toggle to the existing app"></textarea>
+            <button id="generateBtn" class="btn-primary w-full mt-4 py-2 rounded-xl"><i class="fas fa-magic mr-2"></i> Generate / Improve</button>
+            <div id="errorBox" class="text-red-600 dark:text-red-400 mt-2 text-sm hidden"></div>
+          </div>
+
+          <!-- Progress bar (hidden initially) -->
+          <div id="statusArea" class="hidden mt-4">
+            <div class="progress rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 h-2"><div id="progressBar" class="bg-emerald-500 h-full w-0 transition-all duration-300"></div></div>
+            <div id="progressText" class="text-center font-bold mt-2">0%</div>
+            <div id="progressStep" class="text-center text-sm text-gray-500">Starting...</div>
+          </div>
+
+          <!-- Result card (dynamically shown after generation) -->
+          <div id="resultCard" class="hidden mt-6">
+            <div id="prDescription" class="text-sm text-gray-600 dark:text-gray-300 mb-2"></div>
+            <div id="frameworkBadge" class="inline-block bg-emerald-100 dark:bg-emerald-900/50 px-3 py-1 rounded-full text-sm mb-3"></div>
+            <div id="fileViewer" class="space-y-3"></div>
+            <textarea id="prEditTextarea" rows="3" class="w-full mt-3 px-4 py-2 rounded-xl border border-emerald-300/50 bg-white/50 dark:bg-gray-800/50" placeholder="PR description"></textarea>
+
+            <div class="flex gap-3 mt-4">
+              <button id="approveBtn" class="btn-primary flex-1 py-2 rounded-xl hidden"><i class="fab fa-github mr-2"></i> Deploy to GitHub</button>
+              <button id="hfDeployBtn" class="btn-primary flex-1 py-2 rounded-xl" style="background:#f59e0b;"><i class="fab fa-huggingface mr-2"></i> Deploy to HF</button>
+            </div>
+
+            <!-- GitHub result panel -->
+            <div id="githubResultPanel" class="result-panel mt-3 p-3 rounded-xl bg-emerald-50/50 dark:bg-emerald-950/30 hidden">
+              <i class="fab fa-github mr-2"></i> <strong>GitHub Deployment</strong><br>
+              <span id="githubRepoLink"></span><br>
+              <span id="githubPRLink"></span>
+              <button id="mergePrBtn" class="btn-secondary mt-2 text-sm hidden"><i class="fas fa-code-merge mr-1"></i> Approve & Merge PR</button>
+            </div>
+
+            <!-- HF result panel -->
+            <div id="hfResultPanel" class="result-panel mt-3 p-3 rounded-xl bg-emerald-50/50 dark:bg-emerald-950/30 hidden">
+              <i class="fab fa-huggingface mr-2"></i> <strong>Hugging Face Space</strong><br>
+              <span id="hfSpaceLink"></span>
+              <div class="flex flex-wrap gap-2 mt-2">
+                <button id="copyUrlBtn" class="btn-secondary text-sm"><i class="far fa-copy"></i> Copy URL</button>
+                <button id="liveBtn" class="btn-secondary text-sm"><i class="fas fa-external-link-alt"></i> Open</button>
+                <button id="viewLogsBtn" class="btn-secondary text-sm"><i class="fas fa-terminal"></i> Logs</button>
+                <button id="diagnoseFromLogsBtn" class="btn-danger text-sm"><i class="fas fa-stethoscope"></i> Diagnose</button>
+              </div>
+            </div>
+
+            <!-- Error & retry -->
+            <div id="deployErrorBox" class="bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-xl p-3 mt-3 hidden">
+              <span id="deployErrorMessage"></span>
+              <button id="retryDeployBtn" class="bg-amber-500 text-white px-3 py-1 rounded-full text-sm ml-2">🔄 Retry</button>
+              <button id="diagnoseFromErrorBtn" class="bg-red-600 text-white px-3 py-1 rounded-full text-sm ml-2">🩺 Diagnose</button>
+            </div>
+
+            <!-- Live console -->
+            <div id="liveConsole" class="hidden mt-4">
+              <div class="font-mono text-sm mb-1"><i class="fas fa-terminal"></i> Build Logs</div>
+              <pre id="consoleOutput" class="console-log bg-gray-900 text-gray-300 p-3 rounded-xl max-h-64 overflow-auto"></pre>
+              <div class="flex gap-2 mt-2">
+                <button id="refreshLogsBtn" class="btn-secondary text-sm">🔄 Refresh</button>
+                <button id="diagnoseFromConsoleBtn" class="btn-danger text-sm"><i class="fas fa-stethoscope"></i> Diagnose</button>
+              </div>
+            </div>
+
+            <div class="flex gap-3 mt-4">
+              <button id="redoBtn" class="btn-secondary flex-1 py-2 rounded-xl"><i class="fas fa-redo-alt mr-2"></i> Re-weave</button>
+              <button id="downloadBtn" class="btn-secondary flex-1 py-2 rounded-xl"><i class="fas fa-download mr-2"></i> Download ZIP</button>
+            </div>
+            <div id="prInstructions" class="bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200 p-3 rounded-xl mt-3 hidden">⚠️ Merge the PR on GitHub to complete deployment.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pricing Table (unchanged) -->
+    <section id="pricing" class="py-24 px-4">
+      <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-12 fade-up"><h3 class="text-4xl font-bold">Simple, transparent pricing</h3><p class="text-gray-500 mt-2">Start free, scale as you grow.</p></div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div class="neon-card rounded-2xl p-6 text-center fade-up"><div class="text-2xl font-bold">Free Agent</div><div class="text-4xl font-black mt-3">$0<span class="text-base font-medium">/month</span></div><ul class="mt-6 space-y-2 text-left"><li><i class="fas fa-check text-emerald-500 mr-2"></i> 100 prompts / month</li><li><i class="fas fa-check text-emerald-500 mr-2"></i> Basic code generation</li><li><i class="fas fa-check text-emerald-500 mr-2"></i> Community support</li></ul><button class="mt-8 w-full py-2 rounded-full border border-emerald-500 hover:bg-emerald-500 hover:text-white transition">Get Started</button></div>
+          <div class="neon-card rounded-2xl p-6 text-center border-emerald-400 shadow-emerald-200/30 fade-up" data-delay="100"><div class="text-2xl font-bold">Pro Sync</div><div class="text-4xl font-black mt-3">$29<span class="text-base font-medium">/month</span></div><ul class="mt-6 space-y-2 text-left"><li><i class="fas fa-check text-emerald-500 mr-2"></i> Unlimited prompts</li><li><i class="fas fa-check text-emerald-500 mr-2"></i> Full-stack + API generation</li><li><i class="fas fa-check text-emerald-500 mr-2"></i> Priority support + Slack</li><li><i class="fas fa-check text-emerald-500 mr-2"></i> Custom deployment hooks</li></ul><button class="btn-primary mt-8 w-full py-2 rounded-full">Start 14-day trial</button></div>
+          <div class="neon-card rounded-2xl p-6 text-center fade-up" data-delay="200"><div class="text-2xl font-bold">Enterprise</div><div class="text-4xl font-black mt-3">Custom</div><ul class="mt-6 space-y-2 text-left"><li><i class="fas fa-check text-emerald-500 mr-2"></i> On-prem / VPC deployment</li><li><i class="fas fa-check text-emerald-500 mr-2"></i> Custom AI fine-tuning</li><li><i class="fas fa-check text-emerald-500 mr-2"></i> 24/7 dedicated engineer</li><li><i class="fas fa-check text-emerald-500 mr-2"></i> SSO & compliance</li></ul><button class="mt-8 w-full py-2 rounded-full border border-emerald-500 hover:bg-emerald-500 hover:text-white transition">Contact Sales</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ (unchanged) -->
+    <section id="faq" class="py-20 px-4 bg-emerald-50/20 dark:bg-black/20">
+      <div class="max-w-4xl mx-auto">
+        <div class="text-center fade-up"><h3 class="text-4xl font-bold">Frequently asked questions</h3><p class="mt-2 text-gray-500">Everything you need to know about GrishteSync</p></div>
+        <div class="mt-12 space-y-4">
+          <div class="faq-item neon-card rounded-xl p-5 fade-up"><div class="faq-question flex justify-between items-center"><span class="font-semibold text-lg">How does Prompt 2 Product work?</span><i class="fas fa-chevron-down transition-transform duration-300"></i></div><div class="faq-answer mt-3 text-gray-600 dark:text-gray-300">Describe your app idea in natural language — our agent parses, designs architecture, writes code, tests and deploys a fully working product within minutes.</div></div>
+          <div class="faq-item neon-card rounded-xl p-5 fade-up"><div class="faq-question flex justify-between items-center"><span class="font-semibold text-lg">Is there a free tier?</span><i class="fas fa-chevron-down"></i></div><div class="faq-answer mt-3 text-gray-600 dark:text-gray-300">Yes! The Free Agent tier includes 100 monthly prompts, basic code generation, and community support. Perfect for individuals and prototyping.</div></div>
+          <div class="faq-item neon-card rounded-xl p-5 fade-up"><div class="faq-question flex justify-between items-center"><span class="font-semibold text-lg">Can I export the generated code?</span><i class="fas fa-chevron-down"></i></div><div class="faq-answer mt-3 text-gray-600 dark:text-gray-300">Absolutely. You own all code generated. Export as ZIP, push to GitHub, or deploy directly using our integration.</div></div>
+          <div class="faq-item neon-card rounded-xl p-5 fade-up"><div class="faq-question flex justify-between items-center"><span class="font-semibold text-lg">What frameworks are supported?</span><i class="fas fa-chevron-down"></i></div><div class="faq-answer mt-3 text-gray-600 dark:text-gray-300">React, Vue, Node.js, Python (FastAPI/Django), Go, and serverless. We continuously add more stacks.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Newsletter (unchanged) -->
+    <section id="newsletter" class="py-24 px-4">
+      <div class="max-w-3xl mx-auto text-center neon-card rounded-3xl p-8 md:p-12 fade-up">
+        <i class="fas fa-paper-plane text-4xl text-emerald-500 mb-4"></i>
+        <h3 class="text-3xl font-bold">Stay ahead of the curve</h3>
+        <p class="mt-2 text-gray-600 dark:text-gray-300">Get the latest AI development insights and product updates.</p>
+        <form id="newsletterForm" class="mt-8 flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+          <input type="email" placeholder="Your email address" required class="flex-1 px-5 py-3 rounded-full border border-emerald-300 bg-white/50 dark:bg-gray-800/50 focus:outline-none focus:ring-2 focus:ring-emerald-400">
+          <button type="submit" class="btn-primary px-6 py-3 rounded-full font-semibold">Subscribe <i class="fas fa-arrow-right ml-1"></i></button>
+        </form>
+        <p class="text-xs mt-4 text-gray-400">No spam, only innovations. Unsubscribe anytime.</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer (unchanged) -->
+  <footer class="border-t border-emerald-200/30 py-6 px-4 text-center text-gray-500 text-sm">
+    <div class="max-w-6xl mx-auto flex flex-wrap justify-between items-center gap-2">
+      <span>© 2025 GrishteSync — Prompt 2 Product. All visions become reality.</span>
+      <div class="flex gap-5 text-emerald-600">
+        <a href="#" aria-label="Twitter"><i class="fab fa-twitter text-lg hover:text-emerald-700"></i></a>
+        <a href="#" aria-label="GitHub"><i class="fab fa-github text-lg hover:text-emerald-700"></i></a>
+        <a href="#" aria-label="Discord"><i class="fab fa-discord text-lg hover:text-emerald-700"></i></a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Include your existing script.js (builder logic) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="script.js"></script>
+
+  <!-- The template's own JS for canvas, counters, FAQ, etc. -->
+  <script>
+    (function(){
+      // Theme toggle (already defined in script.js – avoid conflict by not redefining, but we merge)
+      const themeToggle = document.getElementById('themeToggle');
+      if(themeToggle && !window._themeToggleInit) {
+        window._themeToggleInit = true;
+        themeToggle.addEventListener('click', () => {
+          document.body.classList.toggle('dark');
+          const isDark = document.body.classList.contains('dark');
+          localStorage.setItem('theme', isDark ? 'dark' : 'light');
+          if(window.particleSystem) window.particleSystem.updateTheme();
+        });
+        if(localStorage.getItem('theme') === 'dark') document.body.classList.add('dark');
+      }
+
+      // Particle Canvas (reuse existing canvas)
+      const canvas = document.getElementById('heroCanvas');
+      if(canvas && !window._particleInit) {
+        window._particleInit = true;
+        let ctx = canvas.getContext('2d');
+        let particles = [], mouseX = 0, mouseY = 0, width, height, animationFrame;
+        let particleColors = { particle: '#10B981', line: 'rgba(16,185,129,0.4)' };
+        function updateThemeColors() {
+          const isDark = document.body.classList.contains('dark');
+          particleColors.particle = isDark ? '#34D399' : '#10B981';
+          particleColors.line = isDark ? 'rgba(52,211,153,0.5)' : 'rgba(16,185,129,0.4)';
+        }
+        function initParticles() {
+          const count = Math.min(70, Math.floor(width * height / 7000));
+          particles = [];
+          for(let i=0;i<count;i++) {
+            particles.push({ x: Math.random() * width, y: Math.random() * height, vx: (Math.random() - 0.5) * 0.6, vy: (Math.random() - 0.5) * 0.4, size: Math.random() * 2.5 + 1.2 });
+          }
+        }
+        function resizeCanvas() {
+          const container = canvas.parentElement;
+          const rect = container.getBoundingClientRect();
+          width = rect.width; height = rect.height;
+          canvas.width = width; canvas.height = height;
+          initParticles();
+        }
+        function drawParticles() {
+          if(!ctx) return;
+          ctx.clearRect(0, 0, width, height);
+          updateThemeColors();
+          for(let p of particles) {
+            p.x += p.vx; p.y += p.vy;
+            if(p.x < 0) p.x = width; if(p.x > width) p.x = 0;
+            if(p.y < 0) p.y = height; if(p.y > height) p.y = 0;
+            ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+            ctx.fillStyle = particleColors.particle; ctx.fill();
+          }
+          for(let i=0;i<particles.length;i++) {
+            for(let j=i+1;j<particles.length;j++) {
+              const dx = particles[i].x - particles[j].x, dy = particles[i].y - particles[j].y;
+              if(Math.hypot(dx,dy) < 110) {
+                ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y);
+                ctx.strokeStyle = particleColors.line; ctx.lineWidth = 0.6; ctx.stroke();
+              }
+            }
+          }
+          for(let p of particles) {
+            let dx = mouseX - p.x, dy = mouseY - p.y;
+            let dist = Math.hypot(dx,dy);
+            if(dist < 100) {
+              let angle = Math.atan2(dy,dx);
+              let force = (100 - dist) / 1000;
+              p.vx -= Math.cos(angle) * force * 0.8;
+              p.vy -= Math.sin(angle) * force * 0.8;
+            }
+            p.vx = Math.min(1.2, Math.max(-1.2, p.vx));
+            p.vy = Math.min(1.2, Math.max(-1.2, p.vy));
+          }
+          animationFrame = requestAnimationFrame(drawParticles);
+        }
+        function handleMouseMove(e) {
+          const rect = canvas.getBoundingClientRect();
+          mouseX = e.clientX - rect.left; mouseY = e.clientY - rect.top;
+          if(mouseX < 0) mouseX = 0; if(mouseX > width) mouseX = width;
+          if(mouseY < 0) mouseY = 0; if(mouseY > height) mouseY = height;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        window.addEventListener('mousemove', handleMouseMove);
+        resizeCanvas(); drawParticles();
+        window.particleSystem = { updateTheme: () => { updateThemeColors(); } };
+      }
+
+      // Scroll fade + parallax
+      const fadeElements = document.querySelectorAll('.fade-up');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => { if(entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); } });
+      }, { threshold: 0.15 });
+      fadeElements.forEach(el => observer.observe(el));
+
+      const parallaxItems = document.querySelectorAll('.parallax-layer');
+      window.addEventListener('scroll', () => {
+        let scrolled = window.scrollY;
+        parallaxItems.forEach(layer => {
+          let speed = parseFloat(layer.getAttribute('data-speed') || '0.1');
+          layer.style.transform = `translateY(${scrolled * speed}px)`;
+        });
+      });
+
+      // Counters
+      const counters = document.querySelectorAll('.counter');
+      const startCounters = () => {
+        counters.forEach(counter => {
+          const target = parseFloat(counter.getAttribute('data-target'));
+          const decimals = counter.getAttribute('data-decimals') ? parseInt(counter.getAttribute('data-decimals')) : 0;
+          let current = 0;
+          const update = () => {
+            let increment = target / 45;
+            if(current < target) { current += increment; if(current >= target) current = target; counter.innerText = decimals === 1 ? current.toFixed(1) : Math.floor(current); requestAnimationFrame(update); }
+            else counter.innerText = decimals === 1 ? target.toFixed(1) : target;
+          }; update();
+        });
+      };
+      const statsSection = document.getElementById('stats');
+      let statsObserved = false;
+      const statObserver = new IntersectionObserver((entries) => { if(entries[0].isIntersecting && !statsObserved) { statsObserved = true; startCounters(); } }, { threshold: 0.4 });
+      if(statsSection) statObserver.observe(statsSection);
+
+      // FAQ accordion
+      document.querySelectorAll('.faq-item').forEach(item => {
+        const questionDiv = item.querySelector('.faq-question');
+        const answerDiv = item.querySelector('.faq-answer');
+        const icon = questionDiv.querySelector('i');
+        questionDiv.addEventListener('click', () => {
+          const isOpen = answerDiv.classList.contains('open');
+          document.querySelectorAll('.faq-answer').forEach(ans => ans.classList.remove('open'));
+          document.querySelectorAll('.faq-question i').forEach(ic => ic.style.transform = 'rotate(0deg)');
+          if(!isOpen) { answerDiv.classList.add('open'); if(icon) icon.style.transform = 'rotate(180deg)'; }
+          else if(icon) icon.style.transform = 'rotate(0deg)';
+        });
+      });
+
+      // Newsletter
+      const newsletterForm = document.getElementById('newsletterForm');
+      newsletterForm?.addEventListener('submit', (e) => { e.preventDefault(); const email = newsletterForm.querySelector('input[type="email"]').value; alert(`✨ Thanks for subscribing, ${email}! You'll receive AI innovation news.`); newsletterForm.reset(); });
+
+      // Mobile menu
+      const hamburgerBtn = document.getElementById('hamburgerBtn');
+      const navMenu = document.getElementById('navMenu');
+      hamburgerBtn?.addEventListener('click', () => {
+        navMenu.classList.toggle('open');
+        const icon = hamburgerBtn.querySelector('i');
+        if(navMenu.classList.contains('open')) icon.classList.replace('fa-bars','fa-times');
+        else icon.classList.replace('fa-times','fa-bars');
+      });
+      document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+          if(window.innerWidth < 768) navMenu.classList.remove('open');
+          document.querySelector('.hamburger-btn i')?.classList.replace('fa-times','fa-bars');
+          const targetId = link.getAttribute('href').substring(1);
+          const target = document.getElementById(targetId);
+          if(target) { e.preventDefault(); window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - 70, behavior: 'smooth' }); }
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
