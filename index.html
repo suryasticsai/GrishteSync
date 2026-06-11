@@ -53,6 +53,7 @@
         </div>
 
         <div class="p-4">
+            <!-- Row for app name and repo selection -->
             <div class="row g-4 mb-4">
                 <div class="col-md-6">
                     <label class="fw-semibold">New App Name</label>
@@ -62,6 +63,18 @@
                     <label class="fw-semibold">Update existing repo</label>
                     <div class="d-flex gap-2"><select id="repoSelect" class="form-select"></select><button class="btn btn-secondary" id="refreshReposBtn"><i class="fas fa-sync"></i></button></div>
                 </div>
+            </div>
+
+            <!-- Multi‑Prompt Dropdown -->
+            <div class="mb-3">
+                <label class="fw-semibold">🧠 AI Mode</label>
+                <select id="promptTypeSelect" class="form-select">
+                    <option value="generate">✨ Generate new app</option>
+                    <option value="fix">🔧 Fix bugs</option>
+                    <option value="improve_ui">🎨 Improve UI/UX</option>
+                    <option value="add_feature">➕ Add feature</option>
+                    <option value="refactor">📦 Refactor code</option>
+                </select>
             </div>
 
             <!-- File browser -->
@@ -77,7 +90,7 @@
             </div>
 
             <div class="mb-4 mt-3">
-                <label class="fw-semibold">Describe your app (or improvement)</label>
+                <label class="fw-semibold">Describe your request</label>
                 <textarea id="promptInput" rows="3" class="form-control" placeholder="Example: Add a dark mode toggle to the existing app"></textarea>
             </div>
             <button class="btn btn-primary-custom w-100" id="generateBtn"><i class="fas fa-magic"></i> Generate / Improve</button>
@@ -164,7 +177,7 @@
     let currentSpaceFullName = null;
 
     const $ = id => document.getElementById(id);
-    const showToast = (msg) => { alert(msg); }; // replace with nicer toast if desired
+    const showToast = (msg) => { alert(msg); };
     const showError = (msg) => { const e = $('errorBox'); if(e){ e.style.display='block'; e.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${msg}`; } };
     const hideError = () => { const e = $('errorBox'); if(e) e.style.display='none'; };
 
@@ -254,7 +267,6 @@
     async function commitFileChange(filePath, newContent, sha) {
         const repoFull = $('repoSelect').value;
         const branchName = `edit-${Date.now()}`;
-        // Use the deploy API to commit a single file (creates PR)
         const resp = await safeFetch(API_DEPLOY, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `token ${githubToken}` },
@@ -329,7 +341,7 @@
         return { complete: (t)=>{ clearInterval(interval); $('progressBar').style.width='100%'; $('progressText').innerText='100%'; $('progressStep').innerText=`Done in ${t}s`; }, fail: (msg)=>{ clearInterval(interval); $('progressBar').style.width='0%'; $('progressText').innerText='Failed'; $('progressStep').innerText=msg; } };
     }
 
-    // Generate / Improve
+    // Generate / Improve (sends prompt_type)
     async function generatePR() {
         const prompt = $('promptInput')?.value.trim();
         if(!prompt) return alert("Enter a prompt");
@@ -338,13 +350,14 @@
         const selectedRepo = $('repoSelect')?.value;
         const newName = $('appNameInput')?.value.trim();
         repoName = selectedRepo || (newName ? `GrishteSync-${newName}` : `GrishteSync-${Date.now().toString(36)}`);
+        const promptType = $('promptTypeSelect').value;
         $('generateBtn').disabled = true;
         showProgress();
         const anim = animateProgress(["Reading prompt...","Generating code...","Preparing files..."]);
         const headers = { 'Content-Type':'application/json' };
         if(selectedRepo && githubToken) headers['Authorization'] = `token ${githubToken}`;
         try {
-            const data = await safeFetch(API_GENERATE, { method:'POST', headers, body: JSON.stringify({ prompt, repo: selectedRepo }) });
+            const data = await safeFetch(API_GENERATE, { method:'POST', headers, body: JSON.stringify({ prompt, repo: selectedRepo, prompt_type: promptType }) });
             if(data.error) throw new Error(data.error);
             anim.complete(data.generate_time || '?');
             generatedFiles = data.files;
