@@ -35,8 +35,6 @@
                 <div class="d-flex gap-2">
                     <button class="btn-outline-light-custom" id="loginBtn" style="display:none;"><i class="fab fa-github"></i> Connect GitHub</button>
                     <span id="gitBadge" style="display:none;" class="badge bg-light text-dark px-3 py-2 rounded-pill"><i class="fab fa-github"></i> <span id="gitUser">@user</span> <button class="btn btn-sm btn-link text-dark" id="disconnectGit">✕</button></span>
-                    <button class="btn-outline-light-custom" id="hfConnectBtn"><i class="fab fa-huggingface"></i> Connect 🤗</button>
-                    <span id="hfBadge" style="display:none;" class="badge bg-light text-dark px-3 py-2 rounded-pill"><i class="fab fa-huggingface"></i> HF ready <button class="btn btn-sm btn-link text-dark" id="disconnectHF">✕</button></span>
                     <button class="btn-outline-light-custom" id="resetBtn"><i class="fas fa-undo-alt"></i> Reset</button>
                 </div>
             </div>
@@ -45,7 +43,7 @@
                 <div class="d-flex gap-3 align-items-center">
                     <span id="repoDisplay"><i class="far fa-folder-open"></i> repo: none</span>
                     <div class="d-flex align-items-center gap-2">
-                        <span>🤗 Deploy</span>
+                        <span>🤗 Deploy to HF</span>
                         <label class="toggle-switch-modern"><input type="checkbox" id="hfToggle" checked><span class="toggle-slider-modern"></span></label>
                     </div>
                 </div>
@@ -172,7 +170,6 @@
     let currentPrompt = "";
     let githubToken = localStorage.getItem("github_token") || null;
     let githubUsername = localStorage.getItem("github_user") || null;
-    let hfToken = localStorage.getItem("hf_token") || null;
     let liveSpaceUrl = null;
     let currentSpaceFullName = null;
 
@@ -192,8 +189,6 @@
         const gitBadge = $('gitBadge');
         const gitUser = $('gitUser');
         const approveBtn = $('approveBtn');
-        const hfConnectBtn = $('hfConnectBtn');
-        const hfBadge = $('hfBadge');
         if (githubToken) {
             if(loginBtn) loginBtn.style.display = 'none';
             if(gitBadge) gitBadge.style.display = 'inline-flex';
@@ -204,13 +199,6 @@
             if(loginBtn) loginBtn.style.display = 'inline-block';
             if(gitBadge) gitBadge.style.display = 'none';
             if(approveBtn) approveBtn.style.display = 'none';
-        }
-        if (hfToken) {
-            if(hfConnectBtn) hfConnectBtn.style.display = 'none';
-            if(hfBadge) hfBadge.style.display = 'inline-flex';
-        } else {
-            if(hfConnectBtn) hfConnectBtn.style.display = 'inline-block';
-            if(hfBadge) hfBadge.style.display = 'none';
         }
         const hfToggle = $('hfToggle');
         const hfDeployBtn = $('hfDeployBtn');
@@ -406,16 +394,16 @@
         } catch(e) { anim.fail(e.message); showError(e.message); $('approveBtn').disabled = false; $('approveBtn').innerHTML = '<i class="fab fa-github"></i> Deploy to GitHub'; }
     }
 
-    // HF deploy & logs
+    // HF deploy (no user token – uses server token)
     async function deployToHF() {
         if(!repoName) return alert("Generate a repo first.");
-        if(!hfToken) return alert("Please connect Hugging Face first (click 'Connect 🤗').");
         if(!Object.keys(generatedFiles).length) return alert("Generate code first.");
         $('hfDeployBtn').disabled = true; $('hfDeployBtn').innerHTML = '⏳ Deploying...';
         showProgress();
         const anim = animateProgress(["Creating Space","Uploading files","Building"]);
         try {
-            const data = await safeFetch(API_DEPLOY_HF, { method:'POST', headers:{ 'Content-Type':'application/json', 'X-HF-Token': hfToken, 'Authorization': githubToken ? `token ${githubToken}` : '' }, body: JSON.stringify({ repo_full_name: repoName, space_name: repoName.split('/')[1] || 'grishte-app', files: generatedFiles, github_token: githubToken, hf_token: hfToken }) });
+            // No X-HF-Token header → backend uses HF_API_TOKEN env var
+            const data = await safeFetch(API_DEPLOY_HF, { method:'POST', headers:{ 'Content-Type':'application/json', 'Authorization': githubToken ? `token ${githubToken}` : '' }, body: JSON.stringify({ repo_full_name: repoName, space_name: repoName.split('/')[1] || 'grishte-app', files: generatedFiles, github_token: githubToken }) });
             if(data.error) throw new Error(data.error);
             anim.complete(data.deploy_time);
             liveSpaceUrl = data.space_url;
@@ -434,12 +422,11 @@
     }
 
     async function fetchSpaceLogs(spaceFullName) {
-        if (!hfToken) return;
         try {
             const data = await safeFetch(API_HF_LOGS, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ space_name: spaceFullName, hf_token: hfToken })
+                body: JSON.stringify({ space_name: spaceFullName }) // no token, backend uses its own
             });
             const logDiv = $('logOutput');
             if (data.logs && data.logs.length) {
@@ -463,8 +450,6 @@
     $('resetBtn')?.addEventListener('click', () => { localStorage.clear(); location.reload(); });
     $('loginBtn')?.addEventListener('click', () => window.location.href = AUTH_GITHUB);
     $('disconnectGit')?.addEventListener('click', () => { localStorage.removeItem('github_token'); localStorage.removeItem('github_user'); location.reload(); });
-    $('hfConnectBtn')?.addEventListener('click', () => { const token = prompt("Enter your Hugging Face token (with write permissions):"); if(token) { localStorage.setItem('hf_token', token); location.reload(); } });
-    $('disconnectHF')?.addEventListener('click', () => { localStorage.removeItem('hf_token'); location.reload(); });
     $('hfToggle')?.addEventListener('change', updateAuthUI);
     $('repoSelect')?.addEventListener('change', () => { if ($('repoSelect').value) loadRepoFiles(); });
     $('refreshLogsBtn')?.addEventListener('click', () => { if(currentSpaceFullName) fetchSpaceLogs(currentSpaceFullName); });
