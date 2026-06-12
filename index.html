@@ -41,7 +41,6 @@
       min-height: 100vh;
     }
 
-    /* Header */
     .main-header {
       background: linear-gradient(135deg, #0a0e1a 0%, #0f1420 100%);
       border-bottom: 1px solid var(--border);
@@ -60,7 +59,6 @@
     .logo-area img {
       height: 48px;
       width: auto;
-      filter: brightness(0) invert(1);
     }
     .logo-area h1 {
       font-size: 1.8rem;
@@ -98,15 +96,11 @@
       gap: 8px;
       font-size: 0.85rem;
     }
-
-    /* Main Layout */
     .app-container {
       max-width: 1400px;
       margin: 0 auto;
       padding: 24px;
     }
-
-    /* Cards */
     .card {
       background: var(--bg-sidebar);
       border: 1px solid var(--border);
@@ -122,14 +116,8 @@
       align-items: center;
       gap: 10px;
     }
-    .card-title i {
-      color: var(--accent);
-    }
-
-    /* Form Elements */
-    .form-group {
-      margin-bottom: 20px;
-    }
+    .card-title i { color: var(--accent); }
+    .form-group { margin-bottom: 20px; }
     label {
       display: block;
       font-weight: 500;
@@ -151,13 +139,8 @@
       outline: none;
       border-color: var(--accent);
     }
-    button {
-      cursor: pointer;
-    }
-    button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
+    button { cursor: pointer; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
     .btn-primary {
       background: linear-gradient(135deg, #10b981, #059669);
       color: white;
@@ -180,8 +163,6 @@
       border-radius: 8px;
       font-weight: 500;
     }
-
-    /* File Viewer */
     .file-item {
       background: var(--bg-editor);
       border-radius: 10px;
@@ -197,20 +178,14 @@
       background: var(--bg-sidebar);
       border-bottom: 1px solid var(--border);
     }
-    .file-content {
-      display: none;
-    }
-    .file-content.open {
-      display: block;
-    }
+    .file-content { display: none; }
+    .file-content.open { display: block; }
     .file-content textarea {
       border-radius: 0;
       font-family: monospace;
       font-size: 0.8rem;
       resize: vertical;
     }
-
-    /* Console */
     .console-log {
       background: var(--bg-terminal);
       padding: 16px;
@@ -221,8 +196,6 @@
       overflow-y: auto;
       white-space: pre-wrap;
     }
-
-    /* Deployments Grid */
     .deployments-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -235,10 +208,7 @@
       border-radius: 12px;
       padding: 16px;
     }
-    .deployment-card h4 {
-      font-size: 1rem;
-      margin-bottom: 8px;
-    }
+    .deployment-card h4 { font-size: 1rem; margin-bottom: 8px; }
     .deployment-card .timestamp {
       font-size: 0.7rem;
       color: var(--text-secondary);
@@ -254,9 +224,6 @@
       text-decoration: none;
       font-size: 0.8rem;
     }
-    .deployment-links a:hover {
-      text-decoration: underline;
-    }
     .status-badge {
       display: inline-block;
       padding: 2px 8px;
@@ -267,8 +234,11 @@
     .status-live { background: var(--success); color: white; }
     .status-building { background: var(--warning); color: white; }
     .status-failed { background: var(--error); color: white; }
-
-    /* Footer */
+    .two-column {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
     .footer {
       text-align: center;
       padding: 24px;
@@ -277,17 +247,7 @@
       font-size: 0.75rem;
       color: var(--text-secondary);
     }
-    .footer a {
-      color: var(--accent);
-      text-decoration: none;
-    }
-
-    /* Two-column layout for prompt and deployments */
-    .two-column {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
-    }
+    .footer a { color: var(--accent); text-decoration: none; }
     @media (max-width: 768px) {
       .two-column { grid-template-columns: 1fr; }
       .main-header { flex-direction: column; text-align: center; }
@@ -295,10 +255,8 @@
   </style>
 </head>
 <body>
-  <!-- Header -->
   <header class="main-header">
     <div class="logo-area">
-      <!-- REPLACE THIS URL WITH YOUR WORKING LOGO URL -->
       <img src="https://i.ibb.co/RGmb4FKk/1781072041102.png" alt="GrishteSync Logo" onerror="this.src='https://via.placeholder.com/48?text=GS'">
       <h1>GrishteSync</h1>
     </div>
@@ -310,11 +268,9 @@
   </header>
 
   <div class="app-container">
-    <!-- Two Column Layout -->
     <div class="two-column">
       <!-- Left Column: Builder -->
       <div>
-        <!-- Step 1: App Name -->
         <div class="card">
           <div class="card-title"><i class="fas fa-pen-fancy"></i> Step 1: Name Your App</div>
           <div class="form-group">
@@ -324,7 +280,6 @@
           </div>
         </div>
 
-        <!-- Step 2: AI Mode & Prompt (disabled until app name is entered) -->
         <div class="card">
           <div class="card-title"><i class="fas fa-brain"></i> Step 2: Tell AI What to Build</div>
           <div class="form-group">
@@ -346,7 +301,6 @@
           <div id="errorBox" style="display:none; margin-top: 12px; color: var(--error); font-size: 0.8rem;"></div>
         </div>
 
-        <!-- Step 3: Generated Files (appears after generation) -->
         <div id="resultCard" style="display:none;">
           <div class="card">
             <div class="card-title"><i class="fas fa-code"></i> Generated Files</div>
@@ -361,14 +315,13 @@
           </div>
         </div>
 
-        <!-- Live Console -->
         <div id="liveConsole" style="display:none;">
           <div class="card">
             <div class="card-title"><i class="fas fa-terminal"></i> Live Build Console</div>
             <pre id="consoleOutput" class="console-log">Waiting for deployment...</pre>
             <div style="margin-top: 12px;">
               <button id="refreshLogsBtn" class="btn-secondary">🔄 Refresh Logs</button>
-              <button id="diagnoseFromConsoleBtn" class="btn-danger" style="margin-left: 8px;">🩺 Diagnose & Fix</button>
+              <button id="diagnoseFromConsoleBtn" class="btn-secondary" style="margin-left: 8px;">🩺 Diagnose & Fix</button>
             </div>
           </div>
         </div>
@@ -388,7 +341,6 @@
       </div>
     </div>
 
-    <!-- Footer -->
     <footer class="footer">
       <p>✧ crafted with <i class="fas fa-heart" style="color: var(--error);"></i> by <strong>Suryasticsai</strong> ✧</p>
       <p style="margin-top: 8px;">
@@ -406,9 +358,11 @@
     const API_GENERATE = `${API_BASE}/api/generate`;
     const API_DEPLOY = `${API_BASE}/api/deploy`;
     const API_DEPLOY_HF = `${API_BASE}/api/deploy-hf`;
+    const API_REPO_FILES = `${API_BASE}/api/repo-files`;
+    const API_HF_LOGS = `${API_BASE}/api/hf-logs`;
+    const API_DIAGNOSE = `${API_BASE}/api/diagnose`;
     const AUTH_GITHUB = `${API_BASE}/auth/login`;
 
-    // State
     let currentVersion = "0.0.0";
     let repoName = "";
     let generatedFiles = {};
@@ -418,8 +372,8 @@
     let currentPRUrl = null;
     let currentSpaceUrl = null;
     let consoleInterval = null;
+    let currentSpaceFullName = null;
 
-    // DOM Elements
     const $ = id => document.getElementById(id);
     const appNameInput = $('appNameInput');
     const promptTypeSelect = $('promptTypeSelect');
@@ -444,7 +398,6 @@
     const deployErrorBox = $('deployErrorBox');
     const deploymentsList = $('deploymentsList');
 
-    // Helper Functions
     function showError(msg) { if(errorBox) { errorBox.style.display = 'block'; errorBox.innerHTML = msg; } }
     function hideError() { if(errorBox) errorBox.style.display = 'none'; }
     function showToast(msg) { alert(msg); }
@@ -479,7 +432,6 @@
       `).join('');
     }
 
-    // Enable/disable prompt based on app name
     function checkAppName() {
       const hasName = appNameInput.value.trim().length > 0;
       promptTypeSelect.disabled = !hasName;
@@ -489,7 +441,6 @@
     appNameInput.addEventListener('input', checkAppName);
     checkAppName();
 
-    // Update Auth UI
     function updateAuthUI() {
       if (githubToken) {
         if(loginBtn) loginBtn.style.display = 'none';
@@ -501,14 +452,12 @@
       }
     }
 
-    // Safe Fetch
     async function safeFetch(url, options = {}) {
       const res = await fetch(url, options);
       const text = await res.text();
       try { return JSON.parse(text); } catch(e) { throw new Error(`Server error (${res.status}): ${text.slice(0,200)}`); }
     }
 
-    // Toggle file content
     window.toggleFile = (id) => {
       const el = $(`file-${id}`);
       if (el) el.classList.toggle('open');
@@ -545,35 +494,27 @@
       }
     }
 
-    // Generate App
     async function generatePR() {
       const appName = appNameInput.value.trim();
       if (!appName) return showError("Please enter an app name");
       const prompt = promptInput.value.trim();
       if (!prompt) return showError("Please describe your app");
       const promptType = promptTypeSelect.value;
-      
       repoName = `GrishteSync-${appName}`;
       hideError();
       generateBtn.disabled = true;
       generateBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Generating...';
-      
       try {
         const headers = { 'Content-Type': 'application/json' };
         if (githubToken) headers['Authorization'] = `token ${githubToken}`;
-        
         const data = await safeFetch(API_GENERATE, {
           method: 'POST',
           headers,
           body: JSON.stringify({ prompt, prompt_type: promptType })
         });
-        
         if (data.error) throw new Error(data.error);
-        
         generatedFiles = data.files;
         renderFileViewer(generatedFiles);
-        
-        // Detect framework
         let framework = "Unknown";
         for (let [name, content] of Object.entries(generatedFiles)) {
           if (name.endsWith('.py')) {
@@ -585,14 +526,11 @@
           }
         }
         frameworkBadge.innerHTML = `<i class="fas fa-cube"></i> ${framework}`;
-        
         resultCard.style.display = 'block';
         approveBtn.style.display = githubToken ? 'inline-block' : 'none';
         hfDeployBtn.disabled = false;
-        
         generateBtn.innerHTML = '<i class="fas fa-magic"></i> Generate Again';
         showToast("App generated successfully!");
-        
       } catch(e) {
         showError(e.message);
         generateBtn.innerHTML = '<i class="fas fa-magic"></i> Generate App';
@@ -601,27 +539,21 @@
       }
     }
 
-    // Deploy to GitHub
     async function deployToGitHub() {
       if (!githubToken) return showToast("Connect GitHub first");
       if (Object.keys(generatedFiles).length === 0) return showToast("Generate an app first");
-      
       approveBtn.disabled = true;
       approveBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Deploying...';
-      
       try {
         const data = await safeFetch(API_DEPLOY, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': `token ${githubToken}` },
           body: JSON.stringify({ repo_name: repoName, files: generatedFiles, version: currentVersion })
         });
-        
         if (data.error) throw new Error(data.error);
-        
         currentPRUrl = data.pr_url;
         const repoUrl = data.repo_url;
         const prNumber = data.pr_url ? data.pr_url.split('/').pop() : null;
-        
         saveDeployment({
           appName: appNameInput.value.trim(),
           timestamp: Date.now(),
@@ -630,10 +562,8 @@
           prNumber: prNumber,
           status: 'building'
         });
-        
         approveBtn.innerHTML = '<i class="fab fa-github"></i> Deployed!';
         showToast(`✅ Deployed to GitHub! PR: ${data.pr_url}`);
-        
       } catch(e) {
         showError(e.message);
         approveBtn.innerHTML = '<i class="fab fa-github"></i> Retry Deploy';
@@ -642,27 +572,21 @@
       }
     }
 
-    // Deploy to HF
     async function deployToHF() {
       if (Object.keys(generatedFiles).length === 0) return showToast("Generate an app first");
-      
       hfDeployBtn.disabled = true;
       hfDeployBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Deploying to HF...';
       liveConsole.style.display = 'block';
       consoleOutput.innerText = 'Starting deployment to Hugging Face...\n';
-      
       try {
         const data = await safeFetch(API_DEPLOY_HF, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ repo_full_name: repoName, files: generatedFiles })
         });
-        
         if (data.error) throw new Error(data.error);
-        
         currentSpaceUrl = data.space_url;
-        
-        // Update deployment record
+        currentSpaceFullName = data.space_full_name;
         const existingDeployment = deployments.find(d => d.appName === appNameInput.value.trim());
         if (existingDeployment) {
           existingDeployment.hfUrl = currentSpaceUrl;
@@ -677,15 +601,11 @@
             status: 'live'
           });
         }
-        
         hfDeployBtn.innerHTML = '<i class="fab fa-huggingface"></i> Live!';
         appendToConsole(`✅ Deployment successful!`);
         appendToConsole(`🔗 Space URL: ${currentSpaceUrl}`);
         showToast(`🎉 App live at ${currentSpaceUrl}`);
-        
-        // Start polling logs
-        startLogPolling(data.space_full_name);
-        
+        if (currentSpaceFullName) startLogPolling(currentSpaceFullName);
       } catch(e) {
         appendToConsole(`❌ Deployment failed: ${e.message}`);
         showError(e.message);
@@ -695,14 +615,13 @@
       }
     }
 
-    // Poll logs
     let logInterval = null;
     async function startLogPolling(spaceFullName) {
       if (logInterval) clearInterval(logInterval);
       appendToConsole("Fetching build logs...");
       logInterval = setInterval(async () => {
         try {
-          const data = await safeFetch(`${API_BASE}/api/hf-logs`, {
+          const data = await safeFetch(API_HF_LOGS, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ space_name: spaceFullName, log_type: 'build' })
@@ -714,7 +633,6 @@
       }, 3000);
     }
 
-    // Download ZIP
     function downloadZip() {
       if (Object.keys(generatedFiles).length === 0) return showToast("Generate an app first");
       if (!window.JSZip) {
@@ -737,7 +655,6 @@
       });
     }
 
-    // Theme Toggle
     function initTheme() {
       const savedTheme = localStorage.getItem('theme');
       if (savedTheme === 'light') document.body.classList.add('light');
@@ -747,7 +664,6 @@
       });
     }
 
-    // Handle OAuth redirect
     function handleRedirectTokens() {
       const params = new URLSearchParams(window.location.search);
       const token = params.get('token');
@@ -760,7 +676,6 @@
       }
     }
 
-    // Event Listeners
     generateBtn.addEventListener('click', generatePR);
     approveBtn.addEventListener('click', deployToGitHub);
     hfDeployBtn.addEventListener('click', deployToHF);
@@ -772,10 +687,25 @@
       location.reload();
     });
     refreshLogsBtn?.addEventListener('click', () => {
-      if (logInterval) startLogPolling(currentSpaceUrl?.split('/').slice(-2).join('/'));
+      if (currentSpaceFullName) startLogPolling(currentSpaceFullName);
+    });
+    diagnoseFromConsoleBtn?.addEventListener('click', async () => {
+      const errorLog = consoleOutput.innerText;
+      const code = Object.values(generatedFiles)[0] || "";
+      if (!errorLog) return showToast("No logs to diagnose");
+      try {
+        const data = await safeFetch(API_DIAGNOSE, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ error_log: errorLog, code: code })
+        });
+        if (data.error) throw new Error(data.error);
+        generatedFiles = data.files;
+        renderFileViewer(generatedFiles);
+        showToast("Diagnosis complete. Review the fixed code and redeploy.");
+      } catch(e) { showError(e.message); }
     });
 
-    // Initialize
     handleRedirectTokens();
     updateAuthUI();
     initTheme();
