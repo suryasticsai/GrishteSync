@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>GrishteSync – AI App Builder</title>
+  <link rel="icon" type="image/png" href="https://i.ibb.co/B5z2c7j7/1781241361720.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: linear-gradient(135deg, #0a0e1a 0%, #0f1420 100%);
+      font-family: 'Inter', sans-serif;
+      color: #e0e0e0;
+      min-height: 100vh;
+    }
+    .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+    
+    /* Header */
+    .header {
+      background: rgba(15, 20, 32, 0.8);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-area img { height: 40px; width: auto; }
+    .logo-area h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #10b981, #34d399);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .github-profile {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(45, 55, 72, 0.8);
+      padding: 6px 16px 6px 10px;
+      border-radius: 40px;
+      backdrop-filter: blur(5px);
+    }
+    .github-profile img {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid #10b981;
+    }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid #10b981;
+      color: #10b981;
+      padding: 8px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-outline:hover { background: #10b981; color: white; transform: translateY(-2px); }
+    .btn-primary {
+      background: linear-gradient(135deg, #10b981, #059669);
+      border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4); }
+    .btn-secondary {
+      background: rgba(42, 42, 58, 0.9);
+      border: 1px solid #2a2a3a;
+      padding: 8px 16px;
+      border-radius: 8px;
+      color: #e0e0e0;
+      cursor: pointer;
+    }
+    .btn-secondary:hover { background: #2a2a3a; }
+    .btn-icon {
+      background: transparent;
+      border: none;
+      color: #10b981;
+      cursor: pointer;
+      margin-left: 8px;
+      font-size: 0.9rem;
+    }
+    .btn-icon:hover { color: #34d399; }
+
+    /* Cards */
+    .card {
+      background: rgba(15, 20, 32, 0.7);
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 24px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+    .card-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #10b981;
+    }
+
+    /* Form elements */
+    input, select, textarea {
+      width: 100%;
+      padding: 12px 16px;
+      background: rgba(26, 31, 46, 0.9);
+      border: 1px solid #2a2a3a;
+      border-radius: 12px;
+      color: #e0e0e0;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #10b981;
+      box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+    }
+    label { display: block; font-size: 0.85rem; margin-bottom: 6px; color: #a0a0b0; }
+
+    /* Console */
+    .console {
+      background: #0a0e1a;
+      border-radius: 12px;
+      padding: 16px;
+      font-family: 'Fira Code', monospace;
+      font-size: 12px;
+      max-height: 250px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      border: 1px solid #2a2a3a;
+    }
+    .console-line { 
+      padding: 2px 0; 
+      border-left: 2px solid transparent;
+      transition: 0.1s;
+    }
+    .console-line.success { border-left-color: #10b981; color: #a7f3d0; }
+    .console-line.error { border-left-color: #ef4444; color: #fecaca; }
+    .console-line.info { border-left-color: #3b82f6; color: #93c5fd; }
+    .console-line.warning { border-left-color: #f59e0b; color: #fde68a; }
+
+    /* File list */
+    .file-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .file-tag {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 30px;
+      padding: 6px 14px;
+      font-size: 0.8rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+    .file-tag:hover { background: rgba(16, 185, 129, 0.3); }
+    .file-tag span { max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    /* Modal (code editor) */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background: #1e1e2e;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 1000px;
+      height: 80%;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid #10b981;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    }
+    .modal-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #2a2a3a;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-header h3 {
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+    .modal-header .close-modal {
+      background: none;
+      border: none;
+      color: #a0a0b0;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    .modal-header .close-modal:hover { color: #ef4444; }
+    .modal-body {
+      flex: 1;
+      overflow: hidden;
+      padding: 8px;
+    }
+    #editor-container {
+      width: 100%;
+      height: 100%;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .modal-footer {
+      padding: 16px 20px;
+      border-top: 1px solid #2a2a3a;
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
+    /* Deployment cards */
+    .deployment-card {
+      background: rgba(26, 31, 46, 0.8);
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 12px;
+      transition: all 0.2s;
+    }
+    .deployment-card:hover { background: rgba(26, 31, 46, 1); transform: translateX(4px); }
+    .deployment-links { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px; }
+    .deployment-links a { color: #10b981; text-decoration: none; font-size: 0.75rem; }
+    
+    /* Loading overlay */
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 3px solid rgba(16,185,129,0.3);
+      border-top-color: #10b981;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    @media (max-width: 768px) { .two-column { grid-template-columns: 1fr; } }
+    
+    footer {
+      text-align: center;
+      padding: 24px;
+      border-top: 1px solid rgba(16,185,129,0.2);
+      margin-top: 24px;
+      font-size: 0.75rem;
+      color: #a0a0b0;
+    }
+    footer a { color: #10b981; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+    <div class="spinner"></div>
+    <div>Connecting to GitHub...</div>
+  </div>
+
+  <div class="header">
+    <div class="logo-area">
+      <img src="https://i.ibb.co/B5z2c7j7/1781241361720.png" alt="Logo">
+      <h1>GrishteSync</h1>
+    </div>
+    <div id="githubProfile" style="display: none;" class="github-profile">
+      <img id="githubAvatar" src="" alt="Avatar">
+      <span id="githubUsername"></span>
+      <button id="logoutBtn" class="btn-outline" style="padding: 4px 12px; font-size: 0.75rem;">Logout</button>
+    </div>
+    <button id="loginBtn" class="btn-outline" style="display: none;"><i class="fab fa-github"></i> Connect GitHub</button>
+    <button id="themeToggle" class="btn-outline"><i class="fas fa-moon"></i></button>
+  </div>
+
+  <div class="container">
+    <div class="two-column">
+      <!-- Left Column: Builder -->
+      <div>
+        <div class="card">
+          <div class="card-title"><i class="fas fa-pen-fancy"></i> App Configuration</div>
+          <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+            <div style="flex:1">
+              <label>App Name</label>
+              <input type="text" id="appNameInput" placeholder="my-awesome-app">
+              <div id="nameWarning" style="font-size:0.7rem; color:#f59e0b; margin-top:4px; display:none;"></div>
+            </div>
+            <div style="flex:1">
+              <label>Project Type</label>
+              <select id="platformSelect">
+                <option value="huggingface">🐍 Python App (HF + GitHub)</option>
+                <option value="github">🌐 WebApp (HTML/CSS/JS)</option>
+              </select>
+            </div>
+          </div>
+          <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+            <div style="flex:1">
+              <label>AI Mode</label>
+              <select id="promptTypeSelect">
+                <option value="generate">✨ Generate</option>
+                <option value="fix">🔧 Fix</option>
+                <option value="improve_ui">🎨 Improve UI</option>
+                <option value="add_feature">➕ Add feature</option>
+                <option value="refactor">📦 Refactor</option>
+                <option value="diagnose">🩺 Diagnose</option>
+              </select>
+            </div>
+            <div style="flex:1">
+              <label>Existing Repo (optional)</label>
+              <select id="repoSelect">
+                <option value="">-- Create new --</option>
+              </select>
+            </div>
+          </div>
+          <label>Describe your app</label>
+          <textarea id="promptInput" rows="3" placeholder="Example: A to-do list with local storage, dark mode and animations"></textarea>
+          <div style="display: flex; gap: 12px; margin-top: 16px;">
+            <button id="generateBtn" class="btn-primary" style="flex:1;">🚀 Generate</button>
+            <button id="deployGithubBtn" class="btn-secondary" style="display:none;"><i class="fab fa-github"></i> Deploy</button>
+            <button id="deployHfBtn" class="btn-secondary" style="display:none;"><i class="fab fa-huggingface"></i> Deploy HF</button>
+          </div>
+        </div>
+
+        <div id="resultCard" style="display:none;">
+          <div class="card">
+            <div class="card-title"><i class="fas fa-code"></i> Generated Files</div>
+            <div id="fileList" class="file-list"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Console & Deployments -->
+      <div>
+        <div class="card">
+          <div class="card-title"><i class="fas fa-terminal"></i> Live Console</div>
+          <div id="consoleOutput" class="console">Ready.</div>
+          <div style="display: flex; gap: 12px; margin-top: 12px;">
+            <button id="clearConsoleBtn" class="btn-secondary">Clear</button>
+            <button id="diagnoseConsoleBtn" class="btn-secondary">🩺 Diagnose</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><i class="fas fa-history"></i> Deployments</div>
+          <div id="deploymentsList"></div>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <p>✧ crafted with <i class="fas fa-heart" style="color: #ef4444;"></i> by <strong>Suryasticsai</strong> ✧</p>
+      <p><a href="https://github.com/suryasticsai" target="_blank">GitHub</a> | <a href="https://linkedin.com/in/suryasticsai" target="_blank">LinkedIn</a> | <a href="mailto:suryasticsai@gmail.com">Contact</a></p>
+      <p style="margin-top: 8px; font-size: 0.7rem;">GrishteSync — From Prompt to Production</p>
+    </footer>
+  </div>
+
+  <!-- Code Editor Modal -->
+  <div id="codeEditorModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Editing: <span id="currentEditFilename"></span></h3>
+        <button class="close-modal" id="closeModalBtn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="editor-container"></div>
+      </div>
+      <div class="modal-footer">
+        <button id="saveEditorBtn" class="btn-primary">💾 Save Changes</button>
+        <button id="cancelEditorBtn" class="btn-secondary">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script>
+    // Configuration
+    const API_BASE = "https://grishtesync-backend.onrender.com";
+    const API_GENERATE = `${API_BASE}/api/generate`;
+    const API_DEPLOY = `${API_BASE}/api/deploy`;
+    const API_DEPLOY_HF = `${API_BASE}/api/deploy-hf`;
+    const API_DIAGNOSE = `${API_BASE}/api/diagnose`;
+    const AUTH_GITHUB = `${API_BASE}/auth/login`;
+
+    let generatedFiles = {};
+    let githubToken = localStorage.getItem("github_token") || null;
+    let githubUsername = localStorage.getItem("github_user") || null;
+    let githubAvatar = localStorage.getItem("github_avatar") || null;
+    let deployments = JSON.parse(localStorage.getItem("deployments") || "[]");
+    let existingRepos = [];
+    let currentPRUrl = null;
+
+    // Editor related
+    let editor = null;
+    let currentEditFile = null;
+    let monacoLoaded = false;
+
+    // DOM elements
+    const $ = id => document.getElementById(id);
+    const consoleOutput = $('consoleOutput');
+    const fileListDiv = $('fileList');
+    const resultCard = $('resultCard');
+    const deployGithubBtn = $('deployGithubBtn');
+    const deployHfBtn = $('deployHfBtn');
+    const platformSelect = $('platformSelect');
+    const generateBtn = $('generateBtn');
+    const appNameInput = $('appNameInput');
+    const promptInput = $('promptInput');
+    const promptTypeSelect = $('promptTypeSelect');
+    const repoSelect = $('repoSelect');
+    const loginBtn = $('loginBtn');
+    const themeToggle = $('themeToggle');
+    const clearConsoleBtn = $('clearConsoleBtn');
+    const diagnoseConsoleBtn = $('diagnoseConsoleBtn');
+    const deploymentsList = $('deploymentsList');
+    const nameWarning = $('nameWarning');
+    const githubProfile = $('githubProfile');
+    const githubUsernameSpan = $('githubUsername');
+    const githubAvatarImg = $('githubAvatar');
+    const logoutBtn = $('logoutBtn');
+    const codeEditorModal = $('codeEditorModal');
+    const currentEditFilenameSpan = $('currentEditFilename');
+    const saveEditorBtn = $('saveEditorBtn');
+    const cancelEditorBtn = $('cancelEditorBtn');
+    const closeModalBtn = $('closeModalBtn');
+
+    // Console helpers
+    function appendToConsole(msg, type = 'info') {
+      const line = document.createElement('div');
+      line.className = `console-line ${type}`;
+      line.textContent = msg;
+      consoleOutput.appendChild(line);
+      consoleOutput.scrollTop = consoleOutput.scrollHeight;
+    }
+
+    function clearConsole() {
+      consoleOutput.innerHTML = '';
+      appendToConsole('Console cleared.');
+    }
+
+    async function simulateConsoleActivity(steps, duration = 300) {
+      for (const step of steps) {
+        appendToConsole(step, 'info');
+        await new Promise(r => setTimeout(r, duration));
+      }
+    }
+
+    // Load Monaco Editor lazily
+    async function loadMonaco() {
+      if (monacoLoaded) return;
+      return new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js';
+        script.onload = () => {
+          require.config({ paths: { vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs' } });
+          require(['vs/editor/editor.main'], () => {
+            monacoLoaded = true;
+            resolve();
+          });
+        };
+        script.onerror = reject;
+        document.head.appendChild(script);
+      });
+    }
+
+    async function openEditor(filename, content) {
+      await loadMonaco();
+      currentEditFile = filename;
+      currentEditFilenameSpan.textContent = filename;
+      codeEditorModal.style.display = 'flex';
+      
+      if (editor) {
+        editor.dispose();
+      }
+      editor = monaco.editor.create(document.getElementById('editor-container'), {
+        value: content,
+        language: getLanguageFromFilename(filename),
+        theme: 'vs-dark',
+        automaticLayout: true,
+        minimap: { enabled: false },
+        scrollBeyondLastLine: false,
+        fontSize: 13,
+        fontFamily: 'Fira Code, monospace'
+      });
+    }
+
+    function getLanguageFromFilename(filename) {
+      const ext = filename.split('.').pop();
+      const map = {
+        'js': 'javascript',
+        'py': 'python',
+        'html': 'html',
+        'css': 'css',
+        'json': 'json',
+        'md': 'markdown',
+        'txt': 'text'
+      };
+      return map[ext] || 'plaintext';
+    }
+
+    function saveEditorChanges() {
+      if (editor && currentEditFile) {
+        const newContent = editor.getValue();
+        generatedFiles[currentEditFile] = newContent;
+        appendToConsole(`✏️ Updated ${currentEditFile}`, 'success');
+        renderFileList();  // re-render to show changes (optional)
+        closeEditorModal();
+      }
+    }
+
+    function closeEditorModal() {
+      codeEditorModal.style.display = 'none';
+      if (editor) {
+        editor.dispose();
+        editor = null;
+      }
+      currentEditFile = null;
+    }
+
+    // File rendering with Download & Edit buttons
+    function renderFileList() {
+      fileListDiv.innerHTML = '';
+      for (const [name, content] of Object.entries(generatedFiles)) {
+        const tag = document.createElement('div');
+        tag.className = 'file-tag';
+        tag.innerHTML = `
+          <i class="far fa-file-code"></i>
+          <span title="${name}">${name}</span>
+          <small style="color:#a0a0b0;">(${content.length} chars)</small>
+          <button class="btn-icon download-file" data-filename="${name}" title="Download"><i class="fas fa-download"></i></button>
+          <button class="btn-icon edit-file" data-filename="${name}" title="Edit code"><i class="fas fa-edit"></i></button>
+        `;
+        fileListDiv.appendChild(tag);
+      }
+      // Attach event listeners
+      document.querySelectorAll('.download-file').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const filename = btn.dataset.filename;
+          downloadFile(filename, generatedFiles[filename]);
+        });
+      });
+      document.querySelectorAll('.edit-file').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const filename = btn.dataset.filename;
+          openEditor(filename, generatedFiles[filename]);
+        });
+      });
+    }
+
+    function downloadFile(name, content) {
+      const blob = new Blob([content], {type: 'text/plain'});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = name;
+      a.click();
+      URL.revokeObjectURL(a.href);
+      appendToConsole(`📥 Downloaded ${name}`);
+    }
+
+    // Deployment history
+    function saveDeployment(deployment) {
+      deployments.unshift(deployment);
+      if (deployments.length > 10) deployments.pop();
+      localStorage.setItem("deployments", JSON.stringify(deployments));
+      renderDeployments();
+    }
+
+    function renderDeployments() {
+      if (!deploymentsList) return;
+      if (deployments.length === 0) {
+        deploymentsList.innerHTML = '<div style="color:#a0a0b0; text-align:center;">No deployments yet</div>';
+        return;
+      }
+      deploymentsList.innerHTML = deployments.map(d => `
+        <div class="deployment-card">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <strong>${d.appName}</strong>
+            <span style="font-size:0.65rem;">${new Date(d.timestamp).toLocaleString()}</span>
+          </div>
+          <div class="deployment-links">
+            ${d.githubUrl ? `<a href="${d.githubUrl}" target="_blank"><i class="fab fa-github"></i> Repo</a>` : ''}
+            ${d.prUrl ? `<a href="${d.prUrl}" target="_blank"><i class="fas fa-code-branch"></i> PR</a>` : ''}
+            ${d.pagesUrl ? `<a href="${d.pagesUrl}" target="_blank"><i class="fas fa-globe"></i> Pages</a>` : ''}
+            ${d.hfUrl ? `<a href="${d.hfUrl}" target="_blank"><i class="fab fa-huggingface"></i> Space</a>` : ''}
+          </div>
+          <div style="margin-top: 8px; display: flex; gap: 8px;">
+            ${d.prUrl ? `<button class="btn-secondary approve-pr-btn" style="padding:4px 12px; font-size:0.7rem;" data-url="${d.prUrl}"><i class="fas fa-check-circle"></i> Approve & Merge</button>` : ''}
+            ${d.prUrl ? `<button class="btn-secondary cancel-pr-btn" style="padding:4px 12px; font-size:0.7rem; background:#ef4444;" data-url="${d.prUrl}"><i class="fas fa-times-circle"></i> Cancel PR</button>` : ''}
+          </div>
+        </div>
+      `).join('');
+      document.querySelectorAll('.approve-pr-btn').forEach(btn => {
+        btn.onclick = () => approveAndMergePR(btn.dataset.url);
+      });
+      document.querySelectorAll('.cancel-pr-btn').forEach(btn => {
+        btn.onclick = () => cancelPR(btn.dataset.url);
+      });
+    }
+
+    async function approveAndMergePR(prUrl) {
+      if (!githubToken) return appendToConsole("❌ Connect GitHub first", 'error');
+      appendToConsole(`🔄 Approving and merging PR: ${prUrl}`, 'info');
+      try {
+        const match = prUrl.match(/github\.com\/(.+?)\/(.+?)\/pull\/(\d+)/);
+        if (!match) throw new Error("Invalid PR URL");
+        const [, owner, repo, pull_number] = match;
+        const url = `https://api.github.com/repos/${owner}/${repo}/pulls/${pull_number}/merge`;
+        const resp = await fetch(url, {
+          method: 'PUT',
+          headers: { 'Authorization': `token ${githubToken}`, 'Accept': 'application/vnd.github.v3+json' },
+          body: JSON.stringify({ merge_method: 'merge' })
+        });
+        if (resp.status === 200) {
+          appendToConsole(`✅ PR merged successfully!`, 'success');
+          appendToConsole(`🔗 Repository: https://github.com/${owner}/${repo}`, 'info');
+        } else {
+          const text = await resp.text();
+          appendToConsole(`❌ Merge failed: ${text}`, 'error');
+        }
+      } catch(e) { appendToConsole(`❌ ${e.message}`, 'error'); }
+    }
+
+    async function cancelPR(prUrl) {
+      if (!githubToken) return appendToConsole("❌ Connect GitHub first", 'error');
+      appendToConsole(`🔄 Closing PR: ${prUrl}`, 'info');
+      try {
+        const match = prUrl.match(/github\.com\/(.+?)\/(.+?)\/pull\/(\d+)/);
+        if (!match) throw new Error("Invalid PR URL");
+        const [, owner, repo, pull_number] = match;
+        const url = `https://api.github.com/repos/${owner}/${repo}/pulls/${pull_number}`;
+        const resp = await fetch(url, {
+          method: 'PATCH',
+          headers: { 'Authorization': `token ${githubToken}`, 'Accept': 'application/vnd.github.v3+json' },
+          body: JSON.stringify({ state: 'closed' })
+        });
+        if (resp.status === 200) {
+          appendToConsole(`✅ PR closed successfully`, 'success');
+        } else {
+          const text = await resp.text();
+          appendToConsole(`❌ Failed to close: ${text}`, 'error');
+        }
+      } catch(e) { appendToConsole(`❌ ${e.message}`, 'error'); }
+    }
+
+    // API calls
+    async function safeFetch(url, options) {
+      const res = await fetch(url, options);
+      const text = await res.text();
+      try { return JSON.parse(text); } catch(e) { throw new Error(`Server error: ${text.slice(0,200)}`); }
+    }
+
+    async function checkExistingRepos() {
+      if (!githubToken) return;
+      try {
+        const repos = await safeFetch('https://api.github.com/user/repos?per_page=100', { headers: { Authorization: `token ${githubToken}` } });
+        existingRepos = repos.filter(r => r.name.toLowerCase().startsWith('grishtesync-')).map(r => r.name.toLowerCase());
+        renderRepoSelect(repos);
+      } catch(e) { console.error(e); }
+    }
+
+    function renderRepoSelect(repos) {
+      const grishteRepos = repos.filter(r => r.name.toLowerCase().startsWith('grishtesync-'));
+      repoSelect.innerHTML = '<option value="">-- Create new --</option>';
+      grishteRepos.forEach(repo => {
+        const opt = document.createElement('option');
+        opt.value = repo.full_name;
+        opt.textContent = repo.name;
+        repoSelect.appendChild(opt);
+      });
+    }
+
+    function checkDuplicateName() {
+      const appName = appNameInput.value.trim().toLowerCase();
+      const fullName = `grishtesync-${appName}`;
+      if (existingRepos.includes(fullName)) {
+        nameWarning.style.display = 'block';
+        nameWarning.innerHTML = `⚠️ Repository "GrishteSync-${appName}" already exists. Will be updated.`;
+        return true;
+      } else {
+        nameWarning.style.display = 'none';
+        return false;
+      }
+    }
+
+    appNameInput.addEventListener('input', checkDuplicateName);
+    repoSelect.addEventListener('change', () => {
+      if (repoSelect.value) {
+        appNameInput.disabled = true;
+        nameWarning.style.display = 'none';
+      } else {
+        appNameInput.disabled = false;
+      }
+    });
+
+    async function generate() {
+      let appName = appNameInput.value.trim();
+      if (!appName) return appendToConsole("❌ Enter an app name", 'error');
+      const prompt = promptInput.value.trim();
+      if (!prompt) return appendToConsole("❌ Describe your app", 'error');
+      
+      const selectedRepo = repoSelect.value;
+      let platform = platformSelect.value;
+      
+      if (selectedRepo) {
+        const match = selectedRepo.match(/GrishteSync-(.+)/);
+        if (match) appName = match[1];
+      }
+      
+      generateBtn.disabled = true;
+      generateBtn.innerText = '⏳ Generating...';
+      
+      await simulateConsoleActivity([
+        "🔍 Parsing your request...",
+        "📝 Generating code structure...",
+        "✍️ Writing files..."
+      ], 200);
+      
+      try {
+        const headers = { 'Content-Type': 'application/json' };
+        if (githubToken) headers['Authorization'] = `token ${githubToken}`;
+        const data = await safeFetch(API_GENERATE, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({ 
+            prompt, 
+            prompt_type: promptTypeSelect.value, 
+            platform, 
+            repo: selectedRepo 
+          })
+        });
+        if (data.error) throw new Error(data.error);
+        generatedFiles = data.files;
+        renderFileList();
+        resultCard.style.display = 'block';
+        appendToConsole(`✅ Generation complete! ${Object.keys(generatedFiles).length} files created.`, 'success');
+        appendToConsole(`📦 Files: ${Object.keys(generatedFiles).join(', ')}`, 'info');
+        
+        if (platform === 'github') {
+          deployGithubBtn.style.display = 'inline-block';
+          deployHfBtn.style.display = 'none';
+        } else {
+          deployGithubBtn.style.display = 'inline-block';
+          deployHfBtn.style.display = 'inline-block';
+        }
+      } catch(e) {
+        appendToConsole(`❌ Generation failed: ${e.message}`, 'error');
+      } finally {
+        generateBtn.disabled = false;
+        generateBtn.innerText = '🚀 Generate';
+      }
+    }
+
+    async function deployToGitHub() {
+      if (!githubToken) return appendToConsole("❌ Connect GitHub first", 'error');
+      if (Object.keys(generatedFiles).length === 0) return appendToConsole("❌ No files to deploy", 'error');
+      
+      let appName = appNameInput.value.trim();
+      if (repoSelect.value) {
+        const match = repoSelect.value.match(/GrishteSync-(.+)/);
+        if (match) appName = match[1];
+      }
+      const repoName = `GrishteSync-${appName}`;
+      
+      deployGithubBtn.disabled = true;
+      deployGithubBtn.innerText = '⏳ Deploying...';
+      appendToConsole("📦 Deploying to GitHub...", 'info');
+      
+      try {
+        const data = await safeFetch(API_DEPLOY, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `token ${githubToken}` },
+          body: JSON.stringify({ repo_name: repoName, files: generatedFiles, version: '0.1.0', pr_description: `Generated by GrishteSync` })
+        });
+        if (data.error) throw new Error(data.error);
+        currentPRUrl = data.pr_url;
+        saveDeployment({
+          appName: appName,
+          timestamp: Date.now(),
+          githubUrl: data.repo_url,
+          prUrl: data.pr_url,
+          pagesUrl: data.pages_url
+        });
+        appendToConsole(`✅ GitHub repo: ${data.repo_url}`, 'success');
+        if (data.pr_url) appendToConsole(`🔀 Pull Request: ${data.pr_url}`, 'info');
+        if (data.pages_url) appendToConsole(`🌐 GitHub Pages: ${data.pages_url}`, 'success');
+      } catch(e) {
+        appendToConsole(`❌ Deploy failed: ${e.message}`, 'error');
+      } finally {
+        deployGithubBtn.disabled = false;
+        deployGithubBtn.innerText = '🐙 Deploy';
+      }
+    }
+
+    async function deployToHF() {
+      if (Object.keys(generatedFiles).length === 0) return appendToConsole("❌ No files to deploy", 'error');
+      
+      let appName = appNameInput.value.trim();
+      if (repoSelect.value) {
+        const match = repoSelect.value.match(/GrishteSync-(.+)/);
+        if (match) appName = match[1];
+      }
+      const repoName = `GrishteSync-${appName}`;
+      
+      deployHfBtn.disabled = true;
+      deployHfBtn.innerText = '⏳ Deploying...';
+      appendToConsole("🤗 Deploying to Hugging Face Space...", 'info');
+      
+      try {
+        const data = await safeFetch(API_DEPLOY_HF, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ repo_full_name: repoName, files: generatedFiles, platform: platformSelect.value })
+        });
+        if (data.error) throw new Error(data.error);
+        saveDeployment({
+          appName: appName,
+          timestamp: Date.now(),
+          hfUrl: data.space_url
+        });
+        appendToConsole(`✅ Hugging Face Space: ${data.space_url}`, 'success');
+      } catch(e) {
+        appendToConsole(`❌ HF deploy failed: ${e.message}`, 'error');
+      } finally {
+        deployHfBtn.disabled = false;
+        deployHfBtn.innerText = '🤗 Deploy HF';
+      }
+    }
+
+    async function diagnoseFromConsole() {
+      const logs = consoleOutput.innerText;
+      const code = Object.values(generatedFiles)[0] || '';
+      if (!logs || logs === 'Ready.') return appendToConsole("No logs to diagnose", 'warning');
+      appendToConsole("🩺 Running diagnosis...", 'info');
+      try {
+        const data = await safeFetch(API_DIAGNOSE, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ error_log: logs, code })
+        });
+        if (data.error) throw new Error(data.error);
+        generatedFiles = data.files;
+        renderFileList();
+        resultCard.style.display = 'block';
+        appendToConsole("✅ Diagnosis complete. Fixed code loaded.", 'success');
+      } catch(e) {
+        appendToConsole(`❌ Diagnosis failed: ${e.message}`, 'error');
+      }
+    }
+
+    // Auth UI
+    function updateAuthUI() {
+      if (githubToken) {
+        loginBtn.style.display = 'none';
+        githubProfile.style.display = 'flex';
+        githubUsernameSpan.innerText = githubUsername || 'User';
+        if (githubAvatar) githubAvatarImg.src = githubAvatar;
+        checkExistingRepos();
+      } else {
+        loginBtn.style.display = 'inline-block';
+        githubProfile.style.display = 'none';
+      }
+    }
+
+    function initTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme === 'light') document.body.style.background = '#f5f5f5';
+      themeToggle.onclick = () => {
+        const isLight = document.body.style.background === '#f5f5f5';
+        document.body.style.background = isLight ? 'linear-gradient(135deg, #0a0e1a 0%, #0f1420 100%)' : '#f5f5f5';
+        localStorage.setItem('theme', isLight ? 'dark' : 'light');
+      };
+    }
+
+    function handleOAuth() {
+      const overlay = document.getElementById('loadingOverlay');
+      loginBtn.onclick = () => {
+        overlay.style.display = 'flex';
+        setTimeout(() => {
+          window.location.href = AUTH_GITHUB;
+        }, 500);
+      };
+      const urlParams = new URLSearchParams(window.location.search);
+      const token = urlParams.get('token');
+      const user = urlParams.get('github_user');
+      if (token) {
+        localStorage.setItem('github_token', token);
+        if (user) localStorage.setItem('github_user', user);
+        fetch('https://api.github.com/user', {
+          headers: { 'Authorization': `token ${token}` }
+        }).then(res => res.json()).then(data => {
+          if (data.avatar_url) localStorage.setItem('github_avatar', data.avatar_url);
+          window.history.replaceState({}, '', window.location.pathname);
+          location.reload();
+        }).catch(() => location.reload());
+      }
+      overlay.style.display = 'none';
+    }
+
+    logoutBtn.onclick = () => {
+      localStorage.removeItem('github_token');
+      localStorage.removeItem('github_user');
+      localStorage.removeItem('github_avatar');
+      location.reload();
+    };
+
+    // Event listeners
+    generateBtn.onclick = generate;
+    deployGithubBtn.onclick = deployToGitHub;
+    deployHfBtn.onclick = deployToHF;
+    clearConsoleBtn.onclick = clearConsole;
+    diagnoseConsoleBtn.onclick = diagnoseFromConsole;
+    platformSelect.onchange = () => {
+      const isGithub = platformSelect.value === 'github';
+      if (isGithub) deployHfBtn.style.display = 'none';
+      else deployHfBtn.style.display = 'inline-block';
+    };
+    saveEditorBtn.onclick = saveEditorChanges;
+    cancelEditorBtn.onclick = closeEditorModal;
+    closeModalBtn.onclick = closeEditorModal;
+    window.onclick = (e) => { if (e.target === codeEditorModal) closeEditorModal(); };
+
+    handleOAuth();
+    updateAuthUI();
+    initTheme();
+    renderDeployments();
+    appendToConsole("✨ GrishteSync ready. Connect GitHub to get started.", 'success');
+  </script>
+</body>
+</html>
