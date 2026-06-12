@@ -36,7 +36,6 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      animation: fadeIn 0.5s ease;
     }
     .logo-area img { height: 40px; width: auto; }
     .logo-area h1 {
@@ -92,6 +91,15 @@
       cursor: pointer;
     }
     .btn-secondary:hover { background: #2a2a3a; }
+    .btn-icon {
+      background: transparent;
+      border: none;
+      color: #10b981;
+      cursor: pointer;
+      margin-left: 8px;
+      font-size: 0.9rem;
+    }
+    .btn-icon:hover { color: #34d399; }
 
     /* Cards */
     .card {
@@ -167,10 +175,76 @@
       border-radius: 30px;
       padding: 6px 14px;
       font-size: 0.8rem;
-      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
       transition: all 0.2s;
     }
-    .file-tag:hover { background: rgba(16, 185, 129, 0.3); transform: scale(1.02); }
+    .file-tag:hover { background: rgba(16, 185, 129, 0.3); }
+    .file-tag span { max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    /* Modal (code editor) */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background: #1e1e2e;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 1000px;
+      height: 80%;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid #10b981;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    }
+    .modal-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #2a2a3a;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-header h3 {
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+    .modal-header .close-modal {
+      background: none;
+      border: none;
+      color: #a0a0b0;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    .modal-header .close-modal:hover { color: #ef4444; }
+    .modal-body {
+      flex: 1;
+      overflow: hidden;
+      padding: 8px;
+    }
+    #editor-container {
+      width: 100%;
+      height: 100%;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .modal-footer {
+      padding: 16px 20px;
+      border-top: 1px solid #2a2a3a;
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
 
     /* Deployment cards */
     .deployment-card {
@@ -209,9 +283,7 @@
       animation: spin 0.8s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* Grid layout */
     .two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
     @media (max-width: 768px) { .two-column { grid-template-columns: 1fr; } }
     
@@ -327,6 +399,23 @@
     </footer>
   </div>
 
+  <!-- Code Editor Modal -->
+  <div id="codeEditorModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Editing: <span id="currentEditFilename"></span></h3>
+        <button class="close-modal" id="closeModalBtn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="editor-container"></div>
+      </div>
+      <div class="modal-footer">
+        <button id="saveEditorBtn" class="btn-primary">💾 Save Changes</button>
+        <button id="cancelEditorBtn" class="btn-secondary">Cancel</button>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <script>
     // Configuration
@@ -344,6 +433,11 @@
     let deployments = JSON.parse(localStorage.getItem("deployments") || "[]");
     let existingRepos = [];
     let currentPRUrl = null;
+
+    // Editor related
+    let editor = null;
+    let currentEditFile = null;
+    let monacoLoaded = false;
 
     // DOM elements
     const $ = id => document.getElementById(id);
@@ -368,6 +462,11 @@
     const githubUsernameSpan = $('githubUsername');
     const githubAvatarImg = $('githubAvatar');
     const logoutBtn = $('logoutBtn');
+    const codeEditorModal = $('codeEditorModal');
+    const currentEditFilenameSpan = $('currentEditFilename');
+    const saveEditorBtn = $('saveEditorBtn');
+    const cancelEditorBtn = $('cancelEditorBtn');
+    const closeModalBtn = $('closeModalBtn');
 
     // Console helpers
     function appendToConsole(msg, type = 'info') {
@@ -390,16 +489,108 @@
       }
     }
 
-    // File rendering
+    // Load Monaco Editor lazily
+    async function loadMonaco() {
+      if (monacoLoaded) return;
+      return new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js';
+        script.onload = () => {
+          require.config({ paths: { vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs' } });
+          require(['vs/editor/editor.main'], () => {
+            monacoLoaded = true;
+            resolve();
+          });
+        };
+        script.onerror = reject;
+        document.head.appendChild(script);
+      });
+    }
+
+    async function openEditor(filename, content) {
+      await loadMonaco();
+      currentEditFile = filename;
+      currentEditFilenameSpan.textContent = filename;
+      codeEditorModal.style.display = 'flex';
+      
+      if (editor) {
+        editor.dispose();
+      }
+      editor = monaco.editor.create(document.getElementById('editor-container'), {
+        value: content,
+        language: getLanguageFromFilename(filename),
+        theme: 'vs-dark',
+        automaticLayout: true,
+        minimap: { enabled: false },
+        scrollBeyondLastLine: false,
+        fontSize: 13,
+        fontFamily: 'Fira Code, monospace'
+      });
+    }
+
+    function getLanguageFromFilename(filename) {
+      const ext = filename.split('.').pop();
+      const map = {
+        'js': 'javascript',
+        'py': 'python',
+        'html': 'html',
+        'css': 'css',
+        'json': 'json',
+        'md': 'markdown',
+        'txt': 'text'
+      };
+      return map[ext] || 'plaintext';
+    }
+
+    function saveEditorChanges() {
+      if (editor && currentEditFile) {
+        const newContent = editor.getValue();
+        generatedFiles[currentEditFile] = newContent;
+        appendToConsole(`✏️ Updated ${currentEditFile}`, 'success');
+        renderFileList();  // re-render to show changes (optional)
+        closeEditorModal();
+      }
+    }
+
+    function closeEditorModal() {
+      codeEditorModal.style.display = 'none';
+      if (editor) {
+        editor.dispose();
+        editor = null;
+      }
+      currentEditFile = null;
+    }
+
+    // File rendering with Download & Edit buttons
     function renderFileList() {
       fileListDiv.innerHTML = '';
       for (const [name, content] of Object.entries(generatedFiles)) {
         const tag = document.createElement('div');
         tag.className = 'file-tag';
-        tag.innerHTML = `<i class="far fa-file-code"></i> ${name} (${content.length} chars)`;
-        tag.onclick = () => downloadFile(name, content);
+        tag.innerHTML = `
+          <i class="far fa-file-code"></i>
+          <span title="${name}">${name}</span>
+          <small style="color:#a0a0b0;">(${content.length} chars)</small>
+          <button class="btn-icon download-file" data-filename="${name}" title="Download"><i class="fas fa-download"></i></button>
+          <button class="btn-icon edit-file" data-filename="${name}" title="Edit code"><i class="fas fa-edit"></i></button>
+        `;
         fileListDiv.appendChild(tag);
       }
+      // Attach event listeners
+      document.querySelectorAll('.download-file').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const filename = btn.dataset.filename;
+          downloadFile(filename, generatedFiles[filename]);
+        });
+      });
+      document.querySelectorAll('.edit-file').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const filename = btn.dataset.filename;
+          openEditor(filename, generatedFiles[filename]);
+        });
+      });
     }
 
     function downloadFile(name, content) {
@@ -444,7 +635,6 @@
           </div>
         </div>
       `).join('');
-      // Attach event listeners to new buttons
       document.querySelectorAll('.approve-pr-btn').forEach(btn => {
         btn.onclick = () => approveAndMergePR(btn.dataset.url);
       });
@@ -770,6 +960,10 @@
       if (isGithub) deployHfBtn.style.display = 'none';
       else deployHfBtn.style.display = 'inline-block';
     };
+    saveEditorBtn.onclick = saveEditorChanges;
+    cancelEditorBtn.onclick = closeEditorModal;
+    closeModalBtn.onclick = closeEditorModal;
+    window.onclick = (e) => { if (e.target === codeEditorModal) closeEditorModal(); };
 
     handleOAuth();
     updateAuthUI();
