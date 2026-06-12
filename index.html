@@ -59,13 +59,52 @@
     }
     .row { display: flex; gap: 16px; flex-wrap: wrap; }
     .col { flex: 1; min-width: 200px; }
-    .file-list { background: #1a1f2e; border-radius: 12px; padding: 12px; max-height: 200px; overflow-y: auto; }
-    .file-item { padding: 6px 8px; cursor: pointer; border-radius: 6px; display: flex; justify-content: space-between; }
+    .split-panel {
+      display: flex;
+      gap: 20px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+    .file-list {
+      flex: 1;
+      background: #1a1f2e;
+      border-radius: 12px;
+      padding: 12px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .file-editor {
+      flex: 2;
+      background: #1a1f2e;
+      border-radius: 12px;
+      padding: 12px;
+    }
+    .file-item {
+      padding: 6px 8px;
+      cursor: pointer;
+      border-radius: 6px;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
     .file-item:hover { background: #2a2a3a; }
+    .file-item.active { background: #10b981; color: white; }
+    .editor-textarea {
+      width: 100%;
+      height: 250px;
+      background: #0a0e1a;
+      border: 1px solid #2a2a3a;
+      border-radius: 10px;
+      color: #e0e0e0;
+      font-family: monospace;
+      font-size: 13px;
+      padding: 10px;
+      resize: vertical;
+    }
     .console { background: #0a0e1a; border-radius: 12px; padding: 12px; font-family: monospace; font-size: 12px; max-height: 200px; overflow-y: auto; white-space: pre-wrap; }
     .deployment-links { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; }
     .deployment-links a { color: #10b981; text-decoration: none; }
-    @media (max-width: 700px) { .row { flex-direction: column; } }
+    @media (max-width: 700px) { .split-panel { flex-direction: column; } }
   </style>
 </head>
 <body>
@@ -125,11 +164,20 @@
 
   <div id="resultCard" style="display:none;">
     <div class="card">
-      <div style="display: flex; justify-content: space-between; align-items: center;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
         <h3><i class="fas fa-code"></i> Generated Files</h3>
-        <button id="downloadZipBtn" class="btn-secondary"><i class="fas fa-download"></i> ZIP</button>
+        <button id="downloadZipBtn" class="btn-secondary"><i class="fas fa-download"></i> Download ZIP</button>
       </div>
-      <div id="fileList" class="file-list" style="margin-top: 12px;"></div>
+      <div class="split-panel">
+        <div class="file-list" id="fileList"></div>
+        <div class="file-editor">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <strong id="currentFileName">Select a file</strong>
+            <button id="saveFileBtn" class="btn-outline btn-sm">💾 Save</button>
+          </div>
+          <textarea id="fileEditor" class="editor-textarea" placeholder="Click a file to edit"></textarea>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -149,7 +197,6 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script>
-  // ---------- Configuration ----------
   const API_BASE = "https://grishtesync-backend.onrender.com";
   const API_GENERATE = `${API_BASE}/api/generate`;
   const API_DEPLOY = `${API_BASE}/api/deploy`;
@@ -162,6 +209,7 @@
   let deployments = JSON.parse(localStorage.getItem("deployments") || "[]");
   let repoName = "";
   let currentPlatform = "huggingface";
+  let currentSelectedFile = null;
 
   const $ = id => document.getElementById(id);
   const consoleOut = $('consoleOutput');
@@ -183,6 +231,9 @@
   const clearConsoleBtn = $('clearConsoleBtn');
   const deploymentsList = $('deploymentsList');
   const downloadZipBtn = $('downloadZipBtn');
+  const fileEditor = $('fileEditor');
+  const saveFileBtn = $('saveFileBtn');
+  const currentFileNameSpan = $('currentFileName');
 
   function appendToConsole(msg) { consoleOut.innerText += msg + '\n'; consoleOut.scrollTop = consoleOut.scrollHeight; }
   function showError(msg) { errorBox.style.display = 'block'; errorBox.innerText = msg; setTimeout(() => errorBox.style.display = 'none', 5000); }
@@ -192,16 +243,27 @@
     for (const [name, content] of Object.entries(generatedFiles)) {
       const div = document.createElement('div');
       div.className = 'file-item';
+      if (currentSelectedFile === name) div.classList.add('active');
       div.innerHTML = `<span><i class="far fa-file-code"></i> ${name}</span> <span style="font-size:0.7rem;">${content.length} chars</span>`;
-      div.onclick = () => {
-        const blob = new Blob([content], {type: 'text/plain'});
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = name;
-        a.click();
-        URL.revokeObjectURL(a.href);
-      };
+      div.onclick = () => selectFile(name);
       fileListDiv.appendChild(div);
+    }
+  }
+
+  function selectFile(filename) {
+    currentSelectedFile = filename;
+    fileEditor.value = generatedFiles[filename];
+    currentFileNameSpan.innerText = filename;
+    renderFileList();
+  }
+
+  function saveCurrentFile() {
+    if (currentSelectedFile && generatedFiles[currentSelectedFile] !== undefined) {
+      generatedFiles[currentSelectedFile] = fileEditor.value;
+      appendToConsole(`✅ Saved ${currentSelectedFile}`);
+      renderFileList(); // update file list (size may change)
+    } else {
+      appendToConsole("❌ No file selected");
     }
   }
 
@@ -256,9 +318,10 @@
       });
       if (data.error) throw new Error(data.error);
       generatedFiles = data.files;
+      currentSelectedFile = Object.keys(generatedFiles)[0] || null;
+      if (currentSelectedFile) fileEditor.value = generatedFiles[currentSelectedFile];
       renderFileList();
       resultCard.style.display = 'block';
-      // Enable/disable deploy buttons based on platform
       if (platform === 'github') {
         deployGithubBtn.style.display = 'inline-block';
         deployHfBtn.style.display = 'none';
@@ -279,6 +342,7 @@
   async function deployToGitHub() {
     if (!githubToken) return appendToConsole("❌ Connect GitHub first");
     if (!generatedFiles || Object.keys(generatedFiles).length === 0) return appendToConsole("❌ No files to deploy");
+    saveCurrentFile(); // ensure latest content
     deployGithubBtn.disabled = true;
     deployGithubBtn.innerText = '⏳ Deploying...';
     appendToConsole("📦 Deploying to GitHub...");
@@ -310,6 +374,7 @@
   async function deployToHF() {
     if (currentPlatform === 'github') return appendToConsole("❌ WebApp cannot be deployed to Hugging Face");
     if (!generatedFiles || Object.keys(generatedFiles).length === 0) return appendToConsole("❌ No files to deploy");
+    saveCurrentFile();
     deployHfBtn.disabled = true;
     deployHfBtn.innerText = '⏳ Deploying...';
     appendToConsole("🤗 Deploying to Hugging Face Space...");
@@ -384,6 +449,7 @@
   deployGithubBtn.onclick = deployToGitHub;
   deployHfBtn.onclick = deployToHF;
   downloadZipBtn.onclick = downloadZip;
+  saveFileBtn.onclick = saveCurrentFile;
   clearConsoleBtn.onclick = () => { consoleOut.innerText = ''; };
   loginBtn.onclick = () => window.location.href = AUTH_GITHUB;
   disconnectGit.onclick = () => {
