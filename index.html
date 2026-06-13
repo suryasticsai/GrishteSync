@@ -172,423 +172,418 @@
   </style>
 </head>
 <body>
-  <div class="header">
-    <div class="logo"><h1>GrishteSync</h1><span style="font-size:0.7rem;">v5.2</span></div>
-    <div id="authSection">
-      <button id="loginBtn" class="btn-outline"><i class="fab fa-github"></i> Connect GitHub</button>
-      <div id="userInfo" style="display:none;" class="github-user">
-        <img id="userAvatar" src=""><span id="userName"></span>
-        <button id="logoutBtn" class="btn-outline" style="padding:4px 8px;">Logout</button>
+<div class="header">
+  <div class="logo"><h1>GrishteSync</h1><span style="font-size:0.7rem;">v5.2</span></div>
+  <div id="authSection">
+    <button id="loginBtn" class="btn-outline"><i class="fab fa-github"></i> Connect GitHub</button>
+    <div id="userInfo" style="display:none;" class="github-user">
+      <img id="userAvatar" src=""><span id="userName"></span>
+      <button id="logoutBtn" class="btn-outline" style="padding:4px 8px;">Logout</button>
+    </div>
+  </div>
+</div>
+
+<div class="main-layout">
+  <div class="builder-panel">
+    <div class="form-group"><label>📱 App Name</label><input id="appName" placeholder="my-awesome-app"></div>
+    <div class="form-group">
+      <label>🎯 Project Type</label>
+      <select id="projectType">
+        <option value="python">🐍 Python App (HF Spaces)</option>
+        <option value="web">🌐 Static Website (GitHub Pages)</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>📦 Existing Repo / Space (optional)</label>
+      <select id="repoSelect"><option value="">-- Create new --</option></select>
+    </div>
+    <div class="form-group">
+      <label>🤖 AI Mode</label>
+      <select id="aiMode">
+        <option value="generate">✨ Generate New</option>
+        <option value="fix">🔧 Fix Bugs</option>
+        <option value="improve">🎨 Improve UI</option>
+        <option value="feature">➕ Add Feature</option>
+      </select>
+    </div>
+    <div class="form-group"><label>💬 Describe your app</label><textarea id="prompt" rows="4" placeholder="Example: A personal diary app with Flask, SQLite, and CRUD operations"></textarea></div>
+    <button id="generateBtn" class="btn-primary" style="width:100%;"><i class="fas fa-magic"></i> Generate App</button>
+    <div id="deployActions" style="display:none; margin-top:16px;">
+      <div style="display:flex; gap:8px;">
+        <button id="deployGithubBtn" class="btn-secondary" style="flex:1;"><i class="fab fa-github"></i> Deploy GitHub</button>
+        <button id="deployHfBtn" class="btn-secondary" style="flex:1;"><i class="fab fa-huggingface"></i> Deploy HF</button>
       </div>
     </div>
   </div>
 
-  <div class="main-layout">
-    <div class="builder-panel">
-      <div class="form-group"><label>📱 App Name</label><input id="appName" placeholder="my-awesome-app"></div>
-      <div class="form-group">
-        <label>🎯 Project Type</label>
-        <select id="projectType">
-          <option value="python">🐍 Python App (HF Spaces)</option>
-          <option value="web">🌐 Static Website (GitHub Pages)</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>📦 Existing Repo / Space (optional)</label>
-        <select id="repoSelect"><option value="">-- Create new --</option></select>
-      </div>
-      <div class="form-group">
-        <label>🤖 AI Mode</label>
-        <select id="aiMode">
-          <option value="generate">✨ Generate New</option>
-          <option value="fix">🔧 Fix Bugs</option>
-          <option value="improve">🎨 Improve UI</option>
-          <option value="feature">➕ Add Feature</option>
-        </select>
-      </div>
-      <div class="form-group"><label>💬 Describe your app</label><textarea id="prompt" rows="4" placeholder="Example: A personal diary app with Flask, SQLite, and CRUD operations"></textarea></div>
-      <button id="generateBtn" class="btn-primary" style="width:100%;"><i class="fas fa-magic"></i> Generate App</button>
-      <div id="deployActions" style="display:none; margin-top:16px;">
-        <div style="display:flex; gap:8px;">
-          <button id="deployGithubBtn" class="btn-secondary" style="flex:1;"><i class="fab fa-github"></i> Deploy GitHub</button>
-          <button id="deployHfBtn" class="btn-secondary" style="flex:1;"><i class="fab fa-huggingface"></i> Deploy HF</button>
-        </div>
-      </div>
+  <div class="editor-panel">
+    <div class="editor-toolbar">
+      <div class="file-tabs" id="fileTabs"></div>
+      <button id="saveFileBtn" class="btn-outline" style="padding:4px 8px;"><i class="fas fa-save"></i> Save</button>
+      <button id="downloadZipBtn" class="btn-outline" style="padding:4px 8px;"><i class="fas fa-download"></i> ZIP</button>
     </div>
-
-    <div class="editor-panel">
-      <div class="editor-toolbar">
-        <div class="file-tabs" id="fileTabs"></div>
-        <button id="saveFileBtn" class="btn-outline" style="padding:4px 8px;"><i class="fas fa-save"></i> Save</button>
-        <button id="downloadZipBtn" class="btn-outline" style="padding:4px 8px;"><i class="fas fa-download"></i> ZIP</button>
-      </div>
-      <div id="editor-container"></div>
-    </div>
-
-    <div class="output-panel">
-      <div class="panel-header">
-        <span><i class="fas fa-terminal"></i> Console</span>
-        <div><button id="clearConsoleBtn" class="btn-outline" style="padding:2px 8px;">Clear</button></div>
-      </div>
-      <div id="console" class="console"><div class="console-line info">✨ Ready. Connect GitHub to start.</div></div>
-      <div style="padding:8px; display:flex; gap:8px;">
-        <button id="diagnoseBtn" class="btn-primary" style="flex:1;"><i class="fas fa-stethoscope"></i> Diagnose & Fix</button>
-      </div>
-      <div class="panel-header"><span><i class="fas fa-rocket"></i> Deployments</span></div>
-      <div id="deploymentsList" class="deployment-list"></div>
-    </div>
+    <div id="editor-container"></div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-  <script>
-    // ---------- Configuration ----------
-    const API_BASE = "https://grishtesync-backend.onrender.com";
-    let githubToken = localStorage.getItem("github_token");
-    let githubUser = localStorage.getItem("github_user");
-    let githubAvatar = localStorage.getItem("github_avatar");
-    let generatedFiles = {};
-    let currentFile = null;
-    let editor = null;
-    let deployments = JSON.parse(localStorage.getItem("deployments") || "[]");
-    let currentPlatform = 'python';
+  <div class="output-panel">
+    <div class="panel-header">
+      <span><i class="fas fa-terminal"></i> Console</span>
+      <div><button id="clearConsoleBtn" class="btn-outline" style="padding:2px 8px;">Clear</button></div>
+    </div>
+    <div id="console" class="console"><div class="console-line info">✨ Ready. Connect GitHub to start.</div></div>
+    <div style="padding:8px; display:flex; gap:8px;">
+      <button id="diagnoseBtn" class="btn-primary" style="flex:1;"><i class="fas fa-stethoscope"></i> Diagnose & Fix</button>
+    </div>
+    <div class="panel-header"><span><i class="fas fa-rocket"></i> Deployments</span></div>
+    <div id="deploymentsList" class="deployment-list"></div>
+  </div>
+</div>
 
-    // DOM elements
-    const $ = id => document.getElementById(id);
-    const consoleDiv = $('console');
-    function appendToConsole(msg, type = 'info') {
-      const line = document.createElement('div');
-      line.className = `console-line ${type}`;
-      line.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
-      consoleDiv.appendChild(line);
-      line.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
-    function clearConsole() { consoleDiv.innerHTML = ''; appendToConsole('Console cleared.', 'info'); }
+<script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+  const API_BASE = "https://grishtesync-backend.onrender.com";
+  let githubToken = localStorage.getItem("github_token");
+  let githubUser = localStorage.getItem("github_user");
+  let generatedFiles = {};
+  let currentFile = null;
+  let editor = null;
+  let deployments = JSON.parse(localStorage.getItem("deployments") || "[]");
+  let currentPlatform = 'python';
 
-    // ---------- Monaco Editor ----------
-    require.config({ paths: { vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs' } });
-    require(['vs/editor/editor.main'], function() {
-      editor = monaco.editor.create(document.getElementById('editor-container'), {
-        value: '// Generate or select a file',
-        language: 'python',
-        theme: 'vs-dark',
-        automaticLayout: true,
-        minimap: { enabled: false },
-        fontSize: 13,
-        fontFamily: 'Monaco, monospace'
-      });
+  const $ = id => document.getElementById(id);
+  const consoleDiv = $('console');
+  function appendToConsole(msg, type = 'info') {
+    const line = document.createElement('div');
+    line.className = `console-line ${type}`;
+    line.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+    consoleDiv.appendChild(line);
+    line.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+  function clearConsole() { consoleDiv.innerHTML = ''; appendToConsole('Console cleared.', 'info'); }
+
+  // Monaco
+  require.config({ paths: { vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs' } });
+  require(['vs/editor/editor.main'], function() {
+    editor = monaco.editor.create(document.getElementById('editor-container'), {
+      value: '// Generate or select a file',
+      language: 'python',
+      theme: 'vs-dark',
+      automaticLayout: true,
+      minimap: { enabled: false },
+      fontSize: 13
     });
-    function getLanguage(filename) {
-      const ext = filename.split('.').pop();
-      const map = { py: 'python', js: 'javascript', html: 'html', css: 'css', json: 'json', md: 'markdown', txt: 'text' };
-      return map[ext] || 'text';
-    }
-    function openFile(filename) {
-      currentFile = filename;
-      if (editor && generatedFiles[filename]) {
-        editor.setValue(generatedFiles[filename]);
-        monaco.editor.setModelLanguage(editor.getModel(), getLanguage(filename));
-        renderFileTabs();
-      }
-    }
-    function renderFileTabs() {
-      const tabsDiv = $('fileTabs');
-      tabsDiv.innerHTML = '';
-      for (const [name] of Object.entries(generatedFiles)) {
-        const tab = document.createElement('div');
-        tab.className = `file-tab ${currentFile === name ? 'active' : ''}`;
-        tab.innerHTML = `<span>${name}</span><button onclick="event.stopPropagation(); deleteFile('${name}')">&times;</button>`;
-        tab.onclick = () => openFile(name);
-        tabsDiv.appendChild(tab);
-      }
-    }
-    function saveCurrentFile() {
-      if (currentFile && editor) {
-        generatedFiles[currentFile] = editor.getValue();
-        appendToConsole(`✅ Saved ${currentFile}`, 'success');
-      }
-    }
-    function deleteFile(name) {
-      delete generatedFiles[name];
-      if (currentFile === name) { currentFile = null; if(editor) editor.setValue('// File deleted'); }
+  });
+  function getLanguage(filename) {
+    const ext = filename.split('.').pop();
+    const map = { py: 'python', js: 'javascript', html: 'html', css: 'css', json: 'json', md: 'markdown', txt: 'text' };
+    return map[ext] || 'text';
+  }
+  function openFile(filename) {
+    currentFile = filename;
+    if (editor && generatedFiles[filename]) {
+      editor.setValue(generatedFiles[filename]);
+      monaco.editor.setModelLanguage(editor.getModel(), getLanguage(filename));
       renderFileTabs();
-      appendToConsole(`🗑️ Deleted ${name}`, 'warning');
     }
-    function downloadZip() {
-      if (Object.keys(generatedFiles).length === 0) return appendToConsole("❌ No files to download", 'error');
-      const zip = new JSZip();
-      for (const [name, content] of Object.entries(generatedFiles)) zip.file(name, content);
-      zip.generateAsync({ type: 'blob' }).then(blob => {
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = `${$('appName').value.trim() || 'app'}.zip`;
-        a.click();
-        URL.revokeObjectURL(a.href);
-        appendToConsole("📦 Downloaded ZIP", 'success');
-      });
+  }
+  function renderFileTabs() {
+    const tabsDiv = $('fileTabs');
+    tabsDiv.innerHTML = '';
+    for (const [name] of Object.entries(generatedFiles)) {
+      const tab = document.createElement('div');
+      tab.className = `file-tab ${currentFile === name ? 'active' : ''}`;
+      tab.innerHTML = `<span>${name}</span><button onclick="event.stopPropagation(); deleteFile('${name}')">&times;</button>`;
+      tab.onclick = () => openFile(name);
+      tabsDiv.appendChild(tab);
     }
-
-    // ---------- Repo Loading (GitHub or HF) ----------
-    async function loadRepos(platform) {
-      const repoSelect = $('repoSelect');
-      repoSelect.innerHTML = '<option value="">-- Loading... --</option>';
-      const token = platform === 'github' ? githubToken : null;
-      const headers = { 'Content-Type': 'application/json' };
-      if (token) headers['Authorization'] = `Bearer ${token}`;
-      try {
-        const res = await fetch(`${API_BASE}/api/list-repos?platform=${platform}`, { headers });
-        const data = await res.json();
-        repoSelect.innerHTML = '<option value="">-- Create new --</option>';
-        if (data.repos && data.repos.length) {
-          data.repos.forEach(repo => {
-            const opt = document.createElement('option');
-            opt.value = repo.full_name;
-            opt.textContent = `${repo.name} (${platform === 'github' ? 'GitHub' : 'HF Space'})`;
-            repoSelect.appendChild(opt);
-          });
-        } else {
-          repoSelect.innerHTML = '<option value="">-- No existing repos found --</option>';
-        }
-      } catch(e) {
-        console.error(e);
-        repoSelect.innerHTML = '<option value="">-- Error loading --</option>';
-        appendToConsole(`⚠️ Failed to load ${platform} repos: ${e.message}`, 'warning');
-      }
+  }
+  function saveCurrentFile() {
+    if (currentFile && editor) {
+      generatedFiles[currentFile] = editor.getValue();
+      appendToConsole(`✅ Saved ${currentFile}`, 'success');
     }
-
-    $('projectType').addEventListener('change', (e) => {
-      currentPlatform = e.target.value;
-      if (githubToken) {
-        const platform = currentPlatform === 'python' ? 'huggingface' : 'github';
-        loadRepos(platform);
-      }
+  }
+  function deleteFile(name) {
+    delete generatedFiles[name];
+    if (currentFile === name) { currentFile = null; if(editor) editor.setValue('// File deleted'); }
+    renderFileTabs();
+    appendToConsole(`🗑️ Deleted ${name}`, 'warning');
+  }
+  function downloadZip() {
+    if (Object.keys(generatedFiles).length === 0) return appendToConsole("❌ No files to download", 'error');
+    const zip = new JSZip();
+    for (const [name, content] of Object.entries(generatedFiles)) zip.file(name, content);
+    zip.generateAsync({ type: 'blob' }).then(blob => {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `${$('appName').value.trim() || 'app'}.zip`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+      appendToConsole("📦 Downloaded ZIP", 'success');
     });
+  }
 
-    // ---------- Generate / Diagnose ----------
-    async function generateApp() {
-      const appName = $('appName').value.trim();
-      const prompt = $('prompt').value.trim();
-      const mode = $('aiMode').value;
-      const projectType = $('projectType').value;
-      const selectedRepo = $('repoSelect').value;
-      if (!appName || !prompt) return appendToConsole("❌ App name and prompt required", 'error');
-      $('generateBtn').disabled = true;
-      $('generateBtn').innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Generating...';
-      appendToConsole(`🤖 Generating ${mode} for "${appName}"...`, 'info');
-      try {
-        const res = await fetch(`${API_BASE}/api/generate`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ prompt, prompt_type: mode, platform: projectType === 'python' ? 'huggingface' : 'github', repo: selectedRepo || null, app_name: appName })
+  async function loadRepos(platform) {
+    const repoSelect = $('repoSelect');
+    repoSelect.innerHTML = '<option value="">-- Loading... --</option>';
+    const token = platform === 'github' ? githubToken : null;
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+    try {
+      const res = await fetch(`${API_BASE}/api/list-repos?platform=${platform}`, { headers });
+      const data = await res.json();
+      repoSelect.innerHTML = '<option value="">-- Create new --</option>';
+      if (data.repos && data.repos.length) {
+        data.repos.forEach(repo => {
+          const opt = document.createElement('option');
+          opt.value = repo.full_name;
+          opt.textContent = `${repo.name} (${platform === 'github' ? 'GitHub' : 'HF Space'})`;
+          repoSelect.appendChild(opt);
         });
-        const data = await res.json();
-        if (data.error) throw new Error(data.error);
-        generatedFiles = data.files;
-        currentFile = Object.keys(generatedFiles)[0];
-        renderFileTabs();
-        if (currentFile) openFile(currentFile);
-        appendToConsole(`✅ Generated ${Object.keys(generatedFiles).length} files`, 'success');
-        $('deployActions').style.display = 'block';
-      } catch(e) { appendToConsole(`❌ ${e.message}`, 'error'); }
-      finally { $('generateBtn').disabled = false; $('generateBtn').innerHTML = '<i class="fas fa-magic"></i> Generate App'; }
-    }
-
-    async function diagnoseFix() {
-      const errorLog = consoleDiv.innerText;
-      if (!errorLog || errorLog === 'Ready.' || errorLog.includes('Console cleared')) {
-        appendToConsole("❌ No error logs to diagnose. Deploy an app first to see logs.", 'error');
-        return;
-      }
-      if (Object.keys(generatedFiles).length === 0) {
-        appendToConsole("❌ No generated code to fix. Generate an app first.", 'error');
-        return;
-      }
-      const diagBtn = $('diagnoseBtn');
-      diagBtn.disabled = true;
-      diagBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Diagnosing...';
-      appendToConsole("🩺 Sending error logs to AI for diagnosis...", 'info');
-      try {
-        const res = await fetch(`${API_BASE}/api/diagnose`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ error_log: errorLog, files: generatedFiles })
-        });
-        const data = await res.json();
-        if (data.error) throw new Error(data.error);
-        generatedFiles = data.files;
-        renderFileTabs();
-        if (Object.keys(generatedFiles).length) openFile(Object.keys(generatedFiles)[0]);
-        appendToConsole("✅ Diagnosis complete. Fixed code ready. Review and redeploy.", 'success');
-      } catch(e) { appendToConsole(`❌ Diagnosis failed: ${e.message}`, 'error'); }
-      finally { diagBtn.disabled = false; diagBtn.innerHTML = '<i class="fas fa-stethoscope"></i> Diagnose & Fix'; }
-    }
-
-    // ---------- Deployments ----------
-    async function deployToGitHub() {
-      if (!githubToken) return appendToConsole("❌ Connect GitHub first", 'error');
-      if (Object.keys(generatedFiles).length === 0) return appendToConsole("❌ No files to deploy", 'error');
-      const appName = $('appName').value.trim();
-      const repoName = `GrishteSync-${appName}`;
-      const btn = $('deployGithubBtn');
-      btn.disabled = true;
-      btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Deploying...';
-      appendToConsole(`📤 Deploying to GitHub: ${repoName}...`, 'info');
-      try {
-        const res = await fetch(`${API_BASE}/api/deploy`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${githubToken}` },
-          body: JSON.stringify({ repo_name: repoName, files: generatedFiles, version: '1.0.0' })
-        });
-        const data = await res.json();
-        if (data.error) throw new Error(data.error);
-        appendToConsole(`✅ GitHub repo: ${data.repo_url}`, 'success');
-        if (data.pr_url) appendToConsole(`🔀 Pull Request: ${data.pr_url}`, 'info');
-        if (data.pages_url) appendToConsole(`🌐 Pages: ${data.pages_url}`, 'success');
-        const deployment = { appName, timestamp: Date.now(), githubUrl: data.repo_url, prUrl: data.pr_url, pagesUrl: data.pages_url };
-        deployments.unshift(deployment);
-        localStorage.setItem('deployments', JSON.stringify(deployments.slice(0,10)));
-        renderDeployments();
-      } catch(e) { appendToConsole(`❌ ${e.message}`, 'error'); }
-      finally { btn.disabled = false; btn.innerHTML = '<i class="fab fa-github"></i> Deploy GitHub'; }
-    }
-
-    async function deployToHF() {
-      if (Object.keys(generatedFiles).length === 0) return appendToConsole("❌ No files to deploy", 'error');
-      const appName = $('appName').value.trim();
-      const spaceName = `GrishteSync-${appName}`.toLowerCase().replace(/[^a-z0-9-]/g, '-');
-      const btn = $('deployHfBtn');
-      btn.disabled = true;
-      btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Deploying...';
-      appendToConsole(`🤗 Deploying to Hugging Face: ${spaceName}...`, 'info');
-      try {
-        const res = await fetch(`${API_BASE}/api/deploy-hf`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ repo_full_name: spaceName, files: generatedFiles, platform: 'huggingface' })
-        });
-        const data = await res.json();
-        if (data.error) throw new Error(data.error);
-        appendToConsole(`✅ HF Space: ${data.space_url}`, 'success');
-        const deployment = { appName, timestamp: Date.now(), hfUrl: data.space_url };
-        deployments.unshift(deployment);
-        localStorage.setItem('deployments', JSON.stringify(deployments.slice(0,10)));
-        renderDeployments();
-      } catch(e) { appendToConsole(`❌ ${e.message}`, 'error'); }
-      finally { btn.disabled = false; btn.innerHTML = '<i class="fab fa-huggingface"></i> Deploy HF'; }
-    }
-
-    async function approveAndMergePR(prUrl) {
-      if (!githubToken) return appendToConsole("❌ Not logged in", 'error');
-      appendToConsole(`🔄 Approving and merging PR: ${prUrl}...`, 'info');
-      try {
-        const match = prUrl.match(/github\.com\/(.+?)\/(.+?)\/pull\/(\d+)/);
-        if (!match) throw new Error("Invalid PR URL");
-        const [, owner, repo, pull_number] = match;
-        const url = `https://api.github.com/repos/${owner}/${repo}/pulls/${pull_number}/merge`;
-        const resp = await fetch(url, {
-          method: 'PUT',
-          headers: { 'Authorization': `Bearer ${githubToken}`, 'Accept': 'application/vnd.github.v3+json' },
-          body: JSON.stringify({ merge_method: 'merge' })
-        });
-        if (resp.status === 200) {
-          appendToConsole(`✅ PR merged successfully!`, 'success');
-          deployments = deployments.map(d => d.prUrl === prUrl ? { ...d, merged: true } : d);
-          localStorage.setItem('deployments', JSON.stringify(deployments));
-          renderDeployments();
-        } else {
-          const text = await resp.text();
-          appendToConsole(`❌ Merge failed: ${text}`, 'error');
-        }
-      } catch(e) { appendToConsole(`❌ ${e.message}`, 'error'); }
-    }
-
-    async function cancelPR(prUrl) {
-      if (!githubToken) return appendToConsole("❌ Not logged in", 'error');
-      appendToConsole(`🔄 Closing PR: ${prUrl}...`, 'info');
-      try {
-        const match = prUrl.match(/github\.com\/(.+?)\/(.+?)\/pull\/(\d+)/);
-        if (!match) throw new Error("Invalid PR URL");
-        const [, owner, repo, pull_number] = match;
-        const url = `https://api.github.com/repos/${owner}/${repo}/pulls/${pull_number}`;
-        const resp = await fetch(url, {
-          method: 'PATCH',
-          headers: { 'Authorization': `Bearer ${githubToken}`, 'Accept': 'application/vnd.github.v3+json' },
-          body: JSON.stringify({ state: 'closed' })
-        });
-        if (resp.status === 200) {
-          appendToConsole(`✅ PR closed successfully`, 'success');
-          deployments = deployments.filter(d => d.prUrl !== prUrl);
-          localStorage.setItem('deployments', JSON.stringify(deployments));
-          renderDeployments();
-        } else {
-          const text = await resp.text();
-          appendToConsole(`❌ Failed to close: ${text}`, 'error');
-        }
-      } catch(e) { appendToConsole(`❌ ${e.message}`, 'error'); }
-    }
-
-    function renderDeployments() {
-      const container = $('deploymentsList');
-      if (!deployments.length) { container.innerHTML = '<div style="color:#8b92b0;text-align:center;">No deployments yet</div>'; return; }
-      container.innerHTML = deployments.map(d => `
-        <div class="deployment-item">
-          <div><strong>${d.appName}</strong> <span style="font-size:0.6rem;">${new Date(d.timestamp).toLocaleString()}</span></div>
-          <div class="deployment-links">
-            ${d.githubUrl ? `<a href="${d.githubUrl}" target="_blank"><i class="fab fa-github"></i> Repo</a>` : ''}
-            ${d.prUrl ? `<a href="${d.prUrl}" target="_blank"><i class="fas fa-code-branch"></i> PR</a>` : ''}
-            ${d.pagesUrl ? `<a href="${d.pagesUrl}" target="_blank"><i class="fas fa-globe"></i> Pages</a>` : ''}
-            ${d.hfUrl ? `<a href="${d.hfUrl}" target="_blank"><i class="fab fa-huggingface"></i> Space</a>` : ''}
-          </div>
-          ${d.prUrl && !d.merged ? `
-            <div class="deployment-actions">
-              <button class="btn-sm btn-primary approve-pr" data-url="${d.prUrl}"><i class="fas fa-check"></i> Approve & Merge</button>
-              <button class="btn-sm btn-danger cancel-pr" data-url="${d.prUrl}"><i class="fas fa-times"></i> Cancel</button>
-            </div>
-          ` : ''}
-        </div>
-      `).join('');
-      document.querySelectorAll('.approve-pr').forEach(btn => btn.onclick = () => approveAndMergePR(btn.dataset.url));
-      document.querySelectorAll('.cancel-pr').forEach(btn => btn.onclick = () => cancelPR(btn.dataset.url));
-    }
-
-    // ---------- Auth ----------
-    function updateAuthUI() {
-      if (githubToken) {
-        $('loginBtn').style.display = 'none';
-        $('userInfo').style.display = 'flex';
-        fetch(`https://api.github.com/user`, { headers: { Authorization: `Bearer ${githubToken}` } })
-          .then(r => r.json()).then(data => { $('userName').innerText = data.login; $('userAvatar').src = data.avatar_url; localStorage.setItem('github_avatar', data.avatar_url); })
-          .catch(() => {});
-        const platform = $('projectType').value === 'python' ? 'huggingface' : 'github';
-        loadRepos(platform);
       } else {
-        $('loginBtn').style.display = 'inline-block';
-        $('userInfo').style.display = 'none';
+        repoSelect.innerHTML = '<option value="">-- No existing repos found --</option>';
       }
+    } catch(e) {
+      console.error(e);
+      repoSelect.innerHTML = '<option value="">-- Error loading --</option>';
+      appendToConsole(`⚠️ Failed to load ${platform} repos: ${e.message}`, 'warning');
     }
+  }
 
-    $('loginBtn').onclick = () => window.location.href = `${API_BASE}/auth/login`;
-    $('logoutBtn').onclick = () => { localStorage.clear(); location.reload(); };
-    $('generateBtn').onclick = generateApp;
-    $('diagnoseBtn').onclick = diagnoseFix;
-    $('clearConsoleBtn').onclick = clearConsole;
-    $('saveFileBtn').onclick = saveCurrentFile;
-    $('downloadZipBtn').onclick = downloadZip;
-    $('deployGithubBtn').onclick = deployToGitHub;
-    $('deployHfBtn').onclick = deployToHF;
-
-    // OAuth redirect handling
-    const urlParams = new URLSearchParams(window.location.search);
-    const token = urlParams.get('token');
-    if (token) {
-      localStorage.setItem('github_token', token);
-      localStorage.setItem('github_user', urlParams.get('github_user') || '');
-      window.history.replaceState({}, '', window.location.pathname);
-      location.reload();
+  $('projectType').addEventListener('change', (e) => {
+    currentPlatform = e.target.value;
+    if (githubToken) {
+      const platform = currentPlatform === 'python' ? 'huggingface' : 'github';
+      loadRepos(platform);
     }
-    updateAuthUI();
-    renderDeployments();
-    appendToConsole("✨ GrishteSync ready. Connect GitHub to start.", 'success');
-  </script>
+  });
+
+  async function generateApp() {
+    const appName = $('appName').value.trim();
+    const prompt = $('prompt').value.trim();
+    const mode = $('aiMode').value;
+    const projectType = $('projectType').value;
+    const selectedRepo = $('repoSelect').value;
+    if (!appName || !prompt) return appendToConsole("❌ App name and prompt required", 'error');
+    $('generateBtn').disabled = true;
+    $('generateBtn').innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Generating...';
+    appendToConsole(`🤖 Generating ${mode} for "${appName}"...`, 'info');
+    try {
+      const res = await fetch(`${API_BASE}/api/generate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt, prompt_type: mode, platform: projectType === 'python' ? 'huggingface' : 'github', repo: selectedRepo || null, app_name: appName })
+      });
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+      generatedFiles = data.files;
+      currentFile = Object.keys(generatedFiles)[0];
+      renderFileTabs();
+      if (currentFile) openFile(currentFile);
+      appendToConsole(`✅ Generated ${Object.keys(generatedFiles).length} files`, 'success');
+      $('deployActions').style.display = 'block';
+    } catch(e) { appendToConsole(`❌ ${e.message}`, 'error'); }
+    finally { $('generateBtn').disabled = false; $('generateBtn').innerHTML = '<i class="fas fa-magic"></i> Generate App'; }
+  }
+
+  async function diagnoseFix() {
+    const errorLog = consoleDiv.innerText;
+    if (!errorLog || errorLog === 'Ready.' || errorLog.includes('Console cleared')) {
+      appendToConsole("❌ No error logs to diagnose. Deploy an app first.", 'error');
+      return;
+    }
+    if (Object.keys(generatedFiles).length === 0) {
+      appendToConsole("❌ No generated code to fix. Generate an app first.", 'error');
+      return;
+    }
+    const diagBtn = $('diagnoseBtn');
+    diagBtn.disabled = true;
+    diagBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Diagnosing...';
+    appendToConsole("🩺 Sending error logs to AI for diagnosis...", 'info');
+    try {
+      const res = await fetch(`${API_BASE}/api/diagnose`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ error_log: errorLog, files: generatedFiles })
+      });
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+      generatedFiles = data.files;
+      renderFileTabs();
+      if (Object.keys(generatedFiles).length) openFile(Object.keys(generatedFiles)[0]);
+      appendToConsole("✅ Diagnosis complete. Fixed code ready. Redeploy.", 'success');
+    } catch(e) { appendToConsole(`❌ Diagnosis failed: ${e.message}`, 'error'); }
+    finally { diagBtn.disabled = false; diagBtn.innerHTML = '<i class="fas fa-stethoscope"></i> Diagnose & Fix'; }
+  }
+
+  async function deployToGitHub() {
+    if (!githubToken) return appendToConsole("❌ Connect GitHub first", 'error');
+    if (Object.keys(generatedFiles).length === 0) return appendToConsole("❌ No files to deploy", 'error');
+    const appName = $('appName').value.trim();
+    const repoName = `GrishteSync-${appName}`;
+    const btn = $('deployGithubBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Deploying...';
+    appendToConsole(`📤 Deploying to GitHub: ${repoName}...`, 'info');
+    try {
+      const res = await fetch(`${API_BASE}/api/deploy`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${githubToken}` },
+        body: JSON.stringify({ repo_name: repoName, files: generatedFiles, version: '1.0.0' })
+      });
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+      appendToConsole(`✅ GitHub repo: ${data.repo_url}`, 'success');
+      if (data.pr_url) appendToConsole(`🔀 Pull Request: ${data.pr_url}`, 'info');
+      if (data.pages_url) appendToConsole(`🌐 Pages: ${data.pages_url}`, 'success');
+      const deployment = { appName, timestamp: Date.now(), githubUrl: data.repo_url, prUrl: data.pr_url, pagesUrl: data.pages_url };
+      deployments.unshift(deployment);
+      localStorage.setItem('deployments', JSON.stringify(deployments.slice(0,10)));
+      renderDeployments();
+    } catch(e) { appendToConsole(`❌ ${e.message}`, 'error'); }
+    finally { btn.disabled = false; btn.innerHTML = '<i class="fab fa-github"></i> Deploy GitHub'; }
+  }
+
+  async function deployToHF() {
+    if (Object.keys(generatedFiles).length === 0) return appendToConsole("❌ No files to deploy", 'error');
+    const appName = $('appName').value.trim();
+    const spaceName = `GrishteSync-${appName}`.toLowerCase().replace(/[^a-z0-9-]/g, '-');
+    const btn = $('deployHfBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Deploying...';
+    appendToConsole(`🤗 Deploying to Hugging Face: ${spaceName}...`, 'info');
+    try {
+      const headers = { 'Content-Type': 'application/json' };
+      if (githubToken) headers['Authorization'] = `Bearer ${githubToken}`;
+      const res = await fetch(`${API_BASE}/api/deploy-hf`, {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify({ repo_full_name: spaceName, files: generatedFiles, platform: 'huggingface', app_name: appName })
+      });
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+      appendToConsole(`✅ HF Space: ${data.space_url}`, 'success');
+      if (data.embed_url) appendToConsole(`🌐 Embedded: ${data.embed_url}`, 'success');
+      const deployment = { appName, timestamp: Date.now(), hfUrl: data.space_url, embedUrl: data.embed_url };
+      deployments.unshift(deployment);
+      localStorage.setItem('deployments', JSON.stringify(deployments.slice(0,10)));
+      renderDeployments();
+    } catch(e) { appendToConsole(`❌ ${e.message}`, 'error'); }
+    finally { btn.disabled = false; btn.innerHTML = '<i class="fab fa-huggingface"></i> Deploy HF'; }
+  }
+
+  async function approveAndMergePR(prUrl) {
+    if (!githubToken) return appendToConsole("❌ Not logged in", 'error');
+    appendToConsole(`🔄 Approving and merging PR: ${prUrl}...`, 'info');
+    try {
+      const match = prUrl.match(/github\.com\/(.+?)\/(.+?)\/pull\/(\d+)/);
+      if (!match) throw new Error("Invalid PR URL");
+      const [, owner, repo, pull_number] = match;
+      const url = `https://api.github.com/repos/${owner}/${repo}/pulls/${pull_number}/merge`;
+      const resp = await fetch(url, {
+        method: 'PUT',
+        headers: { 'Authorization': `Bearer ${githubToken}`, 'Accept': 'application/vnd.github.v3+json' },
+        body: JSON.stringify({ merge_method: 'merge' })
+      });
+      if (resp.status === 200) {
+        appendToConsole(`✅ PR merged successfully!`, 'success');
+        deployments = deployments.map(d => d.prUrl === prUrl ? { ...d, merged: true } : d);
+        localStorage.setItem('deployments', JSON.stringify(deployments));
+        renderDeployments();
+      } else {
+        const text = await resp.text();
+        appendToConsole(`❌ Merge failed: ${text}`, 'error');
+      }
+    } catch(e) { appendToConsole(`❌ ${e.message}`, 'error'); }
+  }
+
+  async function cancelPR(prUrl) {
+    if (!githubToken) return appendToConsole("❌ Not logged in", 'error');
+    appendToConsole(`🔄 Closing PR: ${prUrl}...`, 'info');
+    try {
+      const match = prUrl.match(/github\.com\/(.+?)\/(.+?)\/pull\/(\d+)/);
+      if (!match) throw new Error("Invalid PR URL");
+      const [, owner, repo, pull_number] = match;
+      const url = `https://api.github.com/repos/${owner}/${repo}/pulls/${pull_number}`;
+      const resp = await fetch(url, {
+        method: 'PATCH',
+        headers: { 'Authorization': `Bearer ${githubToken}`, 'Accept': 'application/vnd.github.v3+json' },
+        body: JSON.stringify({ state: 'closed' })
+      });
+      if (resp.status === 200) {
+        appendToConsole(`✅ PR closed successfully`, 'success');
+        deployments = deployments.filter(d => d.prUrl !== prUrl);
+        localStorage.setItem('deployments', JSON.stringify(deployments));
+        renderDeployments();
+      } else {
+        const text = await resp.text();
+        appendToConsole(`❌ Failed to close: ${text}`, 'error');
+      }
+    } catch(e) { appendToConsole(`❌ ${e.message}`, 'error'); }
+  }
+
+  function renderDeployments() {
+    const container = $('deploymentsList');
+    if (!deployments.length) { container.innerHTML = '<div style="color:#8b92b0;text-align:center;">No deployments yet</div>'; return; }
+    container.innerHTML = deployments.map(d => `
+      <div class="deployment-item">
+        <div><strong>${d.appName}</strong> <span style="font-size:0.6rem;">${new Date(d.timestamp).toLocaleString()}</span></div>
+        <div class="deployment-links">
+          ${d.githubUrl ? `<a href="${d.githubUrl}" target="_blank"><i class="fab fa-github"></i> Repo</a>` : ''}
+          ${d.prUrl ? `<a href="${d.prUrl}" target="_blank"><i class="fas fa-code-branch"></i> PR</a>` : ''}
+          ${d.pagesUrl ? `<a href="${d.pagesUrl}" target="_blank"><i class="fas fa-globe"></i> Pages</a>` : ''}
+          ${d.hfUrl ? `<a href="${d.hfUrl}" target="_blank"><i class="fab fa-huggingface"></i> Space</a>` : ''}
+          ${d.embedUrl ? `<a href="${d.embedUrl}" target="_blank"><i class="fas fa-external-link-alt"></i> Embed</a>` : ''}
+        </div>
+        ${d.prUrl && !d.merged ? `
+          <div class="deployment-actions">
+            <button class="btn-sm btn-primary approve-pr" data-url="${d.prUrl}"><i class="fas fa-check"></i> Approve & Merge</button>
+            <button class="btn-sm btn-danger cancel-pr" data-url="${d.prUrl}"><i class="fas fa-times"></i> Cancel</button>
+          </div>
+        ` : ''}
+      </div>
+    `).join('');
+    document.querySelectorAll('.approve-pr').forEach(btn => btn.onclick = () => approveAndMergePR(btn.dataset.url));
+    document.querySelectorAll('.cancel-pr').forEach(btn => btn.onclick = () => cancelPR(btn.dataset.url));
+  }
+
+  function updateAuthUI() {
+    if (githubToken) {
+      $('loginBtn').style.display = 'none';
+      $('userInfo').style.display = 'flex';
+      fetch(`https://api.github.com/user`, { headers: { Authorization: `Bearer ${githubToken}` } })
+        .then(r => r.json()).then(data => { $('userName').innerText = data.login; $('userAvatar').src = data.avatar_url; })
+        .catch(() => {});
+      const platform = $('projectType').value === 'python' ? 'huggingface' : 'github';
+      loadRepos(platform);
+    } else {
+      $('loginBtn').style.display = 'inline-block';
+      $('userInfo').style.display = 'none';
+    }
+  }
+
+  $('loginBtn').onclick = () => window.location.href = `${API_BASE}/auth/login`;
+  $('logoutBtn').onclick = () => { localStorage.clear(); location.reload(); };
+  $('generateBtn').onclick = generateApp;
+  $('diagnoseBtn').onclick = diagnoseFix;
+  $('clearConsoleBtn').onclick = clearConsole;
+  $('saveFileBtn').onclick = saveCurrentFile;
+  $('downloadZipBtn').onclick = downloadZip;
+  $('deployGithubBtn').onclick = deployToGitHub;
+  $('deployHfBtn').onclick = deployToHF;
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const token = urlParams.get('token');
+  if (token) {
+    localStorage.setItem('github_token', token);
+    localStorage.setItem('github_user', urlParams.get('github_user') || '');
+    window.history.replaceState({}, '', window.location.pathname);
+    location.reload();
+  }
+  updateAuthUI();
+  renderDeployments();
+  appendToConsole("✨ GrishteSync ready. Connect GitHub to start.", 'success');
+</script>
 </body>
 </html>
