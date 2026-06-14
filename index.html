@@ -3,12 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GrishteSync | AI App Builder</title>
+  <title>GrishteSync | AI P2P App Builder</title>
   <link rel="icon" type="image/png" href="https://i.ibb.co/B5z2c7j7/1781241361720.png">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    /* ========== CSS (same as before, full) ========== */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Inter', sans-serif;
@@ -215,7 +214,7 @@
 </head>
 <body>
 <div class="header">
-  <div class="logo"><h1>GrishteSync</h1><span style="font-size:0.7rem;">v5.4</span></div>
+  <div class="logo"><h1>GrishteSync</h1><span style="font-size:0.7rem;">v5.5</span></div>
   <div style="display: flex; gap: 12px;">
     <button id="themeToggleBtn" class="btn-outline"><i class="fas fa-moon"></i></button>
     <button id="shareBtn" class="btn-outline"><i class="fas fa-share-alt"></i> Share</button>
@@ -303,7 +302,7 @@
 <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script>
-  // ======================== FULL JAVASCRIPT ========================
+  // ======================== COMPLETE JAVASCRIPT ========================
   const API_BASE = "https://grishtesync-backend.onrender.com";
   let githubToken = localStorage.getItem("github_token");
   let githubUser = localStorage.getItem("github_user");
@@ -335,7 +334,7 @@
     };
   }
 
-  // Share
+  // Share latest deployment URL
   async function shareLatestUrl() {
     const latestDeploy = deployments[0];
     if (!latestDeploy) { appendToConsole('No deployments found to share.', 'warning'); return; }
@@ -343,12 +342,12 @@
     if (url) {
       await navigator.clipboard.writeText(url);
       appendToConsole(`✅ Copied URL to clipboard: ${url}`, 'success');
-    } else { appendToConsole('No live URL available.', 'error'); }
+    } else { appendToConsole('No live URL available for the latest deployment.', 'error'); }
   }
 
   // Export to Gist
   async function exportToGist() {
-    if (!githubToken) { appendToConsole('Connect GitHub first.', 'error'); return; }
+    if (!githubToken) { appendToConsole('Connect GitHub first to create a Gist.', 'error'); return; }
     if (Object.keys(generatedFiles).length === 0) { appendToConsole('No files to export.', 'error'); return; }
     const gistFiles = {};
     for (const [name, content] of Object.entries(generatedFiles)) {
@@ -372,7 +371,7 @@
     } catch(e) { appendToConsole(`❌ Gist failed: ${e.message}`, 'error'); }
   }
 
-  // Monaco
+  // Monaco Editor
   require.config({ paths: { vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs' } });
   require(['vs/editor/editor.main'], function() {
     editor = monaco.editor.create(document.getElementById('editor-container'), {
@@ -437,7 +436,7 @@
     });
   }
 
-  // Preview
+  // Preview functions
   function buildPreviewHTML() {
     if (!generatedFiles['index.html']) return '<div style="padding:20px;">No index.html to preview</div>';
     let html = generatedFiles['index.html'];
@@ -453,7 +452,7 @@
     const container = $('preview-iframe-container');
     const statusDiv = $('preview-status');
     if (!url.includes('huggingface.co/spaces/')) {
-      statusDiv.innerHTML = '❌ Invalid Space URL.';
+      statusDiv.innerHTML = '❌ Invalid Space URL. Must be like https://huggingface.co/spaces/username/space-name';
       container.innerHTML = '';
       return;
     }
@@ -505,7 +504,7 @@
     }
   }
 
-  // Load repos (GitHub / HF)
+  // Load repos from backend
   async function loadRepos(platform) {
     const repoSelect = $('repoSelect');
     repoSelect.innerHTML = '<option value="">-- Loading... --</option>';
@@ -532,6 +531,7 @@
       appendToConsole(`⚠️ Failed to load ${platform} repos: ${e.message}`, 'warning');
     }
   }
+
   $('projectType').addEventListener('change', (e) => {
     currentPlatform = e.target.value;
     if (githubToken) {
@@ -660,7 +660,7 @@
     finally { btn.disabled = false; btn.innerHTML = '<i class="fab fa-huggingface"></i> Deploy HF'; }
   }
 
-  // PR approve / cancel
+  // PR actions
   async function approveAndMergePR(prUrl) {
     if (!githubToken) return appendToConsole("❌ Not logged in", 'error');
     appendToConsole(`🔄 Approving and merging PR: ${prUrl}...`, 'info');
@@ -710,7 +710,6 @@
     } catch(e) { appendToConsole(`❌ ${e.message}`, 'error'); }
   }
 
-  // Render deployments
   function renderDeployments() {
     const container = $('deploymentsList');
     if (!deployments.length) { container.innerHTML = '<div style="color:#8b92b0;text-align:center;">No deployments yet</div>'; return; }
@@ -736,7 +735,6 @@
     document.querySelectorAll('.cancel-pr').forEach(btn => btn.onclick = () => cancelPR(btn.dataset.url));
   }
 
-  // Auth UI
   function updateAuthUI() {
     if (githubToken) {
       $('loginBtn').style.display = 'none';
@@ -752,7 +750,7 @@
     }
   }
 
-  // Event bindings
+  // Event listeners
   $('previewToggleBtn').onclick = togglePreview;
   $('saveFileBtn').onclick = saveCurrentFile;
   $('downloadZipBtn').onclick = downloadZip;
@@ -767,7 +765,6 @@
   $('loginBtn').onclick = () => window.location.href = `${API_BASE}/auth/login`;
   $('logoutBtn').onclick = () => { localStorage.clear(); location.reload(); };
 
-  // OAuth redirect handling
   const urlParams = new URLSearchParams(window.location.search);
   const token = urlParams.get('token');
   if (token) {
