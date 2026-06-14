@@ -3,18 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GrishteSync | AI App Builder with Self‑Healing</title>
+  <title>GrishteSync | AI App Builder</title>
   <link rel="icon" type="image/png" href="https://i.ibb.co/B5z2c7j7/1781241361720.png">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
+    /* ========== CSS (same as before, full) ========== */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      background: linear-gradient(135deg, #0a0c15 0%, #0f1420 100%);
       font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #0a0c15 0%, #0f1420 100%);
       color: #e2e8f0;
       overflow: hidden;
       height: 100vh;
+      transition: background 0.3s, color 0.2s;
+    }
+    body.light {
+      background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+      color: #1a202c;
     }
     .header {
       background: rgba(15, 20, 32, 0.95);
@@ -31,6 +37,7 @@
       right: 0;
       z-index: 100;
     }
+    body.light .header { background: rgba(255,255,255,0.95); border-bottom-color: #cbd5e0; }
     .logo { display: flex; align-items: center; gap: 12px; }
     .logo h1 {
       font-size: 1.3rem;
@@ -48,6 +55,7 @@
       padding: 6px 12px;
       border-radius: 30px;
     }
+    body.light .github-user { background: #e2e8f0; }
     .github-user img { width: 28px; height: 28px; border-radius: 50%; }
     .main-layout {
       display: flex;
@@ -61,12 +69,14 @@
       padding: 20px;
       overflow-y: auto;
     }
+    body.light .builder-panel { background: rgba(255,255,255,0.6); border-right-color: #cbd5e0; }
     .editor-panel {
       width: 50%;
       display: flex;
       flex-direction: column;
       background: #0a0c15;
     }
+    body.light .editor-panel { background: #ffffff; }
     .editor-toolbar {
       background: #11131f;
       border-bottom: 1px solid #1f2438;
@@ -74,7 +84,9 @@
       display: flex;
       gap: 8px;
       align-items: center;
+      justify-content: space-between;
     }
+    body.light .editor-toolbar { background: #f1f5f9; border-bottom-color: #cbd5e0; }
     .file-tabs {
       display: flex;
       gap: 4px;
@@ -92,9 +104,28 @@
       gap: 6px;
       white-space: nowrap;
     }
+    body.light .file-tab { background: #e2e8f0; color: #1a202c; }
     .file-tab.active { background: #10b981; color: white; }
     .file-tab button { background: none; border: none; color: inherit; cursor: pointer; margin-left: 4px; }
-    #editor-container { flex: 1; min-height: 0; }
+    #editor-container, #preview-container {
+      flex: 1;
+      min-height: 0;
+    }
+    .preview-controls {
+      background: #1f2438;
+      border-bottom: 1px solid #10b981;
+      padding: 8px 12px;
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+    }
+    body.light .preview-controls { background: #e2e8f0; }
+    .preview-controls label { font-size: 0.7rem; color: #a0aec0; }
+    .preview-controls .input-group { display: flex; gap: 8px; }
+    .preview-controls input { flex: 1; padding: 6px 10px; font-size: 0.7rem; background: #0f1420; border: 1px solid #2d3748; border-radius: 4px; color: white; }
+    body.light .preview-controls input { background: white; color: black; border-color: #cbd5e0; }
+    .preview-status { font-size: 0.7rem; color: #10b981; }
+    #preview-iframe-container { width: 100%; height: calc(100% - 80px); background: white; }
     .output-panel {
       width: 20%;
       background: rgba(15, 20, 32, 0.6);
@@ -102,6 +133,7 @@
       display: flex;
       flex-direction: column;
     }
+    body.light .output-panel { background: rgba(255,255,255,0.6); border-left-color: #cbd5e0; }
     .panel-header {
       padding: 10px 12px;
       background: #11131f;
@@ -111,6 +143,7 @@
       justify-content: space-between;
       border-bottom: 1px solid #1f2438;
     }
+    body.light .panel-header { background: #f1f5f9; border-bottom-color: #cbd5e0; }
     .console {
       flex: 1;
       padding: 8px;
@@ -119,6 +152,7 @@
       overflow-y: auto;
       background: #0a0c15;
     }
+    body.light .console { background: #ffffff; color: #1a202c; }
     .console-line {
       padding: 4px 0;
       border-left: 2px solid transparent;
@@ -127,9 +161,13 @@
       word-break: break-all;
     }
     .console-line.success { border-left-color: #10b981; color: #a7f3d0; }
+    body.light .console-line.success { color: #065f46; }
     .console-line.error { border-left-color: #ef4444; color: #fecaca; }
+    body.light .console-line.error { color: #b91c1c; }
     .console-line.info { border-left-color: #3b82f6; color: #93c5fd; }
+    body.light .console-line.info { color: #1e40af; }
     .console-line.warning { border-left-color: #f59e0b; color: #fde68a; }
+    body.light .console-line.warning { color: #92400e; }
     .deployment-list { flex: 1; overflow-y: auto; padding: 8px; }
     .deployment-item {
       background: #11131f;
@@ -138,12 +176,14 @@
       margin-bottom: 8px;
       font-size: 0.7rem;
     }
+    body.light .deployment-item { background: #f1f5f9; }
     .deployment-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
     .deployment-links a { color: #10b981; text-decoration: none; }
     .deployment-actions { display: flex; gap: 8px; margin-top: 8px; }
     .btn-sm { padding: 4px 8px; font-size: 0.65rem; border-radius: 4px; cursor: pointer; border: none; }
     .form-group { margin-bottom: 16px; }
     label { font-size: 0.75rem; color: #8b92b0; display: block; margin-bottom: 6px; }
+    body.light label { color: #4a5568; }
     input, select, textarea {
       width: 100%;
       padding: 8px 12px;
@@ -153,6 +193,7 @@
       color: #e2e8f0;
       font-family: inherit;
     }
+    body.light input, body.light select, body.light textarea { background: white; color: #1a202c; border-color: #cbd5e0; }
     button {
       padding: 8px 16px;
       border-radius: 8px;
@@ -164,6 +205,7 @@
     .btn-primary { background: #10b981; color: white; }
     .btn-primary:hover { background: #059669; }
     .btn-secondary { background: #181c2c; color: #e2e8f0; border: 1px solid #1f2438; }
+    body.light .btn-secondary { background: #e2e8f0; color: #1a202c; border-color: #cbd5e0; }
     .btn-secondary:hover { background: #1f2438; }
     .btn-outline { background: transparent; border: 1px solid #10b981; color: #10b981; }
     .btn-danger { background: #dc2626; color: white; }
@@ -173,12 +215,17 @@
 </head>
 <body>
 <div class="header">
-  <div class="logo"><h1>GrishteSync</h1><span style="font-size:0.7rem;">v5.2</span></div>
-  <div id="authSection">
-    <button id="loginBtn" class="btn-outline"><i class="fab fa-github"></i> Connect GitHub</button>
-    <div id="userInfo" style="display:none;" class="github-user">
-      <img id="userAvatar" src=""><span id="userName"></span>
-      <button id="logoutBtn" class="btn-outline" style="padding:4px 8px;">Logout</button>
+  <div class="logo"><h1>GrishteSync</h1><span style="font-size:0.7rem;">v5.4</span></div>
+  <div style="display: flex; gap: 12px;">
+    <button id="themeToggleBtn" class="btn-outline"><i class="fas fa-moon"></i></button>
+    <button id="shareBtn" class="btn-outline"><i class="fas fa-share-alt"></i> Share</button>
+    <button id="exportGistBtn" class="btn-outline"><i class="fab fa-github"></i> Gist</button>
+    <div id="authSection">
+      <button id="loginBtn" class="btn-outline"><i class="fab fa-github"></i> Connect GitHub</button>
+      <div id="userInfo" style="display:none;" class="github-user">
+        <img id="userAvatar" src=""><span id="userName"></span>
+        <button id="logoutBtn" class="btn-outline" style="padding:4px 8px;">Logout</button>
+      </div>
     </div>
   </div>
 </div>
@@ -219,10 +266,24 @@
   <div class="editor-panel">
     <div class="editor-toolbar">
       <div class="file-tabs" id="fileTabs"></div>
-      <button id="saveFileBtn" class="btn-outline" style="padding:4px 8px;"><i class="fas fa-save"></i> Save</button>
-      <button id="downloadZipBtn" class="btn-outline" style="padding:4px 8px;"><i class="fas fa-download"></i> ZIP</button>
+      <div style="display: flex; gap: 8px;">
+        <button id="previewToggleBtn" class="btn-outline" style="padding:4px 8px;"><i class="fas fa-eye"></i> Preview</button>
+        <button id="saveFileBtn" class="btn-outline" style="padding:4px 8px;"><i class="fas fa-save"></i> Save</button>
+        <button id="downloadZipBtn" class="btn-outline" style="padding:4px 8px;"><i class="fas fa-download"></i> ZIP</button>
+      </div>
     </div>
     <div id="editor-container"></div>
+    <div id="preview-container" style="display: none; flex-direction: column; background: white;">
+      <div id="preview-controls" class="preview-controls">
+        <label>🔍 Hugging Face Space URL (for Python apps)</label>
+        <div class="input-group">
+          <input type="text" id="customSpaceUrl" placeholder="https://huggingface.co/spaces/username/space-name">
+          <button id="previewSpaceBtn" class="btn-sm btn-primary">Load</button>
+        </div>
+        <div id="preview-status" class="preview-status"></div>
+      </div>
+      <div id="preview-iframe-container"></div>
+    </div>
   </div>
 
   <div class="output-panel">
@@ -242,6 +303,7 @@
 <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script>
+  // ======================== FULL JAVASCRIPT ========================
   const API_BASE = "https://grishtesync-backend.onrender.com";
   let githubToken = localStorage.getItem("github_token");
   let githubUser = localStorage.getItem("github_user");
@@ -250,6 +312,7 @@
   let editor = null;
   let deployments = JSON.parse(localStorage.getItem("deployments") || "[]");
   let currentPlatform = 'python';
+  let previewMode = false;
 
   const $ = id => document.getElementById(id);
   const consoleDiv = $('console');
@@ -261,6 +324,53 @@
     line.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
   function clearConsole() { consoleDiv.innerHTML = ''; appendToConsole('Console cleared.', 'info'); }
+
+  // Theme
+  function initTheme() {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'light') document.body.classList.add('light');
+    $('themeToggleBtn').onclick = () => {
+      document.body.classList.toggle('light');
+      localStorage.setItem('theme', document.body.classList.contains('light') ? 'light' : 'dark');
+    };
+  }
+
+  // Share
+  async function shareLatestUrl() {
+    const latestDeploy = deployments[0];
+    if (!latestDeploy) { appendToConsole('No deployments found to share.', 'warning'); return; }
+    const url = latestDeploy.hfUrl || latestDeploy.githubUrl || latestDeploy.pagesUrl;
+    if (url) {
+      await navigator.clipboard.writeText(url);
+      appendToConsole(`✅ Copied URL to clipboard: ${url}`, 'success');
+    } else { appendToConsole('No live URL available.', 'error'); }
+  }
+
+  // Export to Gist
+  async function exportToGist() {
+    if (!githubToken) { appendToConsole('Connect GitHub first.', 'error'); return; }
+    if (Object.keys(generatedFiles).length === 0) { appendToConsole('No files to export.', 'error'); return; }
+    const gistFiles = {};
+    for (const [name, content] of Object.entries(generatedFiles)) {
+      gistFiles[name] = { content };
+    }
+    try {
+      const res = await fetch('https://api.github.com/gists', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${githubToken}`, 'Accept': 'application/vnd.github.v3+json' },
+        body: JSON.stringify({
+          description: `App generated by GrishteSync: ${$('appName').value.trim()}`,
+          public: false,
+          files: gistFiles
+        })
+      });
+      const data = await res.json();
+      if (data.html_url) {
+        await navigator.clipboard.writeText(data.html_url);
+        appendToConsole(`✅ Gist created and URL copied: ${data.html_url}`, 'success');
+      } else throw new Error(data.message || 'Failed to create gist');
+    } catch(e) { appendToConsole(`❌ Gist failed: ${e.message}`, 'error'); }
+  }
 
   // Monaco
   require.config({ paths: { vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs' } });
@@ -285,6 +395,7 @@
       editor.setValue(generatedFiles[filename]);
       monaco.editor.setModelLanguage(editor.getModel(), getLanguage(filename));
       renderFileTabs();
+      if (previewMode && filename === 'index.html') refreshPreview();
     }
   }
   function renderFileTabs() {
@@ -302,6 +413,7 @@
     if (currentFile && editor) {
       generatedFiles[currentFile] = editor.getValue();
       appendToConsole(`✅ Saved ${currentFile}`, 'success');
+      if (previewMode && currentFile === 'index.html') refreshPreview();
     }
   }
   function deleteFile(name) {
@@ -309,6 +421,7 @@
     if (currentFile === name) { currentFile = null; if(editor) editor.setValue('// File deleted'); }
     renderFileTabs();
     appendToConsole(`🗑️ Deleted ${name}`, 'warning');
+    if (previewMode && name === 'index.html') refreshPreview();
   }
   function downloadZip() {
     if (Object.keys(generatedFiles).length === 0) return appendToConsole("❌ No files to download", 'error');
@@ -324,6 +437,75 @@
     });
   }
 
+  // Preview
+  function buildPreviewHTML() {
+    if (!generatedFiles['index.html']) return '<div style="padding:20px;">No index.html to preview</div>';
+    let html = generatedFiles['index.html'];
+    if (generatedFiles['style.css'] && !html.includes('style.css')) {
+      html = html.replace('</head>', '<link rel="stylesheet" href="data:text/css;base64,' + btoa(generatedFiles['style.css']) + '">\n</head>');
+    }
+    if (generatedFiles['script.js'] && !html.includes('script.js')) {
+      html = html.replace('</body>', '<script src="data:text/javascript;base64,' + btoa(generatedFiles['script.js']) + '"><\/script>\n</body>');
+    }
+    return html;
+  }
+  function loadSpacePreview(url) {
+    const container = $('preview-iframe-container');
+    const statusDiv = $('preview-status');
+    if (!url.includes('huggingface.co/spaces/')) {
+      statusDiv.innerHTML = '❌ Invalid Space URL.';
+      container.innerHTML = '';
+      return;
+    }
+    statusDiv.innerHTML = '🔄 Loading Space...';
+    container.innerHTML = `<iframe src="${url}" style="width:100%; height:100%; border:none;" sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-downloads"></iframe>`;
+    statusDiv.innerHTML = '✅ Preview loaded.';
+    localStorage.setItem('previewSpaceUrl', url);
+  }
+  function refreshPreview() {
+    const controls = $('preview-controls');
+    const iframeContainer = $('preview-iframe-container');
+    const statusDiv = $('preview-status');
+    iframeContainer.innerHTML = '';
+    if (currentPlatform === 'web' && generatedFiles['index.html']) {
+      controls.style.display = 'none';
+      const iframe = document.createElement('iframe');
+      iframe.srcdoc = buildPreviewHTML();
+      iframe.style.width = '100%';
+      iframe.style.height = '100%';
+      iframe.style.border = 'none';
+      iframeContainer.appendChild(iframe);
+    } else {
+      controls.style.display = 'flex';
+      const lastHfDeploy = deployments.find(d => d.hfUrl);
+      let spaceUrl = localStorage.getItem('previewSpaceUrl') || (lastHfDeploy ? lastHfDeploy.hfUrl : '');
+      if (spaceUrl) {
+        $('customSpaceUrl').value = spaceUrl;
+        loadSpacePreview(spaceUrl);
+      } else {
+        statusDiv.innerHTML = 'No HF Space URL. Paste one above to preview.';
+        iframeContainer.innerHTML = '<div style="padding:20px; text-align:center;">Preview not available.</div>';
+      }
+    }
+  }
+  function togglePreview() {
+    previewMode = !previewMode;
+    const editorDiv = $('editor-container');
+    const previewDiv = $('preview-container');
+    const toggleBtn = $('previewToggleBtn');
+    if (previewMode) {
+      editorDiv.style.display = 'none';
+      previewDiv.style.display = 'flex';
+      toggleBtn.innerHTML = '<i class="fas fa-code"></i> Code';
+      refreshPreview();
+    } else {
+      editorDiv.style.display = 'flex';
+      previewDiv.style.display = 'none';
+      toggleBtn.innerHTML = '<i class="fas fa-eye"></i> Preview';
+    }
+  }
+
+  // Load repos (GitHub / HF)
   async function loadRepos(platform) {
     const repoSelect = $('repoSelect');
     repoSelect.innerHTML = '<option value="">-- Loading... --</option>';
@@ -350,7 +532,6 @@
       appendToConsole(`⚠️ Failed to load ${platform} repos: ${e.message}`, 'warning');
     }
   }
-
   $('projectType').addEventListener('change', (e) => {
     currentPlatform = e.target.value;
     if (githubToken) {
@@ -359,6 +540,7 @@
     }
   });
 
+  // Generate
   async function generateApp() {
     const appName = $('appName').value.trim();
     const prompt = $('prompt').value.trim();
@@ -387,10 +569,11 @@
     finally { $('generateBtn').disabled = false; $('generateBtn').innerHTML = '<i class="fas fa-magic"></i> Generate App'; }
   }
 
+  // Diagnose
   async function diagnoseFix() {
     const errorLog = consoleDiv.innerText;
     if (!errorLog || errorLog === 'Ready.' || errorLog.includes('Console cleared')) {
-      appendToConsole("❌ No error logs to diagnose. Deploy an app first.", 'error');
+      appendToConsole("❌ No error logs to diagnose. Deploy an app first to see logs.", 'error');
       return;
     }
     if (Object.keys(generatedFiles).length === 0) {
@@ -417,6 +600,7 @@
     finally { diagBtn.disabled = false; diagBtn.innerHTML = '<i class="fas fa-stethoscope"></i> Diagnose & Fix'; }
   }
 
+  // Deploy to GitHub
   async function deployToGitHub() {
     if (!githubToken) return appendToConsole("❌ Connect GitHub first", 'error');
     if (Object.keys(generatedFiles).length === 0) return appendToConsole("❌ No files to deploy", 'error');
@@ -430,7 +614,7 @@
       const res = await fetch(`${API_BASE}/api/deploy`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${githubToken}` },
-        body: JSON.stringify({ repo_name: repoName, files: generatedFiles, version: '1.0.0' })
+        body: JSON.stringify({ repo_name: repoName, files: generatedFiles, version: '1.0.0', app_name: appName, prompt: $('prompt').value.trim() })
       });
       const data = await res.json();
       if (data.error) throw new Error(data.error);
@@ -445,6 +629,7 @@
     finally { btn.disabled = false; btn.innerHTML = '<i class="fab fa-github"></i> Deploy GitHub'; }
   }
 
+  // Deploy to HF
   async function deployToHF() {
     if (Object.keys(generatedFiles).length === 0) return appendToConsole("❌ No files to deploy", 'error');
     const appName = $('appName').value.trim();
@@ -459,7 +644,7 @@
       const res = await fetch(`${API_BASE}/api/deploy-hf`, {
         method: 'POST',
         headers: headers,
-        body: JSON.stringify({ repo_full_name: spaceName, files: generatedFiles, platform: 'huggingface', app_name: appName })
+        body: JSON.stringify({ repo_full_name: spaceName, files: generatedFiles, platform: 'huggingface', app_name: appName, prompt: $('prompt').value.trim() })
       });
       const data = await res.json();
       if (data.error) throw new Error(data.error);
@@ -469,10 +654,13 @@
       deployments.unshift(deployment);
       localStorage.setItem('deployments', JSON.stringify(deployments.slice(0,10)));
       renderDeployments();
+      localStorage.setItem('previewSpaceUrl', data.space_url);
+      if (previewMode && currentPlatform === 'python') refreshPreview();
     } catch(e) { appendToConsole(`❌ ${e.message}`, 'error'); }
     finally { btn.disabled = false; btn.innerHTML = '<i class="fab fa-huggingface"></i> Deploy HF'; }
   }
 
+  // PR approve / cancel
   async function approveAndMergePR(prUrl) {
     if (!githubToken) return appendToConsole("❌ Not logged in", 'error');
     appendToConsole(`🔄 Approving and merging PR: ${prUrl}...`, 'info');
@@ -497,7 +685,6 @@
       }
     } catch(e) { appendToConsole(`❌ ${e.message}`, 'error'); }
   }
-
   async function cancelPR(prUrl) {
     if (!githubToken) return appendToConsole("❌ Not logged in", 'error');
     appendToConsole(`🔄 Closing PR: ${prUrl}...`, 'info');
@@ -523,6 +710,7 @@
     } catch(e) { appendToConsole(`❌ ${e.message}`, 'error'); }
   }
 
+  // Render deployments
   function renderDeployments() {
     const container = $('deploymentsList');
     if (!deployments.length) { container.innerHTML = '<div style="color:#8b92b0;text-align:center;">No deployments yet</div>'; return; }
@@ -548,6 +736,7 @@
     document.querySelectorAll('.cancel-pr').forEach(btn => btn.onclick = () => cancelPR(btn.dataset.url));
   }
 
+  // Auth UI
   function updateAuthUI() {
     if (githubToken) {
       $('loginBtn').style.display = 'none';
@@ -563,16 +752,22 @@
     }
   }
 
-  $('loginBtn').onclick = () => window.location.href = `${API_BASE}/auth/login`;
-  $('logoutBtn').onclick = () => { localStorage.clear(); location.reload(); };
-  $('generateBtn').onclick = generateApp;
-  $('diagnoseBtn').onclick = diagnoseFix;
-  $('clearConsoleBtn').onclick = clearConsole;
+  // Event bindings
+  $('previewToggleBtn').onclick = togglePreview;
   $('saveFileBtn').onclick = saveCurrentFile;
   $('downloadZipBtn').onclick = downloadZip;
+  $('clearConsoleBtn').onclick = clearConsole;
+  $('generateBtn').onclick = generateApp;
+  $('diagnoseBtn').onclick = diagnoseFix;
   $('deployGithubBtn').onclick = deployToGitHub;
   $('deployHfBtn').onclick = deployToHF;
+  $('shareBtn').onclick = shareLatestUrl;
+  $('exportGistBtn').onclick = exportToGist;
+  $('previewSpaceBtn').onclick = () => { const url = $('customSpaceUrl').value.trim(); if (url) loadSpacePreview(url); };
+  $('loginBtn').onclick = () => window.location.href = `${API_BASE}/auth/login`;
+  $('logoutBtn').onclick = () => { localStorage.clear(); location.reload(); };
 
+  // OAuth redirect handling
   const urlParams = new URLSearchParams(window.location.search);
   const token = urlParams.get('token');
   if (token) {
@@ -581,6 +776,7 @@
     window.history.replaceState({}, '', window.location.pathname);
     location.reload();
   }
+  initTheme();
   updateAuthUI();
   renderDeployments();
   appendToConsole("✨ GrishteSync ready. Connect GitHub to start.", 'success');
