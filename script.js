@@ -2,6 +2,8 @@
 // Includes: Monaco editor, file management, undo/delete, drafts (GitHub Gists),
 // console with filtering/search/commands, theme, share, deploy, diagnose, preview, etc.
 
+
+
 // ========== Configuration ==========
 const API_BASE = "https://grishtesync-backend.onrender.com";
 let githubToken = localStorage.getItem("github_token");
@@ -1212,6 +1214,202 @@ bindEvents = function() {
     setupKeyboardShortcuts();
 };
 
+// Settings
+let apiBase = localStorage.getItem("api_base") || "https://grishtesync-backend.onrender.com";
+let autoSaveInterval = null;
+let autoSaveSeconds = parseInt(localStorage.getItem("auto_save_seconds") || "30");
+let consoleTimestamps = localStorage.getItem("console_timestamps") !== "false";
+let settingsModal = null;
+
+// Toast helper
+function showToast(message, type = 'info') {
+  let container = document.querySelector('.toast-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.className = 'toast-container';
+    document.body.appendChild(container);
+  }
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.textContent = message;
+  container.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
+}
+
+// Override appendToConsole to respect timestamp setting
+const originalAppend = appendToConsole;
+appendToConsole = function(msg, type = 'info') {
+  if (consoleTimestamps) {
+    originalAppend(msg, type);
+  } else {
+    const line = document.createElement('div');
+    line.className = `console-line ${type}`;
+    line.textContent = msg;
+    consoleDiv.appendChild(line);
+    line.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    consoleLines.push({ text: msg, type, timestamp: null, element: line });
+    applyConsoleFilters();
+  }
+};
+
+// Auto-save setup
+function startAutoSave() {
+  if (autoSaveInterval) clearInterval(autoSaveInterval);
+  if (autoSaveSeconds > 0) {
+    autoSaveInterval = setInterval(() => {
+      if (currentFile && editor) {
+        saveCurrentFile();
+        showToast(`Auto-saved ${currentFile}`, 'info');
+      }
+    }, autoSaveSeconds * 1000);
+  }
+}
+
+// Settings modal
+function showSettings() {
+  if (settingsModal) settingsModal.remove();
+  settingsModal = document.createElement('div');
+  settingsModal.className = 'settings-modal';
+  settingsModal.innerHTML = `
+    <h3>Settings</h3>
+    <div class="form-group">
+      <label>API Base URL</label>
+      <input type="text" id="settingsApiBase" value="${apiBase}" placeholder="https://...">
+    </div>
+    <div class="form-group">
+      <label>Auto-save interval (seconds, 0 to disable)</label>
+      <input type="number" id="settingsAutoSave" value="${autoSaveSeconds}" min="0" step="5">
+    </div>
+    <div class="form-group">
+      <label>
+        <input type="checkbox" id="settingsConsoleTimestamps" ${consoleTimestamps ? 'checked' : ''}>
+        Show console timestamps
+      </label>
+    </div>
+    <div class="modal-actions">
+      <button id="settingsCancelBtn" class="btn-secondary">Cancel</button>
+      <button id="settingsSaveBtn" class="btn-primary">Save</button>
+    </div>
+  `;
+  document.body.appendChild(settingsModal);
+  document.getElementById('settingsCancelBtn').onclick = () => settingsModal.remove();
+  document.getElementById('settingsSaveBtn').onclick = () => {
+    const newApiBase = document.getElementById('settingsApiBase').value.trim();
+    const newAutoSave = parseInt(document.getElementById('settingsAutoSave').value);
+    const newTimestamps = document.getElementById('settingsConsoleTimestamps').checked;
+    if (newApiBase) {
+      apiBase = newApiBase;
+      localStorage.setItem('api_base', apiBase);
+      window.API_BASE = apiBase; // update global if needed
+    }
+    autoSaveSeconds = newAutoSave;
+    localStorage.setItem('auto_save_seconds', autoSaveSeconds);
+    startAutoSave();
+    consoleTimestamps = newTimestamps;
+    localStorage.setItem('console_timestamps', consoleTimestamps);
+    // Re-render console lines to hide/show timestamps
+    const oldLines = [...consoleLines];
+    clearConsole();
+    oldLines.forEach(line => appendToConsole(line.text, line.type));
+    settingsModal.remove();
+    showToast('Settings saved', 'success');
+  };
+}
+
+// Drag & drop file upload
+function setupDragAndDrop() {
+  const editorPanel = document.querySelector('.editor-panel');
+  if (!editorPanel) return;
+  let dragOverlay = null;
+  editorPanel.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    if (!dragOverlay) {
+      dragOverlay = document.createElement('div');
+      dragOverlay.className = 'drag-overlay';
+      dragOverlay.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Drop files to add to project';
+      editorPanel.style.position = 'relative';
+      editorPanel.appendChild(dragOverlay);
+      setTimeout(() => dragOverlay.classList.add('active'), 10);
+    }
+  });
+  editorPanel.addEventListener('dragleave', (e) => {
+    if (dragOverlay) {
+      dragOverlay.remove();
+      dragOverlay = null;
+    }
+  });
+  editorPanel.addEventListener('drop', async (e) => {
+    e.preventDefault();
+    if (dragOverlay) {
+      dragOverlay.remove();
+      dragOverlay = null;
+    }
+    const files = Array.from(e.dataTransfer.files);
+    for (const file of files) {
+      if (file.type === 'text/plain' || file.name.match(/\.(py|js|html|css|json|md|txt)$/i)) {
+        const content = await file.text();
+        const filename = file.name;
+        if (!generatedFiles[filename]) {
+          generatedFiles[filename] = content;
+          appendToConsole(`📁 Added file: ${filename}`, 'success');
+        } else {
+          if (confirm(`File "${filename}" already exists. Overwrite?`)) {
+            generatedFiles[filename] = content;
+            appendToConsole(`📁 Overwrote file: ${filename}`, 'warning');
+          }
+        }
+      } else {
+        appendToConsole(`⚠️ Skipped unsupported file type: ${file.name}`, 'warning');
+      }
+    }
+    renderFileTabs();
+    if (files.length > 0 && !currentFile) openFile(Object.keys(generatedFiles)[0]);
+  });
+}
+
+// Format code action
+function formatCode() {
+  if (editor) {
+    editor.getAction('editor.action.formatDocument').run();
+    appendToConsole(`✨ Formatted ${currentFile}`, 'success');
+  }
+}
+
+// Add settings button to header (call in bindEvents)
+function addSettingsButton() {
+  const headerRight = document.querySelector('.header > div:last-child');
+  if (headerRight && !document.getElementById('settingsBtn')) {
+    const settingsBtn = document.createElement('button');
+    settingsBtn.id = 'settingsBtn';
+    settingsBtn.className = 'btn-outline';
+    settingsBtn.innerHTML = '<i class="fas fa-cog"></i>';
+    settingsBtn.onclick = showSettings;
+    headerRight.insertBefore(settingsBtn, headerRight.firstChild);
+  }
+}
+
+// Override bindEvents to include new UI elements
+const originalBindEvents = bindEvents;
+bindEvents = function() {
+  originalBindEvents();
+  addSettingsButton();
+  setupDragAndDrop();
+  const formatBtn = document.createElement('button');
+  formatBtn.id = 'formatCodeBtn';
+  formatBtn.className = 'btn-outline';
+  formatBtn.innerHTML = '<i class="fas fa-code"></i> Format';
+  formatBtn.style.padding = '4px 8px';
+  formatBtn.onclick = formatCode;
+  const editorToolbar = document.querySelector('.editor-toolbar');
+  if (editorToolbar) {
+    const rightDiv = editorToolbar.querySelector('div:last-child');
+    if (rightDiv) rightDiv.appendChild(formatBtn);
+    else editorToolbar.appendChild(formatBtn);
+  }
+};
+
+// Replace global API_BASE reference if any
+window.API_BASE = apiBase;
 // Wait for DOM to load
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
