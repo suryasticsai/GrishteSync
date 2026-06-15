@@ -983,6 +983,235 @@ function init() {
     }
 }
 
+// ======================== EXTRA FUNCTIONS ========================
+// Append these to your script.js (after all existing functions, before init).
+
+// ---------- Rename File ----------
+function showRenameModal(filename) {
+    const newName = prompt(`Rename "${filename}" to:`, filename);
+    if (!newName || newName === filename) return;
+    if (generatedFiles[newName]) {
+        appendToConsole(`❌ File "${newName}" already exists.`, 'error');
+        return;
+    }
+    const content = generatedFiles[filename];
+    delete generatedFiles[filename];
+    generatedFiles[newName] = content;
+    if (currentFile === filename) currentFile = newName;
+    renderFileTabs();
+    openFile(newName);
+    appendToConsole(`✏️ Renamed "${filename}" → "${newName}"`, 'success');
+}
+
+// Add rename button to each file tab (call this after renderFileTabs)
+function addRenameButtonsToTabs() {
+    document.querySelectorAll('.file-tab').forEach(tab => {
+        const filename = tab.querySelector('span')?.innerText;
+        if (filename && !tab.querySelector('.rename-file-btn')) {
+            const renameBtn = document.createElement('button');
+            renameBtn.className = 'rename-file-btn';
+            renameBtn.innerHTML = '<i class="fas fa-edit"></i>';
+            renameBtn.style.background = 'none';
+            renameBtn.style.border = 'none';
+            renameBtn.style.color = 'inherit';
+            renameBtn.style.cursor = 'pointer';
+            renameBtn.style.marginLeft = '4px';
+            renameBtn.title = 'Rename file';
+            renameBtn.onclick = (e) => {
+                e.stopPropagation();
+                showRenameModal(filename);
+            };
+            tab.querySelector('span')?.after(renameBtn);
+        }
+    });
+}
+
+// Override renderFileTabs to include rename buttons
+const originalRenderFileTabs = renderFileTabs;
+renderFileTabs = function() {
+    originalRenderFileTabs();
+    addRenameButtonsToTabs();
+};
+
+// ---------- File Statistics ----------
+function showFileStats() {
+    let totalLines = 0;
+    let totalChars = 0;
+    const stats = [];
+    for (const [name, content] of Object.entries(generatedFiles)) {
+        const lines = content.split('\n').length;
+        const chars = content.length;
+        totalLines += lines;
+        totalChars += chars;
+        stats.push({ name, lines, chars });
+    }
+    const statsHtml = `
+        <div style="padding: 16px;">
+            <h3>File Statistics</h3>
+            <table style="width:100%; border-collapse: collapse; margin-top: 12px;">
+                <thead><tr><th>File</th><th>Lines</th><th>Characters</th></tr></thead>
+                <tbody>
+                    ${stats.map(s => `<tr><td>${escapeHtml(s.name)}</td><td>${s.lines}</td><td>${s.chars}</td></tr>`).join('')}
+                </tbody>
+                <tfoot><tr><td><strong>Total</strong></td><td><strong>${totalLines}</strong></td><td><strong>${totalChars}</strong></td></tr></tfoot>
+            </table>
+        </div>
+    `;
+    showModal("File Statistics", statsHtml);
+}
+
+function showModal(title, contentHtml) {
+    const modal = document.createElement('div');
+    modal.className = 'modal-overlay';
+    Object.assign(modal.style, {
+        position: 'fixed', top: '0', left: '0', width: '100%', height: '100%',
+        backgroundColor: 'rgba(0,0,0,0.7)', zIndex: '1001',
+        display: 'flex', alignItems: 'center', justifyContent: 'center'
+    });
+    const modalContent = document.createElement('div');
+    Object.assign(modalContent.style, {
+        backgroundColor: '#1e1e2e', borderRadius: '12px', maxWidth: '600px',
+        width: '90%', maxHeight: '80%', overflow: 'auto', padding: '20px', color: '#e2e8f0'
+    });
+    modalContent.innerHTML = `<h2>${title}</h2>${contentHtml}<div style="margin-top:16px; text-align:right;"><button class="close-modal" style="padding:8px 16px; background:#2a2a3a; color:white; border:none; border-radius:4px; cursor:pointer;">Close</button></div>`;
+    modal.appendChild(modalContent);
+    document.body.appendChild(modal);
+    modalContent.querySelector('.close-modal').onclick = () => modal.remove();
+}
+
+// ---------- Search Across Files ----------
+let searchModal = null;
+function searchInFiles() {
+    const searchTerm = prompt("Search for text in all files:", "");
+    if (!searchTerm) return;
+    const results = [];
+    for (const [filename, content] of Object.entries(generatedFiles)) {
+        const lines = content.split('\n');
+        for (let i = 0; i < lines.length; i++) {
+            if (lines[i].toLowerCase().includes(searchTerm.toLowerCase())) {
+                results.push({ filename, lineNumber: i + 1, lineText: lines[i].trim().substring(0, 100) });
+            }
+        }
+    }
+    if (results.length === 0) {
+        appendToConsole(`🔍 No matches found for "${searchTerm}".`, 'warning');
+        return;
+    }
+    const resultsHtml = `
+        <div style="max-height: 400px; overflow-y: auto;">
+            ${results.map(r => `
+                <div class="search-result" data-filename="${r.filename}" data-line="${r.lineNumber}" style="padding: 8px; border-bottom: 1px solid #2a2a3a; cursor: pointer;">
+                    <strong>${escapeHtml(r.filename)}</strong> line ${r.lineNumber}:<br>
+                    <code style="font-size: 0.8rem;">${escapeHtml(r.lineText)}</code>
+                </div>
+            `).join('')}
+        </div>
+    `;
+    showModal(`Search Results for "${searchTerm}"`, resultsHtml);
+    document.querySelectorAll('.search-result').forEach(el => {
+        el.addEventListener('click', () => {
+            const filename = el.dataset.filename;
+            openFile(filename);
+            // Optionally highlight the line in editor? Monaco doesn't support easily without complex API.
+            appendToConsole(`🔍 Opened "${filename}" (line ${el.dataset.line})`, 'info');
+            document.querySelector('.modal-overlay')?.remove();
+        });
+    });
+}
+
+// ---------- AI Code Review ----------
+async function aiCodeReview() {
+    if (Object.keys(generatedFiles).length === 0) {
+        appendToConsole("No code to review. Generate an app first.", 'error');
+        return;
+    }
+    if (!githubToken) {
+        appendToConsole("Connect GitHub to use code review (for authentication).", 'error');
+        return;
+    }
+    const reviewBtn = document.createElement('button');
+    reviewBtn.innerText = 'Reviewing...';
+    reviewBtn.disabled = true;
+    appendToConsole("🤖 Requesting AI code review...", 'info');
+    try {
+        const res = await fetch(`${API_BASE}/api/review`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${githubToken}` },
+            body: JSON.stringify({ files: generatedFiles, prompt: $('prompt').value.trim() })
+        });
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+        showModal("AI Code Review", `<pre style="white-space: pre-wrap; font-family: monospace;">${escapeHtml(data.review)}</pre>`);
+        appendToConsole("✅ Code review completed.", 'success');
+    } catch(e) {
+        appendToConsole(`❌ Review failed: ${e.message}`, 'error');
+    }
+}
+
+// Note: You need to add a /api/review endpoint on your backend that sends code to LLM with a "code review" prompt.
+// If you don't have it, you can omit this function or implement a simpler version using /api/diagnose with a special prompt.
+
+// ---------- Keyboard Shortcuts ----------
+function setupKeyboardShortcuts() {
+    document.addEventListener('keydown', (e) => {
+        // Ctrl+S (or Cmd+S) – save current file
+        if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+            e.preventDefault();
+            saveCurrentFile();
+        }
+        // Ctrl+D – download ZIP
+        if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
+            e.preventDefault();
+            downloadZip();
+        }
+        // Ctrl+F – search across files
+        if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+            e.preventDefault();
+            searchInFiles();
+        }
+        // Ctrl+Shift+R – AI code review
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'R') {
+            e.preventDefault();
+            aiCodeReview();
+        }
+        // Ctrl+Shift+S – save as draft
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'S') {
+            e.preventDefault();
+            saveAsDraft();
+        }
+    });
+    appendToConsole("⌨️ Keyboard shortcuts: Ctrl+S (save), Ctrl+D (download ZIP), Ctrl+F (search), Ctrl+Shift+R (AI review), Ctrl+Shift+S (save draft)", 'info');
+}
+
+// ---------- Add Extra UI Buttons ----------
+function addExtraButtons() {
+    const builderPanel = document.querySelector('.builder-panel');
+    if (builderPanel && !document.querySelector('#extraButtons')) {
+        const extraDiv = document.createElement('div');
+        extraDiv.id = 'extraButtons';
+        extraDiv.style.display = 'flex';
+        extraDiv.style.gap = '8px';
+        extraDiv.style.marginTop = '16px';
+        extraDiv.innerHTML = `
+            <button id="statsBtn" class="btn-secondary" style="flex:1;"><i class="fas fa-chart-bar"></i> Stats</button>
+            <button id="searchBtn" class="btn-secondary" style="flex:1;"><i class="fas fa-search"></i> Search Files</button>
+            <button id="reviewBtn" class="btn-secondary" style="flex:1;"><i class="fas fa-code-branch"></i> AI Review</button>
+        `;
+        builderPanel.appendChild(extraDiv);
+        $('statsBtn')?.addEventListener('click', showFileStats);
+        $('searchBtn')?.addEventListener('click', searchInFiles);
+        $('reviewBtn')?.addEventListener('click', aiCodeReview);
+    }
+}
+
+// Override bindEvents to include extra buttons and shortcuts
+const originalBindEvents = bindEvents;
+bindEvents = function() {
+    originalBindEvents();
+    addExtraButtons();
+    setupKeyboardShortcuts();
+};
+
 // Wait for DOM to load
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
