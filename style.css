@@ -47,7 +47,7 @@ main {
 
 /* Left panel */
 .input-panel {
-    width: 320px;
+    width: 340px;
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
@@ -116,6 +116,31 @@ textarea {
     color: #aaa;
 }
 
+/* Console log */
+.console-log {
+    flex: 1;
+    min-height: 80px;
+    background: #0a0a18;
+    border-radius: 8px;
+    padding: 8px 12px;
+    border: 1px solid #2a2a4e;
+    overflow-y: auto;
+}
+.console-log label {
+    font-size: 12px;
+    color: #666;
+    display: block;
+    margin-bottom: 4px;
+}
+#console-output {
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    color: #8f8;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    min-height: 40px;
+}
+
 /* Editor panel */
 .editor-panel {
     flex: 1;
@@ -159,11 +184,65 @@ textarea {
     position: relative;
 }
 
-/* Balloon styles (added) */
+/* Balloon */
 #edit-balloon textarea:focus {
     border-color: #6c6cff;
     outline: none;
 }
 #balloon-loading {
     color: #aaa;
+}
+
+/* Modals */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+.modal-content {
+    background: #1a1a2e;
+    padding: 30px;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 420px;
+    position: relative;
+    border: 1px solid #3a3a5a;
+}
+.modal-content h2 {
+    margin-bottom: 16px;
+}
+.modal-content label {
+    display: block;
+    margin: 10px 0 4px;
+    font-size: 13px;
+}
+.modal-content input {
+    width: 100%;
+    padding: 10px;
+    background: #0d0d1a;
+    border: 1px solid #2a2a4e;
+    border-radius: 6px;
+    color: #e0e0e0;
+    font-size: 14px;
+}
+.modal-content .btn {
+    margin-top: 12px;
+}
+.close-modal {
+    position: absolute;
+    top: 12px;
+    right: 18px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #888;
+}
+.close-modal:hover {
+    color: #fff;
 }
