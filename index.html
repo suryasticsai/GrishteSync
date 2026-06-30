@@ -11,18 +11,18 @@
     <div class="app">
         <header>
             <h1>⚡ GrishteSync</h1>
-            <p>Generate, edit, and deploy full-stack apps with AI</p>
+            <p>Generate, edit, and deploy full‑stack apps with AI</p>
         </header>
 
         <main>
-            <!-- Input Panel -->
+            <!-- Left Panel -->
             <section class="input-panel">
                 <div class="form-group">
                     <label for="project-type">Project Type</label>
                     <select id="project-type">
                         <option value="webapp">Web Application</option>
                         <option value="python">Python Script</option>
-                        <option value="fullstack">Full-Stack App (Flask/FastAPI + DB)</option>
+                        <option value="fullstack">Full‑Stack App (Flask/FastAPI + DB)</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -36,15 +36,21 @@
                     <button id="deploy-hf-btn" class="btn btn-outline">🤗 Deploy to HF</button>
                 </div>
                 <div id="status" class="status"></div>
+
+                <!-- Console log output -->
+                <div class="console-log">
+                    <label>Console</label>
+                    <pre id="console-output"></pre>
+                </div>
             </section>
 
             <!-- Editor Panel -->
             <section class="editor-panel">
                 <div class="file-tabs" id="file-tabs">
-                    <!-- Tabs will be dynamically generated -->
+                    <!-- Tabs dynamically generated -->
                 </div>
                 <div id="editor-container">
-                    <!-- Monaco editor will be mounted here -->
+                    <!-- Monaco editor mounted here -->
                 </div>
                 <!-- Floating balloon for code selection -->
                 <div id="edit-balloon" style="display: none; position: absolute; background: #1e1e2f; border: 1px solid #4a4a6a; border-radius: 12px; padding: 14px; box-shadow: 0 6px 20px rgba(0,0,0,0.6); z-index: 1000; min-width: 280px; font-family: 'Inter', -apple-system, sans-serif;">
@@ -57,6 +63,33 @@
                 </div>
             </section>
         </main>
+    </div>
+
+    <!-- Modals for GitHub/HF deployment -->
+    <div id="github-modal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close-modal" data-modal="github-modal">&times;</span>
+            <h2>Deploy to GitHub</h2>
+            <label>Personal Access Token</label>
+            <input type="password" id="github-token" placeholder="ghp_..." />
+            <label>Repository (username/repo)</label>
+            <input type="text" id="github-repo" placeholder="suryasticsai/my-app" />
+            <button id="github-deploy-confirm" class="btn btn-primary">Deploy</button>
+            <div id="github-deploy-status" class="status"></div>
+        </div>
+    </div>
+
+    <div id="hf-modal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close-modal" data-modal="hf-modal">&times;</span>
+            <h2>Deploy to Hugging Face</h2>
+            <label>HF Token</label>
+            <input type="password" id="hf-token" placeholder="hf_..." />
+            <label>Space (username/space)</label>
+            <input type="text" id="hf-space" placeholder="suryasticsai/my-space" />
+            <button id="hf-deploy-confirm" class="btn btn-primary">Deploy</button>
+            <div id="hf-deploy-status" class="status"></div>
+        </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.1/min/vs/loader.min.js"></script>
