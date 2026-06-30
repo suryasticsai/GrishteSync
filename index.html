@@ -1,109 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>GrishteSync | AI App Builder</title>
-  <link rel="icon" type="image/png" href="https://i.ibb.co/B5z2c7j7/1781241361720.png">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Your external stylesheet -->
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GrishteSync - AI Code Generator</title>
+    <link rel="stylesheet" href="style.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 </head>
 <body>
-<div class="header">
-  <div class="logo">
-    <h1>GrishteSync</h1>
-    <span style="font-size:0.7rem;">v5.5</span>
-  </div>
-  <div style="display: flex; gap: 12px;">
-    <button id="themeToggleBtn" class="btn-outline"><i class="fas fa-moon"></i></button>
-    <button id="shareBtn" class="btn-outline"><i class="fas fa-share-alt"></i> Share</button>
-    <button id="exportGistBtn" class="btn-outline"><i class="fab fa-github"></i> Gist</button>
-    <div id="authSection">
-      <button id="loginBtn" class="btn-outline"><i class="fab fa-github"></i> Connect GitHub</button>
-      <div id="userInfo" style="display:none;" class="github-user">
-        <img id="userAvatar" src=""><span id="userName"></span>
-        <button id="logoutBtn" class="btn-outline" style="padding:4px 8px;">Logout</button>
-      </div>
-    </div>
-  </div>
-</div>
+    <div class="app">
+        <header>
+            <h1>⚡ GrishteSync</h1>
+            <p>Generate, edit, and deploy full-stack apps with AI</p>
+        </header>
 
-<div class="main-layout">
-  <div class="builder-panel">
-    <div class="form-group"><label>📱 App Name</label><input id="appName" placeholder="my-awesome-app"></div>
-    <div class="form-group">
-      <label>🎯 Project Type</label>
-      <select id="projectType">
-        <option value="python">🐍 Python App (HF Spaces)</option>
-        <option value="web">🌐 Static Website (GitHub Pages)</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label>📦 Existing Repo / Space (optional)</label>
-      <select id="repoSelect"><option value="">-- Create new --</option></select>
-    </div>
-    <div class="form-group">
-      <label>🤖 AI Mode</label>
-      <select id="aiMode">
-        <option value="generate">✨ Generate New</option>
-        <option value="fix">🔧 Fix Bugs</option>
-        <option value="improve">🎨 Improve UI</option>
-        <option value="feature">➕ Add Feature</option>
-      </select>
-    </div>
-    <div class="form-group"><label>💬 Describe your app</label><textarea id="prompt" rows="4" placeholder="Example: A personal diary app with Flask, SQLite, and CRUD operations"></textarea></div>
-    <button id="generateBtn" class="btn-primary" style="width:100%;"><i class="fas fa-magic"></i> Generate App</button>
-    <div id="deployActions" style="display:none; margin-top:16px;">
-      <div style="display:flex; gap:8px;">
-        <button id="deployGithubBtn" class="btn-secondary" style="flex:1;"><i class="fab fa-github"></i> Deploy GitHub</button>
-        <button id="deployHfBtn" class="btn-secondary" style="flex:1;"><i class="fab fa-huggingface"></i> Deploy HF</button>
-      </div>
-    </div>
-  </div>
+        <main>
+            <!-- Input Panel -->
+            <section class="input-panel">
+                <div class="form-group">
+                    <label for="project-type">Project Type</label>
+                    <select id="project-type">
+                        <option value="webapp">Web Application</option>
+                        <option value="python">Python Script</option>
+                        <option value="fullstack">Full-Stack App (Flask/FastAPI + DB)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="description">Describe your project</label>
+                    <textarea id="description" rows="4" placeholder="e.g., A todo list with user authentication..."></textarea>
+                </div>
+                <div class="actions">
+                    <button id="generate-btn" class="btn btn-primary">🚀 Generate</button>
+                    <button id="review-btn" class="btn btn-outline">🔍 Review</button>
+                    <button id="deploy-github-btn" class="btn btn-outline">📦 Deploy to GitHub</button>
+                    <button id="deploy-hf-btn" class="btn btn-outline">🤗 Deploy to HF</button>
+                </div>
+                <div id="status" class="status"></div>
+            </section>
 
-  <div class="editor-panel">
-    <div class="editor-toolbar">
-      <div class="file-tabs" id="fileTabs"></div>
-      <div style="display: flex; gap: 8px;">
-        <button id="previewToggleBtn" class="btn-outline" style="padding:4px 8px;"><i class="fas fa-eye"></i> Preview</button>
-        <button id="saveFileBtn" class="btn-outline" style="padding:4px 8px;"><i class="fas fa-save"></i> Save</button>
-        <button id="downloadZipBtn" class="btn-outline" style="padding:4px 8px;"><i class="fas fa-download"></i> ZIP</button>
-      </div>
+            <!-- Editor Panel -->
+            <section class="editor-panel">
+                <div class="file-tabs" id="file-tabs">
+                    <!-- Tabs will be dynamically generated -->
+                </div>
+                <div id="editor-container">
+                    <!-- Monaco editor will be mounted here -->
+                </div>
+                <!-- Floating balloon for code selection -->
+                <div id="edit-balloon" style="display: none; position: absolute; background: #1e1e2f; border: 1px solid #4a4a6a; border-radius: 12px; padding: 14px; box-shadow: 0 6px 20px rgba(0,0,0,0.6); z-index: 1000; min-width: 280px; font-family: 'Inter', -apple-system, sans-serif;">
+                    <textarea id="balloon-input" rows="2" placeholder="Describe the change..." style="width: 100%; background: #2a2a3e; color: #e0e0e0; border: 1px solid #3a3a5a; border-radius: 6px; padding: 8px; font-size: 14px; resize: vertical;"></textarea>
+                    <div style="display: flex; gap: 8px; margin-top: 8px;">
+                        <button id="balloon-submit" class="btn btn-primary" style="flex:1;">Apply</button>
+                        <button id="balloon-cancel" class="btn btn-outline" style="flex:1;">Cancel</button>
+                    </div>
+                    <div id="balloon-loading" style="display:none; text-align:center; color:#aaa; margin-top:6px;">⏳ Sending...</div>
+                </div>
+            </section>
+        </main>
     </div>
-    <div id="editor-container"></div>
-    <div id="preview-container" style="display: none; flex-direction: column; background: white;">
-      <div id="preview-controls" class="preview-controls">
-        <label>🔍 Hugging Face Space URL (for Python apps)</label>
-        <div class="input-group">
-          <input type="text" id="customSpaceUrl" placeholder="https://huggingface.co/spaces/username/space-name">
-          <button id="previewSpaceBtn" class="btn-sm btn-primary">Load</button>
-        </div>
-        <div id="preview-status" class="preview-status"></div>
-      </div>
-      <div id="preview-iframe-container"></div>
-    </div>
-  </div>
 
-  <div class="output-panel">
-    <div class="panel-header">
-      <span><i class="fas fa-terminal"></i> Console</span>
-      <div><button id="clearConsoleBtn" class="btn-outline" style="padding:2px 8px;">Clear</button></div>
-    </div>
-    <div id="console" class="console"><div class="console-line info">✨ Ready. Connect GitHub to start.</div></div>
-    <div style="padding:8px; display:flex; gap:8px;">
-      <button id="diagnoseBtn" class="btn-primary" style="flex:1;"><i class="fas fa-stethoscope"></i> Diagnose & Fix</button>
-    </div>
-    <div class="panel-header"><span><i class="fas fa-rocket"></i> Deployments</span></div>
-    <div id="deploymentsList" class="deployment-list"></div>
-  </div>
-</div>
-
-<!-- External dependencies -->
-<script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<!-- Your main script (contains all logic) -->
-<script src="script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.1/min/vs/loader.min.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
