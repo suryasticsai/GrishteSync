@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://i.ibb.co/RGmb4FKk/1781072041102.png" alt="GrishteSync Logo" width="150" />
+</p>
+
 # GrishteSync
 Autonomous Smart AI software full-stack developer agent 
 
